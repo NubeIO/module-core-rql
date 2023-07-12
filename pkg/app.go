@@ -10,6 +10,8 @@ import (
 
 var name = "module-core-rql"
 
+const Permission = 0755
+
 func (m *Module) networkUpdateSuccess(uuid string) error {
 	var network model.Network
 	network.InFault = false

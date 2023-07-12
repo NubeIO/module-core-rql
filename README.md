@@ -1,6 +1,6 @@
 # module-core-rql
 
-port from https://github.com/NubeIO/nrule
+port from https://github.com/NubeIO/module-core-rql
 
 
 ```bash

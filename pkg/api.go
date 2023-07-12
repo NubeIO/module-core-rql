@@ -21,7 +21,7 @@ func (m *Module) Get(path string) ([]byte, error) {
 	} else if path == jsonSchemaPoint {
 		return json.Marshal(systemschema.GetPointSchema())
 	} else if path == test {
-		return json.Marshal(m.Enable())
+		return json.Marshal("hello")
 	}
 	return nil, errors.New("not found")
 }
