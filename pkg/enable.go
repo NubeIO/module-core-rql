@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"fmt"
 	"github.com/NubeIO/module-core-rql/apirules"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
@@ -10,15 +11,13 @@ import (
 )
 
 func (m *Module) Enable() error {
-	log.Infof("plugin is enabled...%s", name)
-
+	log.Infof("plugin is enabling...%s", name)
 	eng := rules.NewRuleEngine()
-
 	n := "Core"
 	props := make(rules.PropertiesMap)
 	props[n] = eng
 	client := "RQL"
-	newStorage := storage.New("../")
+	newStorage := storage.New(fmt.Sprintf("%s.db", name))
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	newClient := &apirules.Client{
@@ -32,7 +31,11 @@ func (m *Module) Enable() error {
 		},
 	}
 	props[client] = newClient
-
+	m.Rules = eng
+	m.Client = newClient
+	m.Props = props
+	m.Storage = newStorage
+	log.Infof("plugin is enabled...%s", name)
 	return nil
 }
 

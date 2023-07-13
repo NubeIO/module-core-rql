@@ -2,8 +2,8 @@ package apirules
 
 import (
 	"context"
+	"github.com/NubeIO/module-core-rql/rubixoscli"
 	"github.com/NubeIO/module-core-rql/storage"
-	"github.com/NubeIO/rubix-os-client/rubixoscli"
 	"github.com/NubeIO/rubix-os/installer"
 )
 

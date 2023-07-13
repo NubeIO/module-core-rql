@@ -1,8 +1,8 @@
 package storage
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -24,7 +24,7 @@ func New(dbFile string) IStorage {
 	}
 	newDb, err := buntdb.Open(dbFile)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	return &db{DB: newDb}
 }

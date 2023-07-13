@@ -1,6 +1,9 @@
 package pkg
 
 import (
+	"github.com/NubeIO/module-core-rql/apirules"
+	"github.com/NubeIO/module-core-rql/rules"
+	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/NubeIO/rubix-os/module/shared"
 	"github.com/patrickmn/go-cache"
 	"time"
@@ -12,6 +15,11 @@ type Module struct {
 	grpcMarshaller shared.Marshaller
 	config         *Config
 	store          *cache.Cache
+
+	Rules   *rules.RuleEngine
+	Client  *apirules.Client
+	Props   rules.PropertiesMap
+	Storage storage.IStorage
 }
 
 func (m *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
