@@ -6,7 +6,11 @@ port from https://github.com/NubeIO/module-core-rql
 ```bash
 go build -o module-core-rql
 ```
-
+to run rubix-os
 ```bash
-go build -o module-core-rql && mv -f module-core-rql /home/aidan/code/go/nube/rubix-os/data/modules
+bash build.bash <YOUR_PATH>
+```
+example
+```bash
+bash build.bash /home/aidan/code/go
 ```

@@ -7,7 +7,6 @@ require (
 	github.com/NubeIO/lib-date v0.0.6
 	github.com/NubeIO/lib-dhcpd v0.0.2
 	github.com/NubeIO/lib-networking v0.1.0
-	github.com/NubeIO/lib-schema v0.2.18
 	github.com/NubeIO/lib-system v0.0.1
 	github.com/NubeIO/lib-systemctl-go v0.3.1
 	github.com/NubeIO/lib-ufw v0.0.3
@@ -38,6 +37,7 @@ require (
 
 require (
 	github.com/NubeIO/lib-files v1.0.0 // indirect
+	github.com/NubeIO/lib-schema v0.2.18 // indirect
 	github.com/NubeIO/rubix-assist v0.10.6 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
