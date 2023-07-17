@@ -1,8 +1,20 @@
 #!/bin/bash
 
-echo PATH $1/rubix-os
-echo ****MODULES****
-ls  $1/rubix-os/data/modules
-echo ****MODULES****
+code_path=$1
 
-go build -o module-core-rql && mv -f module-core-rql $1/rubix-os/data/modules && cd $1/rubix-os && bash build.bash
+if [ "$code_path" = "" ];
+then
+    code_path="code/go"
+    echo NO PATH PROVIDED WILL USE: $code_path
+else
+    echo PATH PROVIDED WILL USE: $code_path
+fi
+
+path=$HOME/$code_path/rubix-os
+
+echo $path
+echo "****MODULES****"
+ls  $path/data/modules
+echo "****MODULES****"
+
+go build -o module-core-rql && mv -f module-core-rql $path/data/modules && cd $path && bash build.bash
