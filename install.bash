@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# bash install.bash version=v1.4.0 build=rubix-bios-1.4.0-83b470ea.armv7.zip services=no download=no clean=no ports=yes backup=no restore=no
+# bash install.bash version=v1.4.0 build=rubix-bios-1.4.0-83b470ea.armv7.zip services=no download=no clean=no ports=yes backup=yes restore=yes
 # if services is "yes" it will stop and remove all the old rubix services
 # if download is "yes" it download and unzip the build
 # if backup is "yes" make a tmp dir to store some backups of things like FF database file
@@ -36,11 +36,12 @@ home=$HOME
 zip_build="$build"
 echo DOWNLOAD: $url  BUILD: $zip_build
 
-if [ "$download" = "yes" ];
-then
-  wget $url
-  unzip $zip_build
-fi
+
+# remove old bios if in home dir
+rm rubix-bios
+rm rubix-edge-bios
+
+
 
 
 if [ "$ports" = "no" ]; # will open ports
@@ -54,7 +55,7 @@ fi
 
 if [ "$services" = "yes" ];
 then
-    echo STOP OLD/DISABLE SERVICES
+
     sudo systemctl stop nubeio-flow-framework
     sudo systemctl disable nubeio-flow-framework
 
@@ -66,6 +67,9 @@ then
 
     sudo systemctl stop nubeio-wires-plat
     sudo systemctl disable nubeio-wires-plat
+
+    sudo fuser -n tcp -k 1660
+    sudo fuser -n tcp -k 1659
 fi
 
 
@@ -79,9 +83,9 @@ then
 
 fi
 
+
 if [ "$clean" = "yes" ]; # will delete the data dir
 then
-
   sudo rm -r /data/flow-framework
   sudo rm -r /data/rubix-service
   sudo rm -r /data/rubix-registry
@@ -89,6 +93,18 @@ then
   sudo rm -r /data/rubix-bios
   sudo rm -r /data/rubix-edge
   sudo rm -r /data/rubix-store
+  sudo rm -r /data/rubix-plat
+  sudo rm -r /data/apps
+  sudo rm -r /data/auth
+  sudo rm -r /data/backup
+  sudo rm -r /data/tmp
+fi
+
+if [ "$download" = "yes" ];
+then
+  wget $url
+  unzip $zip_build
+  rm rubix-bios-1.4.0-83b470ea.armv7.zip
 fi
 
 
