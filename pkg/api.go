@@ -11,14 +11,15 @@ const (
 	jsonSchemaDevice  = "/schema/json/device"
 	jsonSchemaPoint   = "/schema/json/point"
 	apiRules          = "/rules"
+	apiRun            = "/rules/dry"
 )
 
 const errNotFound = "not found"
 
 func getPathUUID(path string) (urlPath, uuid, combined string) {
 	s := urlSplit(path)
-	if len(s) == 2 {
-		return s[0], s[1], fmt.Sprintf("%s/%s", s[0], s[1])
+	if len(s) > 2 {
+		return s[1], s[2], fmt.Sprintf("/%s/%s", s[1], s[2])
 	}
 	return "", "", ""
 }
@@ -53,17 +54,13 @@ func urlIsCorrectModule(path string) bool {
 }
 
 func (m *Module) Get(path string) ([]byte, error) {
-	if urlLen(path) == 1 { // all rules
-		if path == apiRules {
-			return m.SelectAllRules()
-		}
+	if path == apiRules {
+		return m.SelectAllRules()
 	}
-	if urlLen(path) == 2 {
-		urlPath, uuid, combined := getPathUUID(path)
-		if urlPath == apiRules {
-			if path == combined { // get a rule
-				return m.SelectRule(uuid)
-			}
+	if urlLen(path) > 2 {
+		_, uuid, combined := getPathUUID(path)
+		if path == combined { // get a rule
+			return m.SelectRule(uuid)
 		}
 	}
 	return nil, errors.New(path)
@@ -72,6 +69,9 @@ func (m *Module) Get(path string) ([]byte, error) {
 func (m *Module) Post(path string, body []byte) ([]byte, error) {
 	if path == apiRules {
 		return m.AddRule(body)
+	}
+	if path == apiRun {
+		return m.Dry(body)
 	}
 	return nil, errors.New(errNotFound)
 }
