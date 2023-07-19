@@ -1,8 +1,10 @@
 package pkg
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/labstack/gommon/log"
 	"strings"
 )
 
@@ -54,6 +56,8 @@ func urlIsCorrectModule(path string) bool {
 }
 
 func (m *Module) Get(path string) ([]byte, error) {
+	log.Errorf("hello aidan!!!!!!!!!!!!!!!!!!111")
+	return json.Marshal("heloo aidan")
 	if path == apiRules {
 		return m.SelectAllRules()
 	}
