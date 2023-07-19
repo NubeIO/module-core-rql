@@ -36,6 +36,7 @@ func (inst *Module) Enable() error {
 	inst.Props = props
 	inst.Storage = newStorage
 	log.Infof("plugin is enabled...%s", name)
+	go inst.Loop()
 	return nil
 }
 

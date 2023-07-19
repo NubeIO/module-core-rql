@@ -5,6 +5,7 @@ import (
 	"fmt"
 	pprint "github.com/NubeIO/module-core-rql/helpers/print"
 	"github.com/go-gota/gota/dataframe"
+	log "github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -13,11 +14,11 @@ func (inst *Client) PrintJson(x interface{}) {
 }
 
 func (inst *Client) PrintString(x string) {
-	fmt.Println(x)
+	log.Info(x)
 }
 
 func (inst *Client) Print(x interface{}) {
-	fmt.Println(x)
+	log.Error(x)
 }
 
 func (inst *Client) ToString(x interface{}) string {

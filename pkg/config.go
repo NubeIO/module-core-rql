@@ -24,7 +24,7 @@ func (inst *Module) DefaultConfig() *Config {
 
 	return &Config{
 		Schedule: schedule,
-		LogLevel: "ERROR",
+		LogLevel: "INFO",
 	}
 }
 

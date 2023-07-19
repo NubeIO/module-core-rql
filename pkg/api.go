@@ -3,7 +3,6 @@ package pkg
 import (
 	"errors"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -56,7 +55,6 @@ func urlIsCorrectModule(path string) bool {
 }
 
 func (inst *Module) Get(path string) ([]byte, error) {
-	log.Errorf("Got URL: %s !!!!!!!!!!!!!!!!!!", path)
 	if path == apiRules {
 		return inst.SelectAllRules()
 	}
