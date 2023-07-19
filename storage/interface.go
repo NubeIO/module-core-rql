@@ -7,6 +7,7 @@ type IStorage interface {
 	SelectRule(uuid string) (*RQLRule, error)
 	SelectAllRules() ([]RQLRule, error)
 	SelectAllEnabledRules() ([]RQLRule, error)
+	UpdateResult(uuid string, result interface{}) (*RQLRule, error)
 
 	AddVariable(rc *RQLVariables) (*RQLVariables, error)
 	UpdateVariable(uuid string, rc *RQLVariables) (*RQLVariables, error)

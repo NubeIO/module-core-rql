@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/lib-uuid/uuid"
 	"github.com/tidwall/buntdb"
+	"time"
 )
 
 func (inst *db) AddRule(rc *RQLRule) (*RQLRule, error) {
@@ -40,6 +41,29 @@ func (inst *db) UpdateRule(uuid string, rc *RQLRule) (*RQLRule, error) {
 		return nil, err
 	}
 	return rc, nil
+}
+
+func (inst *db) UpdateResult(uuid string, result interface{}) (*RQLRule, error) {
+	rule, err := inst.SelectRule(uuid)
+	if err != nil {
+		return nil, err
+	}
+	r := Result{
+		Result:    result,
+		Timestamp: time.Now(),
+	}
+	if rule.ResultStorageSize < 10 {
+		rule.ResultStorageSize = 10
+	}
+	if rule.ResultStorageSize > 100 {
+		rule.ResultStorageSize = 100
+	}
+	if len(rule.Result) > rule.ResultStorageSize {
+		rule.Result = rule.Result[1:]
+	} else {
+		rule.Result = append(rule.Result, r)
+	}
+	return inst.UpdateRule(uuid, rule)
 }
 
 func (inst *db) DeleteRule(uuid string) error {
