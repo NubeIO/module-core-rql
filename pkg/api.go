@@ -1,10 +1,8 @@
 package pkg
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/labstack/gommon/log"
 	"strings"
 )
 
@@ -14,6 +12,7 @@ const (
 	jsonSchemaPoint   = "/schema/json/point"
 	apiRules          = "/rules"
 	apiRun            = "/rules/dry"
+	apiVars           = "/vars"
 )
 
 const errNotFound = "not found"
@@ -55,45 +54,61 @@ func urlIsCorrectModule(path string) bool {
 	return false
 }
 
-func (m *Module) Get(path string) ([]byte, error) {
-	log.Errorf("hello aidan!!!!!!!!!!!!!!!!!!111")
-	return json.Marshal("heloo aidan")
+func (inst *Module) Get(path string) ([]byte, error) {
 	if path == apiRules {
-		return m.SelectAllRules()
+		return inst.SelectAllRules()
 	}
-	if urlLen(path) > 2 {
-		_, uuid, combined := getPathUUID(path)
-		if path == combined { // get a rule
-			return m.SelectRule(uuid)
-		}
+
+	_, uuid, combined := getPathUUID(path)
+	if path == combined { // get a rule
+		return inst.SelectRule(uuid)
 	}
+
+	if path == apiVars { // get all variable
+		return inst.SelectAllVariables()
+	}
+
+	if path == combined { // get a variable
+		return inst.SelectVariable(uuid)
+	}
+
 	return nil, errors.New(path)
 }
 
-func (m *Module) Post(path string, body []byte) ([]byte, error) {
+func (inst *Module) Post(path string, body []byte) ([]byte, error) {
 	if path == apiRules {
-		return m.AddRule(body)
+		return inst.AddRule(body)
 	}
 	if path == apiRun {
-		return m.Dry(body)
+		return inst.Dry(body)
 	}
+	if path == apiVars { // add variable
+		return inst.AddVariable(body)
+	}
+
 	return nil, errors.New(errNotFound)
 }
 
-func (m *Module) Put(path, uuid string, body []byte) ([]byte, error) {
+func (inst *Module) Put(path, uuid string, body []byte) ([]byte, error) {
 	return nil, errors.New(errNotFound)
 }
 
-func (m *Module) Patch(path, uuid string, body []byte) ([]byte, error) {
+func (inst *Module) Patch(path, uuid string, body []byte) ([]byte, error) {
 	if path == apiRules { // update a rule
-		return m.UpdateRule(uuid, body)
+		return inst.UpdateRule(uuid, body)
+	}
+	if path == apiVars { // update variable
+		return inst.UpdateVariable(body, uuid)
 	}
 	return nil, errors.New(errNotFound)
 }
 
-func (m *Module) Delete(path, uuid string) ([]byte, error) {
+func (inst *Module) Delete(path, uuid string) ([]byte, error) {
 	if path == apiRules { // delete a rule
-		return m.DeleteRule(uuid)
+		return inst.DeleteRule(uuid)
+	}
+	if path == apiVars { // delete a var
+		return inst.DeleteVariable(uuid)
 	}
 	return nil, errors.New(errNotFound)
 }

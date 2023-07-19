@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (m *Module) Enable() error {
+func (inst *Module) Enable() error {
 	log.Infof("plugin is enabling...%s", name)
 	eng := rules.NewRuleEngine()
 	n := "Core"
@@ -31,15 +31,15 @@ func (m *Module) Enable() error {
 		},
 	}
 	props[client] = newClient
-	m.Rules = eng
-	m.Client = newClient
-	m.Props = props
-	m.Storage = newStorage
+	inst.Rules = eng
+	inst.Client = newClient
+	inst.Props = props
+	inst.Storage = newStorage
 	log.Infof("plugin is enabled...%s", name)
 	return nil
 }
 
-func (m *Module) Disable() error {
+func (inst *Module) Disable() error {
 	log.Infof("plugin is disabled...%s", name)
 	return nil
 }

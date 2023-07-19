@@ -22,16 +22,16 @@ type Module struct {
 	Storage storage.IStorage
 }
 
-func (m *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
+func (inst *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
 	grpcMarshaller := shared.GRPCMarshaller{DbHelper: dbHelper}
-	m.dbHelper = dbHelper
-	m.moduleName = moduleName
-	m.grpcMarshaller = &grpcMarshaller
-	m.store = cache.New(5*time.Minute, 10*time.Minute)
+	inst.dbHelper = dbHelper
+	inst.moduleName = moduleName
+	inst.grpcMarshaller = &grpcMarshaller
+	inst.store = cache.New(5*time.Minute, 10*time.Minute)
 	return nil
 }
 
-func (m *Module) GetInfo() (*shared.Info, error) {
+func (inst *Module) GetInfo() (*shared.Info, error) {
 	return &shared.Info{
 		Name:       name,
 		Author:     "Nube iO",

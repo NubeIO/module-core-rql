@@ -9,54 +9,54 @@ import (
 	"time"
 )
 
-func (m *Module) SelectAllRules() ([]byte, error) {
-	resp, err := m.Storage.SelectAllRules()
+func (inst *Module) SelectAllRules() ([]byte, error) {
+	resp, err := inst.Storage.SelectAllRules()
 	if err != nil {
 		return nil, err
 	}
 	return json.Marshal(resp)
 }
 
-func (m *Module) SelectRule(uuid string) ([]byte, error) {
-	resp, err := m.Storage.SelectRule(uuid)
+func (inst *Module) SelectRule(uuid string) ([]byte, error) {
+	resp, err := inst.Storage.SelectRule(uuid)
 	if err != nil {
 		return nil, err
 	}
 	return json.Marshal(resp)
 }
 
-func (m *Module) AddRule(b []byte) ([]byte, error) {
+func (inst *Module) AddRule(b []byte) ([]byte, error) {
 	var body *storage.RQLRule
 	err := json.Unmarshal(b, &body)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.Storage.AddRule(body)
+	resp, err := inst.Storage.AddRule(body)
 	if err != nil {
 		return nil, err
 	}
-	err = m.Rules.AddRule(body, m.Props)
+	err = inst.Rules.AddRule(body, inst.Props)
 	if err != nil {
 		return nil, err
 	}
 	return json.Marshal(resp)
 }
 
-func (m *Module) UpdateRule(uuid string, b []byte) ([]byte, error) {
+func (inst *Module) UpdateRule(uuid string, b []byte) ([]byte, error) {
 	var body *storage.RQLRule
 	err := json.Unmarshal(b, &body)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.Storage.UpdateRule(uuid, body)
+	resp, err := inst.Storage.UpdateRule(uuid, body)
 	if err != nil {
 		return nil, err
 	}
 	return json.Marshal(resp)
 }
 
-func (m *Module) DeleteRule(uuid string) ([]byte, error) {
-	err := m.Storage.DeleteRule(uuid)
+func (inst *Module) DeleteRule(uuid string) ([]byte, error) {
+	err := inst.Storage.DeleteRule(uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -68,11 +68,11 @@ type Message struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-func (m *Module) Dry(b []byte) ([]byte, error) {
+func (inst *Module) Dry(b []byte) ([]byte, error) {
 	start := time.Now()
-	m.Client.Err = ""
-	m.Client.Return = nil
-	m.Client.TimeTaken = ""
+	inst.Client.Err = ""
+	inst.Client.Return = nil
+	inst.Client.TimeTaken = ""
 
 	var body *rules.Body
 	err := json.Unmarshal(b, &body)
@@ -80,8 +80,8 @@ func (m *Module) Dry(b []byte) ([]byte, error) {
 		return nil, err
 	}
 	if err != nil {
-		m.Client.Err = err.Error()
-		return json.Marshal(m.Client)
+		inst.Client.Err = err.Error()
+		return json.Marshal(inst.Client)
 	}
 
 	name := uuid.ShortUUID("")
@@ -93,17 +93,67 @@ func (m *Module) Dry(b []byte) ([]byte, error) {
 		Script:   script,
 		Schedule: schedule,
 	}
-	err = m.Rules.AddRule(newRule, m.Props)
+	err = inst.Rules.AddRule(newRule, inst.Props)
 	if err != nil {
-		m.Client.Err = err.Error()
-		return json.Marshal(m.Client)
+		inst.Client.Err = err.Error()
+		return json.Marshal(inst.Client)
 	}
-	value, err := m.Rules.ExecuteAndRemove(name, m.Props, false)
+	value, err := inst.Rules.ExecuteAndRemove(name, inst.Props, false)
 	if err != nil {
-		m.Client.Err = err.Error()
-		return json.Marshal(m.Client)
+		inst.Client.Err = err.Error()
+		return json.Marshal(inst.Client)
 	}
-	m.Client.Return = value
-	m.Client.TimeTaken = time.Since(start).String()
-	return json.Marshal(m.Client)
+	inst.Client.Return = value
+	inst.Client.TimeTaken = time.Since(start).String()
+	return json.Marshal(inst.Client)
+}
+
+func (inst *Module) SelectAllVariables() ([]byte, error) {
+	resp, err := inst.Storage.SelectAllVariables()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(resp)
+}
+
+func (inst *Module) SelectVariable(uuid string) ([]byte, error) {
+	resp, err := inst.Storage.SelectVariable(uuid)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(resp)
+}
+
+func (inst *Module) AddVariable(b []byte) ([]byte, error) {
+	var body *storage.RQLVariables
+	err := json.Unmarshal(b, &body)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := inst.Storage.AddVariable(body)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(resp)
+}
+
+func (inst *Module) UpdateVariable(b []byte, uuid string) ([]byte, error) {
+	var body *storage.RQLVariables
+	err := json.Unmarshal(b, &body)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := inst.Storage.UpdateVariable(uuid, body)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(resp)
+}
+
+func (inst *Module) DeleteVariable(uuid string) ([]byte, error) {
+	err := inst.Storage.DeleteVariable(uuid)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(Message{Message: "ok"})
 }
