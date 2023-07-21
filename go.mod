@@ -26,6 +26,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.10
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/labstack/gommon v0.4.0
+	github.com/mandolyte/mdtopdf v1.3.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rvflash/elapsed v0.3.0
 	github.com/sirupsen/logrus v1.9.3
@@ -52,6 +53,7 @@ require (
 	github.com/jackpal/gateway v1.0.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jung-kurt/gofpdf v1.16.2 // indirect
 	github.com/leaanthony/slicer v1.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -59,6 +61,7 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sergeymakinen/go-systemdconf/v2 v2.0.2 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect

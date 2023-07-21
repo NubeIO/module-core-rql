@@ -43,21 +43,13 @@ func (inst *Module) Loop() {
 			}
 			if canRun != nil && rule.Enable {
 				if canRun.CanRun {
-					result, err := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
-					if err != nil {
-						//return
-					}
-					log.Errorf("RESULT %s", result)
+					result, _ := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
 					if result.String() != "undefined" {
-						log.Errorf("ADDERD RESULT %s", result)
 						inst.Storage.UpdateResult(rule.UUID, result)
 					}
 
 				}
-			} else {
-
 			}
-
 		}
 		firstLoop = false
 		time.Sleep(1 * time.Second)

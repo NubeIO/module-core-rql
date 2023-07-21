@@ -50,7 +50,8 @@ func (inst *db) UpdateResult(uuid string, result interface{}) (*RQLRule, error) 
 	}
 	r := Result{
 		Result:    result,
-		Timestamp: time.Now(),
+		Timestamp: time.Now().Format(time.RFC1123),
+		Time:      time.Now(),
 	}
 	if rule.ResultStorageSize < 10 {
 		rule.ResultStorageSize = 10

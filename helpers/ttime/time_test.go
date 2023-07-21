@@ -13,6 +13,13 @@ const (
 	layout = "2006-01-02T15:04:05Z"
 )
 
+func TestRealTime(t *testing.T) {
+	tt := time.Now()
+
+	fmt.Println(tt.Format(time.RFC1123))
+
+}
+
 func TestRealTime_Now(t *testing.T) {
 	firstDate := time.Date(2023, 6, 25, 9, 7, 0, 0, time.Local)
 

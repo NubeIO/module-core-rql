@@ -6,7 +6,8 @@ import (
 
 type Result struct {
 	Result    interface{} `json:"result"`
-	Timestamp time.Time   `json:"timestamp"`
+	Timestamp string      `json:"timestamp"`
+	Time      time.Time   `json:"time"`
 }
 
 type RQLRule struct {
