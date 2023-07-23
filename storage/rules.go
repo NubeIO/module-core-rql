@@ -132,8 +132,10 @@ func (inst *db) SelectAllEnabledRules() ([]RQLRule, error) {
 			if err != nil {
 				return false
 			}
-			if matchRuleUUID(data.UUID) && data.Enable {
-				resp = append(resp, data)
+			if data.Enable {
+				if matchRuleUUID(data.UUID) {
+					resp = append(resp, data)
+				}
 			}
 			return true
 		})

@@ -11,7 +11,7 @@ type db struct {
 	DB *buntdb.DB
 }
 
-func New(dbFile string) IStorage {
+func New(dbFile string) (IStorage, error) {
 	if dbFile == "" {
 		dbFile = "data/data.db"
 	}
@@ -26,7 +26,7 @@ func New(dbFile string) IStorage {
 	if err != nil {
 		log.Error(err)
 	}
-	return &db{DB: newDb}
+	return &db{DB: newDb}, err
 }
 
 func (inst *db) Close() error {

@@ -28,9 +28,12 @@ func (inst *Module) addAll(allRules []storage.RQLRule) {
 func (inst *Module) Loop() {
 	var firstLoop = true
 	for {
+		if inst.ErrorOnDB {
+			continue
+		}
 		allRules, err := inst.Storage.SelectAllEnabledRules()
 		if err != nil {
-			//return
+			continue
 		}
 		if firstLoop {
 			inst.addAll(allRules) // add all existing rules from DB

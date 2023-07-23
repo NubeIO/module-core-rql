@@ -16,10 +16,11 @@ type Module struct {
 	config         *Config
 	store          *cache.Cache
 
-	Rules   *rules.RuleEngine
-	Client  *apirules.Client
-	Props   rules.PropertiesMap
-	Storage storage.IStorage
+	Rules     *rules.RuleEngine
+	Client    *apirules.Client
+	Props     rules.PropertiesMap
+	Storage   storage.IStorage
+	ErrorOnDB bool
 }
 
 func (inst *Module) Init(dbHelper shared.DBHelper, moduleName string) error {

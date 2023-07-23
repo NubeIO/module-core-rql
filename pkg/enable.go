@@ -15,7 +15,11 @@ func (inst *Module) Enable() error {
 	props := make(rules.PropertiesMap)
 	props[n] = eng
 	client := "RQL"
-	newStorage := storage.New(fmt.Sprintf("%s.db", name))
+	newStorage, err := storage.New(fmt.Sprintf("%s.db", name))
+	if err != nil {
+		log.Errorf("%s: error in making DB: %s", name, err)
+		inst.ErrorOnDB = true
+	}
 	newClient := &apirules.Client{
 		Storage: newStorage,
 	}
