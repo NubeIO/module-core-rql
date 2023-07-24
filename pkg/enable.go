@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"github.com/NubeIO/module-core-rql/apirules"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
@@ -15,7 +14,7 @@ func (inst *Module) Enable() error {
 	props := make(rules.PropertiesMap)
 	props[n] = eng
 	client := "RQL"
-	newStorage, err := storage.New(fmt.Sprintf("%s.db", name))
+	newStorage, err := storage.New("data")
 	if err != nil {
 		log.Errorf("%s: error in making DB: %s", name, err)
 		inst.ErrorOnDB = true

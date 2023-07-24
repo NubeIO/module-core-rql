@@ -21,9 +21,21 @@ type RQLRule struct {
 	Result            []Result `json:"result"`
 }
 
+func (c RQLRule) ID() (jsonField string, value interface{}) {
+	value = c.UUID
+	jsonField = "uuid"
+	return
+}
+
 type RQLVariables struct {
 	UUID     string `json:"uuid"`
 	Name     string `json:"name"`
 	Variable any    `json:"variable"`
 	Password string `json:"password"`
+}
+
+func (c RQLVariables) ID() (jsonField string, value interface{}) {
+	value = c.UUID
+	jsonField = "uuid"
+	return
 }
