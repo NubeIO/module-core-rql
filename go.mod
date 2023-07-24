@@ -23,7 +23,6 @@ require (
 	github.com/go-gota/gota v0.12.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-yaml/yaml v2.1.0+incompatible
-	github.com/hashicorp/go-plugin v1.4.10
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/labstack/gommon v0.4.0
 	github.com/mandolyte/mdtopdf v1.3.2
@@ -31,6 +30,7 @@ require (
 	github.com/rvflash/elapsed v0.3.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/slack-go/slack v0.12.2
+	github.com/sonyarouje/simdb v0.1.0
 	github.com/tidwall/buntdb v1.3.0
 	github.com/tidwall/gjson v1.14.4
 	gopkg.in/yaml.v3 v3.0.1
@@ -49,6 +49,7 @@ require (
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
+	github.com/hashicorp/go-plugin v1.4.10 // indirect
 	github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb // indirect
 	github.com/jackpal/gateway v1.0.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect

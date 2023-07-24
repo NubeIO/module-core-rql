@@ -1,99 +1,38 @@
 package storage
 
-import (
-	"encoding/json"
-	"fmt"
-	"github.com/NubeIO/lib-uuid/uuid"
-	"github.com/tidwall/buntdb"
-)
+import "github.com/NubeIO/lib-uuid/uuid"
 
 func (inst *db) AddVariable(rc *RQLVariables) (*RQLVariables, error) {
-	rc.UUID = uuid.ShortUUID("var")
-	data, err := json.Marshal(rc)
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return nil, err
-	}
-	err = inst.DB.Update(func(tx *buntdb.Tx) error {
-		_, _, err := tx.Set(rc.UUID, string(data), nil)
-		return err
-	})
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return nil, err
-	}
-	return rc, nil
+	rc.UUID = uuid.ShortUUID("rql")
+	err := inst.DB.Insert(rc)
+	return rc, err
 }
 
 func (inst *db) UpdateVariable(uuid string, rc *RQLVariables) (*RQLVariables, error) {
-	j, err := json.Marshal(rc)
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return nil, err
+	if rc != nil {
+		rc.UUID = uuid
 	}
-	err = inst.DB.Update(func(tx *buntdb.Tx) error {
-		_, _, err := tx.Set(uuid, string(j), nil)
-		return err
-	})
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return nil, err
-	}
-	return rc, nil
+	err := inst.DB.Update(rc)
+	return rc, err
 }
 
 func (inst *db) DeleteVariable(uuid string) error {
-	err := inst.DB.Update(func(tx *buntdb.Tx) error {
-		_, err := tx.Delete(uuid)
-		return err
-	})
+	rule, err := inst.SelectVariable(uuid)
 	if err != nil {
-		fmt.Printf("Error delete: %s", err)
 		return err
 	}
-	return nil
+	return inst.DB.Delete(rule)
 }
 
 func (inst *db) SelectVariable(uuid string) (*RQLVariables, error) {
 	var data *RQLVariables
-	err := inst.DB.View(func(tx *buntdb.Tx) error {
-		val, err := tx.Get(uuid)
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal([]byte(val), &data)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return nil, err
-	}
-	return data, nil
+	err := inst.DB.Open(RQLVariables{}).Where("uuid", "=", uuid).First().AsEntity(&data)
+	return data, err
 
 }
 
 func (inst *db) SelectAllVariables() ([]RQLVariables, error) {
 	var resp []RQLVariables
-	err := inst.DB.View(func(tx *buntdb.Tx) error {
-		err := tx.Ascend("", func(key, value string) bool {
-			var data RQLVariables
-			err := json.Unmarshal([]byte(value), &data)
-			if err != nil {
-				return false
-			}
-			if matchVarUID(data.UUID) {
-				resp = append(resp, data)
-			}
-			return true
-		})
-		return err
-	})
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return []RQLVariables{}, err
-	}
+	inst.DB.Open(RQLVariables{}).AsEntity(&resp)
 	return resp, nil
 }

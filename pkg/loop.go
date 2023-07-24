@@ -38,7 +38,6 @@ func (inst *Module) Loop() {
 		if firstLoop {
 			inst.addAll(allRules) // add all existing rules from DB
 		}
-
 		for _, rule := range allRules {
 			canRun, err := inst.Rules.CanExecute(rule.Name)
 			if err != nil {
@@ -48,7 +47,10 @@ func (inst *Module) Loop() {
 				if canRun.CanRun {
 					result, _ := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
 					if result.String() != "undefined" {
-						inst.Storage.UpdateResult(rule.UUID, result)
+						_, err := inst.Storage.UpdateResult(rule.UUID, result)
+						if err != nil {
+							log.Errorf("%s: run rules loop update-result err: %s", name, err.Error())
+						}
 					}
 
 				}

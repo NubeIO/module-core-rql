@@ -1,19 +1,18 @@
 package storage
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/tidwall/buntdb"
+	simdb "github.com/sonyarouje/simdb"
 	"os"
 	"path/filepath"
 )
 
 type db struct {
-	DB *buntdb.DB
+	DB *simdb.Driver
 }
 
 func New(dbFile string) (IStorage, error) {
 	if dbFile == "" {
-		dbFile = "data/data.db"
+		dbFile = "data/data"
 	}
 	parentDir := filepath.Dir(dbFile)
 	if parentDir != "" {
@@ -22,16 +21,42 @@ func New(dbFile string) (IStorage, error) {
 			panic("data directory creation issue")
 		}
 	}
-	newDb, err := buntdb.Open(dbFile)
-	if err != nil {
-		log.Error(err)
-	}
+	newDb, err := simdb.New(dbFile)
+
 	return &db{DB: newDb}, err
 }
 
-func (inst *db) Close() error {
-	return inst.DB.Close()
-}
+//func New(dbFile string) (IStorage, error) {
+//	if dbFile == "" {
+//		dbFile = "data/data.db"
+//	}
+//	parentDir := filepath.Dir(dbFile)
+//	if parentDir != "" {
+//		err := os.MkdirAll(parentDir, 0755)
+//		if err != nil {
+//			panic("data directory creation issue")
+//		}
+//	}
+//	newDb, err := buntdb.Open(dbFile)
+//	if err != nil {
+//		return &db{DB: newDb}, err
+//	}
+//	size := 10 * 1024 * 1024 //10mb
+//	c := buntdb.Config{
+//		SyncPolicy:           buntdb.EverySecond,
+//		AutoShrinkPercentage: 30,
+//		AutoShrinkMinSize:    size,
+//	}
+//	err = newDb.SetConfig(c)
+//	if err != nil {
+//		return &db{DB: newDb}, err
+//	}
+//	return &db{DB: newDb}, err
+//}
+
+//func (inst *db) Close() error {
+//	//return inst.DB.Close()
+//}
 
 func matchRuleUUID(uuid string) bool {
 	if len(uuid) == 16 {
