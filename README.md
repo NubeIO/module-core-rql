@@ -14,3 +14,13 @@ example
 ```bash
 bash build.bash code/go
 ```
+
+
+
+# PDF
+
+to add an image using a URL will not work the image needs to be on host
+
+```
+![](/data/module-core-rql/nube.png "Nube logo")
+```

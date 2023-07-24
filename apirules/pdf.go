@@ -1,8 +1,9 @@
 package apirules
 
 import (
-	"fmt"
 	"github.com/mandolyte/mdtopdf"
+	"github.com/wcharczuk/go-chart/v2"
+	"os"
 )
 
 type PDFResponse struct {
@@ -11,27 +12,36 @@ type PDFResponse struct {
 }
 
 type PdfBody struct {
-	Input          string `json:"input" binding:"required"`
-	WriteToHomeDir bool   `json:"write_to_home_dir"`
+	Text string `json:"text"`
 }
 
 func (inst *Client) PDF(pdfBody *PdfBody) *PingResponse {
 	// 	"github.com/mandolyte/mdtopdf"
-	content := []byte(pdfBody.Input)
+	content := []byte(pdfBody.Text)
 	output := "test.pdf"
 
-	fmt.Println(pdfBody.WriteToHomeDir)
+	pie := chart.DonutChart{
+		Width:  512,
+		Height: 512,
+		Values: []chart.Value{
+			{Value: 5, Label: "Blue"},
+			{Value: 5, Label: "Green"},
+			{Value: 4, Label: "Gray"},
+			{Value: 4, Label: "Orange"},
+			{Value: 3, Label: "Deep Blue"},
+			{Value: 3, Label: "test"},
+		},
+	}
+
+	f, _ := os.Create("output.png")
+	defer f.Close()
+	pie.Render(chart.PNG, f)
 
 	pf := mdtopdf.NewPdfRenderer("", "", output, "")
 	err := pf.Process(content)
-	if err != nil {
-		//die(err)
-	}
-
 	r := &PingResponse{
-		Result: "wrote PDF ok",
+		Result: pdfBody.Text,
 		Error:  errorString(err),
 	}
-	//pprint.PrintJSON(r)
 	return r
 }
