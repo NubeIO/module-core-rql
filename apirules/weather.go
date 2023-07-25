@@ -23,13 +23,19 @@ let r = RQL.WeatherByTownAU("helensburgh", "nsw")["Result"];
 
 let value = r["Data"]["MaxTemp"];
 
-let write = RQL.WritePointValueAt16(
+let write = RQL.WritePointValuePriority(
   "hos_dbfa6c2f8b75428c",
   "pnt_629a980a0a724544",
+  16,
   value["Value"]
 );
 
-RQL.Result = write["Result"]["Priority"];
+let result = {
+  point: write["Result"]["Priority"],
+  weather: r,
+};
+
+RQL.Result = result;
 
 */
 

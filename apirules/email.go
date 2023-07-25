@@ -3,7 +3,6 @@ package apirules
 import (
 	"encoding/json"
 	"github.com/jordan-wright/email"
-	"github.com/labstack/gommon/log"
 	"net/smtp"
 )
 
@@ -39,14 +38,16 @@ func emailBody(body any) (*mail, error) {
 	return result, err
 }
 
-func (inst *Client) SendEmail(body any) {
+func (inst *Client) SendEmail(body any) error {
 	parsed, err := emailBody(body)
+	if err != nil {
+		return err
+	}
 	to := parsed.To
 	subject := parsed.Subject
 	message := parsed.Message
 	senderAddress := parsed.SenderAddress
 	password := parsed.Password
-
 	e := email.NewEmail()
 	e.From = senderAddress
 	e.To = to
@@ -54,11 +55,6 @@ func (inst *Client) SendEmail(body any) {
 	e.Bcc = parsed.Bcc
 	e.Subject = subject
 	e.HTML = []byte(message)
-	err = e.Send("smtp.gmail.com:587", smtp.PlainAuth("", senderAddress, password, "smtp.gmail.com"))
-	if err != nil {
-		log.Error(err)
-		return
-	} else {
+	return e.Send("smtp.gmail.com:587", smtp.PlainAuth("", senderAddress, password, "smtp.gmail.com"))
 
-	}
 }

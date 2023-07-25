@@ -3,19 +3,10 @@ package apirules
 import (
 	"encoding/json"
 	"fmt"
-	pprint "github.com/NubeIO/module-core-rql/helpers/print"
 	"github.com/go-gota/gota/dataframe"
 	log "github.com/sirupsen/logrus"
 	"strings"
 )
-
-func (inst *Client) PrintJson(x interface{}) {
-	pprint.PrintJOSN(x)
-}
-
-func (inst *Client) PrintString(x string) {
-	log.Info(x)
-}
 
 func (inst *Client) Print(x interface{}) {
 	log.Error(x)
