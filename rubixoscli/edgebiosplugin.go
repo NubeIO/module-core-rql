@@ -17,6 +17,7 @@ func (inst *Client) EdgeListPlugins(hostIDName string) ([]interfaces.Plugin, err
 		return nil, connectionErr, requestErr
 	}
 	data := resp.Result().(*[]interfaces.Plugin)
+
 	return *data, nil, nil
 }
 

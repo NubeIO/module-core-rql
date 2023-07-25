@@ -2,6 +2,7 @@ package apirules
 
 import (
 	"encoding/json"
+	"github.com/NubeIO/module-core-rql/helpers/float"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
 )
 
@@ -43,6 +44,18 @@ func pointWriteBody(body any) (*model.Priority, error) {
 
 func (inst *Client) WritePointValue(hostIDName, uuid string, value *model.Priority) *Point {
 	body, err := pointWriteBody(value)
+	resp, err := cli.WritePointValue(hostIDName, uuid, body)
+	return &Point{
+		Result: resp,
+		Error:  errorString(err),
+	}
+}
+
+func (inst *Client) WritePointValueAt16(hostIDName, uuid string, value float64) *Point {
+	pri := &model.Priority{
+		P16: float.New(value),
+	}
+	body, err := pointWriteBody(pri)
 	resp, err := cli.WritePointValue(hostIDName, uuid, body)
 	return &Point{
 		Result: resp,

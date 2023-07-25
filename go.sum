@@ -6,6 +6,8 @@ github.com/Azure/azure-sdk-for-go/sdk/internal v0.7.0/go.mod h1:yqy467j36fJxcRV2
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
+github.com/NubeDev/bom-api v0.0.0-20230725015331-94dd46eaa05e h1:P7n50X3/RhxkDxKUbn7ZCXEm/yFLy9I3KSdInFO3gus=
+github.com/NubeDev/bom-api v0.0.0-20230725015331-94dd46eaa05e/go.mod h1:1VRZ+Vk7tVxyJ19O5uy8OVl7EDg75o43vTk2pdEChzA=
 github.com/NubeDev/flow-eng v0.8.32 h1:NysxqnYi4Edi0iadkhgehK4e3oQTjdnFupr7HurAJag=
 github.com/NubeDev/flow-eng v0.8.32/go.mod h1:gWoWiXl+Yqkbir1ZXyQpHXtFYxdczW4ggb3oDQNlwI8=
 github.com/NubeIO/lib-date v0.0.6 h1:88Ki7UIOvDEKyd3vKJ7r4fiUeX25Q5iyMO5d0125wrA=

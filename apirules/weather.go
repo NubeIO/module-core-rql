@@ -5,10 +5,42 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/NubeDev/bom-api/bom"
 	"github.com/go-resty/resty/v2"
 	"regexp"
 	"time"
 )
+
+type WeatherByTownAUResp struct {
+	Result *bom.Observations
+	Error  string
+}
+
+/*
+Example get weather data and write a point value
+
+let r = RQL.WeatherByTownAU("helensburgh", "nsw")["Result"];
+
+let value = r["Data"]["MaxTemp"];
+
+let write = RQL.WritePointValueAt16(
+  "hos_dbfa6c2f8b75428c",
+  "pnt_629a980a0a724544",
+  value["Value"]
+);
+
+RQL.Result = write["Result"]["Priority"];
+
+*/
+
+func (inst *Client) WeatherByTownAU(town, state string) *WeatherByTownAUResp {
+	var client = bom.New(&bom.Client{})
+	resp, err := client.ObservationByTown(town, state)
+	return &WeatherByTownAUResp{
+		Result: resp,
+		Error:  errorString(err),
+	}
+}
 
 type CurrentWeatherResponse struct {
 	Result *CurrentWeather

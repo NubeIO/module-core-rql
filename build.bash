@@ -17,4 +17,4 @@ echo "****MODULES****"
 ls  $path/data/modules
 echo "****MODULES****"
 
-go build -o module-core-rql && mv -f module-core-rql $path/data/modules && cd $path && bash build.bash
+go build -o module-core-rql && mv -f module-core-rql $path/data/modules && cd $path && bash build.bash system

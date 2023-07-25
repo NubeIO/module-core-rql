@@ -39,6 +39,7 @@ require (
 )
 
 require (
+	github.com/NubeDev/bom-api v0.0.0-20230725015331-94dd46eaa05e // indirect
 	github.com/NubeIO/lib-files v1.0.0 // indirect
 	github.com/NubeIO/lib-schema v0.2.18 // indirect
 	github.com/NubeIO/rubix-assist v0.10.6 // indirect
