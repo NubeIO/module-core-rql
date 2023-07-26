@@ -4,12 +4,7 @@ import (
 	"time"
 )
 
-func (inst *Client) SleepMs(duration int) {
-	d := time.Duration(duration)
-	time.Sleep(d * time.Millisecond)
-}
-
-func (inst *Client) Sleep(duration int) {
+func (inst *Client) Sleep(duration int) { // will sleep for 100ms
 	d := time.Duration(duration)
 	time.Sleep(d * time.Second)
 }

@@ -65,6 +65,8 @@ require (
 	github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 // indirect
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pokstad/gomate v0.0.0-20190602040143-310ba954e521 // indirect
+	github.com/pokstad/offset v0.0.0-20181110164114-f14a768120e2 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sergeymakinen/go-systemdconf/v2 v2.0.2 // indirect
