@@ -14,4 +14,6 @@ type IStorage interface {
 	DeleteVariable(uuid string) error
 	SelectVariable(uuid string) (*RQLVariables, error)
 	SelectAllVariables() ([]RQLVariables, error)
+	UpdateVariableValue(uuid string, value any) (*RQLVariables, error)
+	SelectVariableByName(name string) (*RQLVariables, error)
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/NubeDev/flow-eng/helpers"
 )
 
-type pingResult struct {
+type PingResult struct {
 	Ip string `json:"ip"`
 	Ok bool   `json:"ok"`
 }
@@ -14,9 +14,11 @@ type PingResponse struct {
 	Error  string
 }
 
-func (inst *Client) Ping(ipList []string) *PingResponse {
-	var r pingResult
-	var out []pingResult
+// Ping ping an list of IP address eg: ["192.168.15.1", "192.168.15.2"]
+// will return []PingResult
+func (inst *RQL) Ping(ipList []string) *PingResponse {
+	var r PingResult
+	var out []PingResult
 	for _, ip := range ipList {
 		ok := helpers.CommandPing(ip)
 		r.Ip = ip

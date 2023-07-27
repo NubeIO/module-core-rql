@@ -19,7 +19,7 @@ func (inst *Module) Enable() error {
 		log.Errorf("%s: error in making DB: %s", name, err)
 		inst.ErrorOnDB = true
 	}
-	newClient := &apirules.Client{
+	newClient := &apirules.RQL{
 		Storage: newStorage,
 	}
 	props[client] = newClient

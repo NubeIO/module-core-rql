@@ -16,7 +16,7 @@ type Point struct {
 	Error  string       `json:"error"`
 }
 
-func (inst *Client) GetPoints(hostIDName string) *Points {
+func (inst *RQL) GetPoints(hostIDName string) *Points {
 	resp, err := cli.GetPoints(hostIDName)
 	return &Points{
 		Result: resp,
@@ -24,7 +24,7 @@ func (inst *Client) GetPoints(hostIDName string) *Points {
 	}
 }
 
-func (inst *Client) GetPoint(hostIDName, uuid string) *Point {
+func (inst *RQL) GetPoint(hostIDName, uuid string) *Point {
 	resp, err := cli.GetPoint(hostIDName, uuid)
 	return &Point{
 		Result: resp,
@@ -42,7 +42,7 @@ func pointWriteBody(body any) (*model.Priority, error) {
 	return result, err
 }
 
-func (inst *Client) WritePointValue(hostIDName, uuid string, value *model.Priority) *Point {
+func (inst *RQL) WritePointValue(hostIDName, uuid string, value *model.Priority) *Point {
 	body, err := pointWriteBody(value)
 	resp, err := cli.WritePointValue(hostIDName, uuid, body)
 	return &Point{
@@ -51,7 +51,7 @@ func (inst *Client) WritePointValue(hostIDName, uuid string, value *model.Priori
 	}
 }
 
-func (inst *Client) WritePointValuePriority(hostIDName, uuid string, pri int, value float64) *Point {
+func (inst *RQL) WritePointValuePriority(hostIDName, uuid string, pri int, value float64) *Point {
 	body, err := pointWriteBody(getPri(pri, value))
 	resp, err := cli.WritePointValue(hostIDName, uuid, body)
 	return &Point{

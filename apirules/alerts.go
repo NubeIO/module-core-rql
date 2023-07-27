@@ -26,7 +26,7 @@ func alertBody(body any) (*model.Alert, error) {
 	return result, err
 }
 
-func (inst *Client) GetAlerts(hostIDName string) *Alerts {
+func (inst *RQL) GetAlerts(hostIDName string) *Alerts {
 	resp, err := cli.GetAlerts()
 	return &Alerts{
 		Result: resp,
@@ -34,7 +34,7 @@ func (inst *Client) GetAlerts(hostIDName string) *Alerts {
 	}
 }
 
-func (inst *Client) AddAlert(hostIDName string, body any) *Alert {
+func (inst *RQL) AddAlert(hostIDName string, body any) *Alert {
 	b, err := alertBody(body)
 	if err != nil {
 		return &Alert{

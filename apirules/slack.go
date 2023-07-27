@@ -16,8 +16,8 @@ type slackMessage struct {
 	Password      string
 }
 
-func slackBody(body any) (*mail, error) {
-	result := &mail{}
+func slackBody(body any) (*Mail, error) {
+	result := &Mail{}
 	dbByte, err := json.Marshal(body)
 	if err != nil {
 		return result, err
@@ -26,7 +26,7 @@ func slackBody(body any) (*mail, error) {
 	return result, err
 }
 
-func (inst *Client) Slack(body any) {
+func (inst *RQL) Slack(body any) {
 	var ChannelId = "C05DNBFP1M4"
 	api := slack.New("")
 	//attachment := slack.Attachment{

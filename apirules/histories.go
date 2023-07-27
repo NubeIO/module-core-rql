@@ -9,7 +9,8 @@ type Histories struct {
 	Error  string               `json:"error"`
 }
 
-func (inst *Client) GetPointHistories(hostIDName string, pointUUIDs []string) *Histories {
+// GetPointHistories get ROS Histories
+func (inst *RQL) GetPointHistories(hostIDName string, pointUUIDs []string) *Histories {
 	resp, err := cli.GetPointHistories(hostIDName, pointUUIDs)
 	return &Histories{
 		Result: resp,

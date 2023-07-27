@@ -6,7 +6,7 @@ import (
 	"github.com/NubeIO/rubix-os/installer"
 )
 
-type Client struct {
+type RQL struct {
 	Return    interface{}      `json:"return"`
 	Err       string           `json:"err"`
 	TimeTaken string           `json:"time_taken"`

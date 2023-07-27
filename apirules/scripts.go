@@ -10,7 +10,7 @@ type ScriptsResponse struct {
 	Error  string
 }
 
-func (inst *Client) GetScripts() *ScriptsResponse {
+func (inst *RQL) GetScripts() *ScriptsResponse {
 	client := resty.New()
 	url := "http://0.0.0.0:1666/api/rules"
 	resp, err := client.R().

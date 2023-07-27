@@ -1,6 +1,9 @@
 package storage
 
-import "github.com/NubeIO/lib-uuid/uuid"
+import (
+	"errors"
+	"github.com/NubeIO/lib-uuid/uuid"
+)
 
 func (inst *db) AddVariable(rc *RQLVariables) (*RQLVariables, error) {
 	rc.UUID = uuid.ShortUUID("rql")
@@ -16,6 +19,18 @@ func (inst *db) UpdateVariable(uuid string, rc *RQLVariables) (*RQLVariables, er
 	return rc, err
 }
 
+func (inst *db) UpdateVariableValue(uuidName string, value any) (*RQLVariables, error) {
+	variable, err := inst.selectVariable(uuidName)
+	if err != nil {
+		return nil, err
+	}
+	if variable == nil {
+		return nil, errors.New("var not found")
+	}
+	variable.Variable = value
+	return inst.UpdateVariable(variable.UUID, variable)
+}
+
 func (inst *db) DeleteVariable(uuid string) error {
 	rule, err := inst.SelectVariable(uuid)
 	if err != nil {
@@ -24,9 +39,28 @@ func (inst *db) DeleteVariable(uuid string) error {
 	return inst.DB.Delete(rule)
 }
 
+func (inst *db) selectVariable(uuidName string) (*RQLVariables, error) {
+	variable, err := inst.SelectVariable(uuidName)
+	if variable == nil || err != nil {
+		variable, err = inst.SelectVariableByName(uuidName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return variable, err
+
+}
+
 func (inst *db) SelectVariable(uuid string) (*RQLVariables, error) {
 	var data *RQLVariables
 	err := inst.DB.Open(RQLVariables{}).Where("uuid", "=", uuid).First().AsEntity(&data)
+	return data, err
+
+}
+
+func (inst *db) SelectVariableByName(name string) (*RQLVariables, error) {
+	var data *RQLVariables
+	err := inst.DB.Open(RQLVariables{}).Where("name", "=", name).First().AsEntity(&data)
 	return data, err
 
 }

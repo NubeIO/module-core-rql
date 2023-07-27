@@ -15,7 +15,7 @@ type Hosts struct {
 	Error  string       `json:"error"`
 }
 
-func (inst *Client) GetHosts() *Hosts {
+func (inst *RQL) GetHosts() *Hosts {
 	resp, msg := cli.GetHosts()
 	var err string
 	if msg != nil {

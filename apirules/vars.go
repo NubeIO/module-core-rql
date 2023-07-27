@@ -19,12 +19,20 @@ type VarResponse struct {
 	Error  string
 }
 
-func (inst *Client) GetVariables() *VarsResponse {
+func (inst *RQL) GetVariables() *VarsResponse {
 	out, err := inst.Storage.SelectAllVariables()
 	return &VarsResponse{
 		Result: out,
 		Error:  errorString(err),
 	}
+}
+
+func (inst *RQL) UpdateVariableValue(uuidName string, value any) any {
+	r, err := inst.Storage.UpdateVariableValue(uuidName, value)
+	if err != nil {
+		return err
+	}
+	return r
 }
 
 /*
@@ -34,9 +42,12 @@ VarParseArray
 let data = JSON.parse(RQL.VarParseArray("array"));
 RQL.Return = data;
 */
-func (inst *Client) VarParseArray(uuidName string) interface{} {
+func (inst *RQL) VarParseArray(uuidName string) interface{} {
 	r := inst.GetVariable(uuidName)
 	if r == nil {
+		return nil
+	}
+	if r.Result == nil {
 		return nil
 	}
 	b, err := json.Marshal(r.Result.Variable)
@@ -57,11 +68,14 @@ VarParseObject
 
 let data = RQL.VarParseObject("obj");
 let sp = JSON.parse(data);
-RQL.Return = sp["sp"];
+RQL.Result = sp["sp"];
 */
-func (inst *Client) VarParseObject(uuidName string) interface{} {
+func (inst *RQL) VarParseObject(uuidName string) interface{} {
 	r := inst.GetVariable(uuidName)
 	if r == nil {
+		return nil
+	}
+	if r.Result == nil {
 		return nil
 	}
 	b, err := json.Marshal(r.Result.Variable)
@@ -75,18 +89,24 @@ func (inst *Client) VarParseObject(uuidName string) interface{} {
 	return t
 }
 
-func (inst *Client) VarParseString(uuidName string) string {
+func (inst *RQL) VarParseString(uuidName string) string {
 	r := inst.GetVariable(uuidName)
 	if r == nil {
+		return ""
+	}
+	if r.Result == nil {
 		return ""
 	}
 	f := r.Result.Variable
 	return fmt.Sprint(f)
 }
 
-func (inst *Client) VarParseNumber(uuidName string) float64 {
+func (inst *RQL) VarParseNumber(uuidName string) float64 {
 	r := inst.GetVariable(uuidName)
 	if r == nil {
+		return 0
+	}
+	if r.Result == nil {
 		return 0
 	}
 	f := r.Result.Variable
@@ -96,7 +116,7 @@ func (inst *Client) VarParseNumber(uuidName string) float64 {
 	return 0
 }
 
-func (inst *Client) GetVariable(uuidName string) *VarResponse {
+func (inst *RQL) GetVariable(uuidName string) *VarResponse {
 	out, err := inst.Storage.SelectAllVariables()
 	for _, variables := range out {
 		if variables.Name == uuidName {

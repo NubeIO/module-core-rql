@@ -17,7 +17,7 @@ type Module struct {
 	store          *cache.Cache
 
 	Rules     *rules.RuleEngine
-	Client    *apirules.Client
+	Client    *apirules.RQL
 	Props     rules.PropertiesMap
 	Storage   storage.IStorage
 	ErrorOnDB bool

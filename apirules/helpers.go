@@ -8,19 +8,17 @@ import (
 	"strings"
 )
 
-func (inst *Client) Print(x interface{}) {
+// Print console log a value
+func (inst *RQL) Print(x interface{}) {
 	log.Error(x)
 }
 
-func (inst *Client) ToString(x interface{}) string {
+// ToString convert any value to a string
+func (inst *RQL) ToString(x interface{}) string {
 	return fmt.Sprint(x)
 }
 
-func (inst *Client) PrintMany(x ...interface{}) {
-	fmt.Printf("%v\n", x)
-}
-
-func (inst *Client) JsonToDF(data any) dataframe.DataFrame {
+func (inst *RQL) jsonToDF(data any) dataframe.DataFrame {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return dataframe.DataFrame{}
@@ -29,7 +27,7 @@ func (inst *Client) JsonToDF(data any) dataframe.DataFrame {
 	return df
 }
 
-func (inst *Client) Tags(tag ...string) {
+func (inst *RQL) Tags(tag ...string) {
 	var includeList []string
 	var excludeList []string
 	for _, s := range tag {

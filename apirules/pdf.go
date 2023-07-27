@@ -7,7 +7,7 @@ import (
 )
 
 type PDFResponse struct {
-	Result []pingResult
+	Result []PingResult
 	Error  string
 }
 
@@ -15,7 +15,7 @@ type PdfBody struct {
 	Text string `json:"text"`
 }
 
-func (inst *Client) PDF(pdfBody *PdfBody) *PingResponse {
+func (inst *RQL) PDF(pdfBody *PdfBody) *PingResponse {
 	// 	"github.com/mandolyte/mdtopdf"
 	content := []byte(pdfBody.Text)
 	output := "test.pdf"

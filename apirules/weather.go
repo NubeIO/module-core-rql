@@ -39,7 +39,7 @@ RQL.Result = result;
 
 */
 
-func (inst *Client) WeatherByTownAU(town, state string) *WeatherByTownAUResp {
+func (inst *RQL) WeatherByTownAU(town, state string) *WeatherByTownAUResp {
 	var client = bom.New(&bom.Client{})
 	resp, err := client.ObservationByTown(town, state)
 	return &WeatherByTownAUResp{
@@ -143,7 +143,7 @@ func httpBody(body any) (*HTTPBody, error) {
 	return result, err
 }
 
-func (inst *Client) HTTPGet(body *HTTPBody) *HTTPGet {
+func (inst *RQL) HTTPGet(body *HTTPBody) *HTTPGet {
 	//b, _ := httpBody(body)
 	client := resty.New()
 	var resp *resty.Response
@@ -162,7 +162,7 @@ func (inst *Client) HTTPGet(body *HTTPBody) *HTTPGet {
 	}
 }
 
-func (inst *Client) GetCurrentWeather(apiKey, city string) *CurrentWeatherResponse {
+func (inst *RQL) GetCurrentWeather(apiKey, city string) *CurrentWeatherResponse {
 	client := resty.New()
 	url := fmt.Sprintf("https://api.weatherapi.com/v1/current.json?key=%s&q=%s&aqi=no", apiKey, city)
 	resp, err := client.R().
@@ -180,7 +180,7 @@ func (inst *Client) GetCurrentWeather(apiKey, city string) *CurrentWeatherRespon
 	return r
 }
 
-func (inst *Client) GetForecast(apiKey, city string, days int) *ForecastResponse {
+func (inst *RQL) GetForecast(apiKey, city string, days int) *ForecastResponse {
 	client := resty.New()
 	if days == 0 {
 		days = 1

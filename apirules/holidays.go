@@ -26,7 +26,7 @@ type PublicHolidaysResponse struct {
 	Error  string
 }
 
-func (inst *Client) GetPublicHolidays(year, countryCode string) *PublicHolidaysResponse {
+func (inst *RQL) GetPublicHolidays(year, countryCode string) *PublicHolidaysResponse {
 	client := resty.New()
 	url := fmt.Sprintf("https://date.nager.at/api/v3/PublicHolidays/%s/%s", year, countryCode)
 	resp, err := client.R().
@@ -46,7 +46,7 @@ func (inst *Client) GetPublicHolidays(year, countryCode string) *PublicHolidaysR
 	return r
 }
 
-func (inst *Client) GetPublicHolidaysByState(year, countryCode, state string) *PublicHolidaysResponse {
+func (inst *RQL) GetPublicHolidaysByState(year, countryCode, state string) *PublicHolidaysResponse {
 	client := resty.New()
 	url := fmt.Sprintf("https://date.nager.at/api/v3/PublicHolidays/%s/%s", year, countryCode)
 	resp, err := client.R().
@@ -85,7 +85,7 @@ type IsPublicHolidayResponse struct {
 	Error  string
 }
 
-func (inst *Client) IsPublicHoliday(year, countryCode, date string) *IsPublicHolidayResponse {
+func (inst *RQL) IsPublicHoliday(year, countryCode, date string) *IsPublicHolidayResponse {
 	client := resty.New()
 	url := fmt.Sprintf("https://date.nager.at/api/v3/PublicHolidays/%s/%s", year, countryCode)
 	resp, err := client.R().

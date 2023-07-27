@@ -7,7 +7,7 @@ import (
 )
 
 // RandInt returns a random int within the specified range.
-func (inst *Client) RandInt(range1, range2 int) int {
+func (inst *RQL) RandInt(range1, range2 int) int {
 	if range1 == range2 {
 		return range1
 	}
@@ -24,7 +24,7 @@ func (inst *Client) RandInt(range1, range2 int) int {
 }
 
 // RandFloat returns a random float64 within the specified range.
-func (inst *Client) RandFloat(range1, range2 float64) float64 {
+func (inst *RQL) RandFloat(range1, range2 float64) float64 {
 	if range1 == range2 {
 		return range1
 	}
@@ -41,7 +41,7 @@ func (inst *Client) RandFloat(range1, range2 float64) float64 {
 }
 
 // LimitToRange returns the input value clamped within the specified range
-func (inst *Client) LimitToRange(value float64, range1 float64, range2 float64) float64 {
+func (inst *RQL) LimitToRange(value float64, range1 float64, range2 float64) float64 {
 	if range1 == range2 {
 		return range1
 	}
@@ -57,7 +57,7 @@ func (inst *Client) LimitToRange(value float64, range1 float64, range2 float64) 
 }
 
 // RoundTo returns the input value rounded to the specified number of decimal places.
-func (inst *Client) RoundTo(value float64, decimals uint32) float64 {
+func (inst *RQL) RoundTo(value float64, decimals uint32) float64 {
 	if decimals < 0 {
 		return value
 	}
@@ -65,7 +65,7 @@ func (inst *Client) RoundTo(value float64, decimals uint32) float64 {
 }
 
 // Scale returns the (float64) input value (between inputMin and inputMax) scaled to a value between outputMin and outputMax
-func (inst *Client) Scale(value, inMin, inMax, outMin, outMax float64) float64 {
+func (inst *RQL) Scale(value, inMin, inMax, outMin, outMax float64) float64 {
 	if inMin == inMax || outMin == outMax {
 		return value
 	}
