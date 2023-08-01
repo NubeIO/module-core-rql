@@ -16,11 +16,12 @@ type Module struct {
 	config         *Config
 	store          *cache.Cache
 
-	Rules     *rules.RuleEngine
-	Client    *apirules.RQL
-	Props     rules.PropertiesMap
-	Storage   storage.IStorage
-	ErrorOnDB bool
+	Rules           *rules.RuleEngine
+	Client          *apirules.RQL
+	Props           rules.PropertiesMap
+	Storage         storage.IStorage
+	ErrorOnDB       bool
+	moduleDirectory string
 }
 
 func (inst *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
@@ -29,6 +30,11 @@ func (inst *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
 	inst.moduleName = moduleName
 	inst.grpcMarshaller = &grpcMarshaller
 	inst.store = cache.New(5*time.Minute, 10*time.Minute)
+	dir, err := inst.dbHelper.CreateModuleDataDir(moduleName)
+	if err != nil {
+		return err
+	}
+	inst.moduleDirectory = dir
 	return nil
 }
 

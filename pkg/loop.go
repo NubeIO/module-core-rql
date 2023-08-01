@@ -41,7 +41,7 @@ func (inst *Module) Loop() {
 		for _, rule := range allRules {
 			canRun, err := inst.Rules.CanExecute(rule.Name)
 			if err != nil {
-				//fmt.Println(err)
+				log.Errorf("%s: run rules loop execute err: %s", name, err.Error())
 			}
 			if canRun != nil && rule.Enable {
 				if canRun.CanRun {

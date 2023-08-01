@@ -51,7 +51,25 @@ func (inst *db) DeleteRule(uuid string) error {
 	return inst.DB.Delete(rule)
 }
 
-func (inst *db) SelectRule(uuid string) (*RQLRule, error) {
+func (inst *db) SelectRule(uuidName string) (*RQLRule, error) {
+	resp, err := inst.selectRule(uuidName)
+	if resp == nil || err != nil {
+		resp, err = inst.selectRuleByName(uuidName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return resp, err
+}
+
+func (inst *db) selectRuleByName(name string) (*RQLRule, error) {
+	var data *RQLRule
+	err := inst.DB.Open(RQLRule{}).Where("name", "=", name).First().AsEntity(&data)
+	return data, err
+
+}
+
+func (inst *db) selectRule(uuid string) (*RQLRule, error) {
 	var data *RQLRule
 	err := inst.DB.Open(RQLRule{}).Where("uuid", "=", uuid).First().AsEntity(&data)
 	return data, err
