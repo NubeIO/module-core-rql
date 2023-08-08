@@ -10,12 +10,11 @@ import (
 )
 
 type Module struct {
-	dbHelper       shared.DBHelper
-	moduleName     string
-	grpcMarshaller shared.Marshaller
-	config         *Config
-	store          *cache.Cache
-
+	dbHelper        shared.DBHelper
+	moduleName      string
+	grpcMarshaller  shared.Marshaller
+	config          *Config
+	store           *cache.Cache
 	Rules           *rules.RuleEngine
 	Client          *apirules.RQL
 	Props           rules.PropertiesMap

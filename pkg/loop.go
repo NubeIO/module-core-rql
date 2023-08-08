@@ -46,6 +46,9 @@ func (inst *Module) Loop() {
 			if canRun != nil && rule.Enable {
 				if canRun.CanRun {
 					result, _ := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
+					if result == nil {
+						continue
+					}
 					if result.String() != "undefined" {
 						_, err := inst.Storage.UpdateResult(rule.UUID, result)
 						if err != nil {
