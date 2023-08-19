@@ -211,6 +211,9 @@ func (inst *RuleEngine) execute(name string, props PropertiesMap, reset bool) (g
 	rule.lock = true
 	rule.State = Processing
 	v, err := rule.vm.RunString(rule.script)
+	if err != nil {
+		return nil, err
+	}
 	rule.lock = false
 	rule.TimeTaken = time.Since(start).String()
 	rule.State = Completed

@@ -11,6 +11,7 @@ const (
 	jsonSchemaDevice  = "/schema/json/device"
 	jsonSchemaPoint   = "/schema/json/point"
 	apiRules          = "/rules"
+	apiRunExisting    = "/rules/run"
 	apiRun            = "/rules/dry"
 	apiVars           = "/vars"
 )
@@ -21,6 +22,16 @@ func getPathUUID(path string) (urlPath, uuid, combined string) {
 	s := urlSplit(path)
 	if len(s) > 2 {
 		return s[1], s[2], fmt.Sprintf("/%s/%s", s[1], s[2])
+	}
+	return "", "", ""
+}
+
+// rootPathSplit  eg /rules/run/rul_ABC123 (ROOT/SUB/NAME-UUID)
+func rootPathSplit(path string) (rootPath, subPath, nameUUID string) {
+	s := strings.Split(path, "/")
+	s = removeEmptyStrings(s)
+	if len(s) > 2 {
+		return s[0], s[1], s[2]
 	}
 	return "", "", ""
 }
@@ -54,6 +65,16 @@ func urlIsCorrectModule(path string) bool {
 	return false
 }
 
+func removeEmptyStrings(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 func (inst *Module) Get(path string) ([]byte, error) {
 
 	err := inst.check()
@@ -66,7 +87,7 @@ func (inst *Module) Get(path string) ([]byte, error) {
 	}
 
 	_, uuid, combined := getPathUUID(path)
-	if path == combined { // get a rule
+	if path == combined { // get a rule by name or uuid http://0.0.0.0:1660/api/modules/module-core-rql/rules/test
 		return inst.SelectRule(uuid)
 	}
 
@@ -85,7 +106,13 @@ func (inst *Module) Post(path string, body []byte) ([]byte, error) {
 	if path == apiRules {
 		return inst.AddRule(body)
 	}
-	if path == apiRun {
+
+	_, subPath, nameUUID := rootPathSplit(path) // run an existing
+	if subPath == "run" {
+		return inst.ReuseRuleRun(body, nameUUID)
+	}
+
+	if path == apiRun { // run a rule
 		return inst.Dry(body)
 	}
 	if path == apiVars { // add variable
