@@ -29,6 +29,7 @@ func (inst *Module) Enable() error {
 	inst.Storage = newStorage
 	log.Infof("plugin is enabled...%s", name)
 	go inst.Loop()
+	inst.pluginIsEnabled = true
 	return nil
 }
 

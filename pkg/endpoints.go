@@ -2,12 +2,23 @@ package pkg
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/NubeIO/lib-uuid/uuid"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
 	"time"
 )
+
+func (inst *Module) check() error {
+	if !inst.pluginIsEnabled {
+		return errors.New("please enable module")
+	}
+	if inst.Storage == nil {
+		return errors.New("failed to init module storage")
+	}
+	return nil
+}
 
 func (inst *Module) SelectAllRules() ([]byte, error) {
 	resp, err := inst.Storage.SelectAllRules()

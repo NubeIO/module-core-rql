@@ -55,6 +55,12 @@ func urlIsCorrectModule(path string) bool {
 }
 
 func (inst *Module) Get(path string) ([]byte, error) {
+
+	err := inst.check()
+	if err != nil {
+		return nil, err
+	}
+
 	if path == apiRules {
 		return inst.SelectAllRules()
 	}

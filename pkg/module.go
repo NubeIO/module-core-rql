@@ -21,6 +21,7 @@ type Module struct {
 	Storage         storage.IStorage
 	ErrorOnDB       bool
 	moduleDirectory string
+	pluginIsEnabled bool
 }
 
 func (inst *Module) Init(dbHelper shared.DBHelper, moduleName string) error {

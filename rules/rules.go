@@ -29,7 +29,7 @@ type Rule struct {
 	NextTimeScheduled time.Time
 	TimeDue           string
 	TimeTaken         string // 12ms
-
+	Props             PropertiesMap
 }
 
 type RuleMap map[string]*Rule
@@ -49,13 +49,6 @@ type Body struct {
 	Name     string      `json:"name"`
 	Schedule string      `json:"schedule"`
 	Enable   bool        `json:"enable"`
-}
-
-type AddRule struct {
-	Name     string
-	Script   string
-	Schedule string
-	Props    PropertiesMap
 }
 
 func (inst *RuleEngine) AddRule(body *storage.RQLRule, props PropertiesMap) error {
@@ -85,6 +78,7 @@ func (inst *RuleEngine) AddRule(body *storage.RQLRule, props PropertiesMap) erro
 	rule.vm = vm
 	rule.script = script
 	rule.Schedule = sch
+	rule.Props = props
 	inst.rules[name] = &rule
 	return nil
 }
@@ -194,6 +188,14 @@ func (inst *RuleEngine) ExecuteWithScript(name string, props PropertiesMap, scri
 		return nil, err
 	}
 	return inst.execute(name, props, true)
+}
+
+func (inst *RuleEngine) ExecuteByName(name string, reset bool) (goja.Value, error) {
+	rule, err := inst.GetRule(name)
+	if err != nil {
+		return nil, err
+	}
+	return inst.execute(name, rule.Props, reset)
 }
 
 func (inst *RuleEngine) Execute(name string, props PropertiesMap, reset bool) (goja.Value, error) {
