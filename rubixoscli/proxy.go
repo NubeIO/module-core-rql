@@ -7,7 +7,7 @@ import (
 )
 
 func (inst *Client) ProxyGET(hostIDName, path string) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/%s", path)
+	path = fmt.Sprintf("/proxy/api/%s", path)
 	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
 	resp, err := inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
@@ -20,7 +20,7 @@ func (inst *Client) ProxyGET(hostIDName, path string) (*resty.Response, error) {
 }
 
 func (inst *Client) ProxyPOST(hostIDName, path string, body interface{}) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/%s", path)
+	path = fmt.Sprintf("/proxy/api/%s", path)
 	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
 	resp, err := inst.Rest.R().
 		SetBody(body).
@@ -34,7 +34,7 @@ func (inst *Client) ProxyPOST(hostIDName, path string, body interface{}) (*resty
 }
 
 func (inst *Client) ProxyPATCH(hostIDName, path string, body interface{}) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/%s", path)
+	path = fmt.Sprintf("/proxy/api/%s", path)
 	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
 	resp, err := inst.Rest.R().
 		SetBody(body).
@@ -48,7 +48,7 @@ func (inst *Client) ProxyPATCH(hostIDName, path string, body interface{}) (*rest
 }
 
 func (inst *Client) ProxyPUT(hostIDName, path string, body interface{}) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/%s", path)
+	path = fmt.Sprintf("/proxy/api/%s", path)
 	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
 	resp, err := inst.Rest.R().
 		SetBody(body).
@@ -62,7 +62,7 @@ func (inst *Client) ProxyPUT(hostIDName, path string, body interface{}) (*resty.
 }
 
 func (inst *Client) ProxyDELETE(hostIDName, path string) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/%s", path)
+	path = fmt.Sprintf("/proxy/api/%s", path)
 	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
 	resp, err := inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).

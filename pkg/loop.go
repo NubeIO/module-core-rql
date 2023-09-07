@@ -45,12 +45,17 @@ func (inst *Module) Loop() {
 			}
 			if canRun != nil && rule.Enable {
 				if canRun.CanRun {
-					result, _ := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
+					result, err := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
+					if err != nil {
+						_, err := inst.Storage.UpdateResult(rule.UUID, err.Error())
+						log.Errorf("%s: run rules loop update-result err: %s", name, err.Error())
+						continue
+					}
 					if result == nil {
 						continue
 					}
 					if result.String() != "undefined" {
-						_, err := inst.Storage.UpdateResult(rule.UUID, result)
+						_, err := inst.Storage.UpdateResult(rule.UUID, returnType(result))
 						if err != nil {
 							log.Errorf("%s: run rules loop update-result err: %s", name, err.Error())
 						}

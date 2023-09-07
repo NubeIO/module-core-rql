@@ -7,6 +7,7 @@ import (
 	"github.com/NubeIO/lib-uuid/uuid"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
+	"github.com/dop251/goja"
 	"time"
 )
 
@@ -142,7 +143,7 @@ func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 		inst.Client.Err = err.Error()
 		return json.Marshal(inst.Client)
 	}
-	inst.Client.Return = value
+	inst.Client.Return = returnType(value)
 	inst.Client.TimeTaken = time.Since(start).String()
 	return json.Marshal(inst.Client)
 }
@@ -187,9 +188,29 @@ func (inst *Module) Dry(b []byte) ([]byte, error) {
 		inst.Client.Err = err.Error()
 		return json.Marshal(inst.Client)
 	}
-	inst.Client.Return = value
+	inst.Client.Return = returnType(value)
 	inst.Client.TimeTaken = time.Since(start).String()
 	return json.Marshal(inst.Client)
+}
+
+func returnType(value goja.Value) any {
+	t := value.ExportType().String()
+	if t == "string" {
+		return value.String()
+	}
+	if t == "*errors.errorString" {
+		return value.String()
+	}
+	if t == "string" {
+		return value.String()
+	}
+	if t == "int64" {
+		return value.ToInteger()
+	}
+	if t == "float64" {
+		return value.ToFloat()
+	}
+	return value
 }
 
 func (inst *Module) SelectAllVariables() ([]byte, error) {

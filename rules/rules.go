@@ -211,6 +211,7 @@ func (inst *RuleEngine) execute(name string, props PropertiesMap, reset bool) (g
 	rule.lock = true
 	rule.State = Processing
 	v, err := rule.vm.RunString(rule.script)
+
 	if err != nil {
 		return nil, err
 	}
@@ -219,6 +220,9 @@ func (inst *RuleEngine) execute(name string, props PropertiesMap, reset bool) (g
 	rule.State = Completed
 	rule.TimeCompleted = time.Now()
 	nextTime, err := ttime.AdjustTime(rule.TimeCompleted, rule.Schedule)
+	if err != nil {
+		return nil, err
+	}
 	rule.NextTimeScheduled = nextTime
 	if reset {
 		err = inst.resetRule(name, props)

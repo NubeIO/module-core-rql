@@ -16,6 +16,11 @@ type WeatherByTownAUResp struct {
 	Error  string
 }
 
+type WeatherByZipResp struct {
+	Result float64
+	Error  string
+}
+
 /*
 Example get weather data and write a point value
 
@@ -39,11 +44,24 @@ RQL.Result = result;
 
 */
 
-func (inst *RQL) WeatherByTownAU(town, state string) *WeatherByTownAUResp {
+func (inst *RQL) WeatherByZip(zip string) *WeatherByTownAUResp {
 	var client = bom.New(&bom.Client{})
-	resp, err := client.ObservationByTown(town, state)
+	resp, err := client.ObservationByZip(zip)
 	return &WeatherByTownAUResp{
 		Result: resp,
+		Error:  errorString(err),
+	}
+}
+
+func (inst *RQL) WeatherByZipCurrentTemp(zip string) *WeatherByZipResp {
+	var client = bom.New(&bom.Client{})
+	resp, err := client.ObservationByZip(zip)
+	var temp float64
+	if resp != nil {
+		temp = resp.Data.Temp
+	}
+	return &WeatherByZipResp{
+		Result: temp,
 		Error:  errorString(err),
 	}
 }

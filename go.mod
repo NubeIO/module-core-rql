@@ -3,7 +3,7 @@ module github.com/NubeIO/module-core-rql
 go 1.18
 
 require (
-	github.com/NubeDev/bom-api v0.0.0-20230725015331-94dd46eaa05e
+	github.com/NubeDev/bom-api v0.0.2
 	github.com/NubeDev/flow-eng v0.8.32
 	github.com/NubeIO/lib-date v0.0.6
 	github.com/NubeIO/lib-dhcpd v0.0.2
