@@ -6,20 +6,10 @@ import (
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
 )
 
-type Points struct {
-	Result []model.Point `json:"result"`
-	Error  string        `json:"error"`
-}
-
-type Point struct {
-	Result *model.Point `json:"result"`
-	Error  string       `json:"error"`
-}
-
 func (inst *RQL) GetPoints(hostIDName string) any {
 	resp, err := cli.GetPoints(hostIDName)
 	if err != nil {
-		return err.Error()
+		return err
 	}
 	return resp
 }

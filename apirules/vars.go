@@ -9,22 +9,12 @@ import (
 	"strings"
 )
 
-type VarsResponse struct {
-	Result []storage.RQLVariables
-	Error  string
-}
-
-type VarResponse struct {
-	Result *storage.RQLVariables
-	Error  string
-}
-
-func (inst *RQL) GetVariables() *VarsResponse {
+func (inst *RQL) GetVariables() any {
 	out, err := inst.Storage.SelectAllVariables()
-	return &VarsResponse{
-		Result: out,
-		Error:  errorString(err),
+	if err != nil {
+		return err
 	}
+	return out
 }
 
 func (inst *RQL) UpdateVariableValue(uuidName string, value any) any {
@@ -42,17 +32,14 @@ VarParseArray
 let data = JSON.parse(RQL.VarParseArray("array"));
 RQL.Return = data;
 */
-func (inst *RQL) VarParseArray(uuidName string) interface{} {
-	r := inst.GetVariable(uuidName)
-	if r == nil {
-		return nil
-	}
-	if r.Result == nil {
-		return nil
-	}
-	b, err := json.Marshal(r.Result.Variable)
+func (inst *RQL) VarParseArray(uuidName string) any {
+	r, err := inst.getVariable(uuidName)
 	if err != nil {
-		return 0
+		return err
+	}
+	b, err := json.Marshal(r.Variable)
+	if err != nil {
+		return err
 	}
 	jsonStr := string(b)
 	a := gjson.Parse(jsonStr).Array()
@@ -70,15 +57,12 @@ let data = RQL.VarParseObject("obj");
 let sp = JSON.parse(data);
 RQL.Result = sp["sp"];
 */
-func (inst *RQL) VarParseObject(uuidName string) interface{} {
-	r := inst.GetVariable(uuidName)
-	if r == nil {
-		return nil
+func (inst *RQL) VarParseObject(uuidName string) any {
+	r, err := inst.getVariable(uuidName)
+	if err != nil {
+		return err
 	}
-	if r.Result == nil {
-		return nil
-	}
-	b, err := json.Marshal(r.Result.Variable)
+	b, err := json.Marshal(r.Variable)
 	if err != nil {
 		return nil
 	}
@@ -89,51 +73,56 @@ func (inst *RQL) VarParseObject(uuidName string) interface{} {
 	return t
 }
 
-func (inst *RQL) VarParseString(uuidName string) string {
-	r := inst.GetVariable(uuidName)
+func (inst *RQL) VarParseString(uuidName string) any {
+	r, err := inst.getVariable(uuidName)
+	if err != nil {
+		return err
+	}
 	if r == nil {
 		return ""
 	}
-	if r.Result == nil {
-		return ""
-	}
-	f := r.Result.Variable
-	return fmt.Sprint(f)
+	return fmt.Sprint(r.Variable)
 }
 
-func (inst *RQL) VarParseNumber(uuidName string) float64 {
-	r := inst.GetVariable(uuidName)
+func (inst *RQL) VarParseNumber(uuidName string) any {
+	r, err := inst.getVariable(uuidName)
+	if err != nil {
+		return err
+	}
 	if r == nil {
 		return 0
 	}
-	if r.Result == nil {
-		return 0
-	}
-	f := r.Result.Variable
+	f := r.Variable
 	if s, err := strconv.ParseFloat(fmt.Sprint(f), 64); err == nil {
 		return s
 	}
 	return 0
 }
 
-func (inst *RQL) GetVariable(uuidName string) *VarResponse {
+func (inst *RQL) getVariable(uuidName string) (*storage.RQLVariables, error) {
 	out, err := inst.Storage.SelectAllVariables()
-	for _, variables := range out {
-		if variables.Name == uuidName {
-			return &VarResponse{
-				Result: &variables,
-				Error:  errorString(err),
+	if err != nil {
+		return nil, err
+	}
+	for _, variable := range out {
+		if variable.Name == uuidName {
+			if err != nil {
+				return &variable, err
 			}
 		}
-		if variables.UUID == uuidName {
-			return &VarResponse{
-				Result: &variables,
-				Error:  errorString(err),
+		if variable.UUID == uuidName {
+			if err != nil {
+				return &variable, err
 			}
 		}
 	}
-	return &VarResponse{
-		Result: nil,
-		Error:  errorString(err),
+	return nil, err
+}
+
+func (inst *RQL) GetVariable(uuidName string) any {
+	out, err := inst.getVariable(uuidName)
+	if err != nil {
+		return err
 	}
+	return out
 }

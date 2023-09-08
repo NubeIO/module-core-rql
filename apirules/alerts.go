@@ -1,50 +1,46 @@
 package apirules
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/mitchellh/mapstructure"
 )
 
-type Alert struct {
-	Result *model.Alert `json:"result"`
-	Error  string       `json:"error"`
-}
+/*
+let body = {
+  hostUUID: "hos_c8ab2fe07e7a413c",
+  entityType: "device",
+  type: "ping",
+  status: "active",
+  severity: "crucial",
+};
 
-type Alerts struct {
-	Result []model.Alert `json:"result"`
-	Error  string        `json:"error"`
-}
+let alert = RQL.AddAlert("hos_c8ab2fe07e7a413c", body);
+
+RQL.Result = alert.CreatedAt;
+*/
 
 func alertBody(body any) (*model.Alert, error) {
 	result := &model.Alert{}
-	dbByte, err := json.Marshal(body)
-	if err != nil {
-		return result, err
-	}
-	err = json.Unmarshal(dbByte, &result)
+	err := mapstructure.Decode(body, &result)
 	return result, err
 }
 
-func (inst *RQL) GetAlerts(hostIDName string) *Alerts {
-	resp, err := cli.GetAlerts()
-	return &Alerts{
-		Result: resp,
-		Error:  errorString(err),
+func (inst *RQL) GetAlerts(hostIDName string) any {
+	resp, err := cli.GetAlerts(hostIDName)
+	if err != nil {
+		return err
 	}
+	return resp
 }
 
-func (inst *RQL) AddAlert(hostIDName string, body any) *Alert {
+func (inst *RQL) AddAlert(hostIDName string, body any) any {
 	b, err := alertBody(body)
 	if err != nil {
-		return &Alert{
-			Result: nil,
-			Error:  fmt.Sprintf("failed to parse body err:%s", err.Error()),
-		}
+		return err
 	}
 	resp, err := cli.AddAlert(hostIDName, b)
-	return &Alert{
-		Result: resp,
-		Error:  errorString(err),
+	if err != nil {
+		return err
 	}
+	return resp
 }

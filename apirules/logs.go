@@ -1,6 +1,8 @@
 package apirules
 
-import "github.com/NubeIO/module-core-rql/storage"
+import (
+	"github.com/NubeIO/module-core-rql/storage"
+)
 
 type RuleLogsResponse struct {
 	Result []storage.Result

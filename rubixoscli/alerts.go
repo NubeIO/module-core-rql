@@ -33,9 +33,11 @@ func (inst *Client) AddAlert(hostIDName string, body *model.Alert) (*model.Alert
 	return resp.Result().(*model.Alert), nil
 }
 
-func (inst *Client) GetAlerts() ([]model.Alert, error) {
+func (inst *Client) GetAlerts(hostIDName string) ([]model.Alert, error) {
 	path := fmt.Sprintf("%s", Paths.Alerts.Path)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("host-uuid", hostIDName).
+		SetHeader("host-name", hostIDName).
 		SetResult(&[]model.Alert{}).
 		Get(path))
 	if err != nil {

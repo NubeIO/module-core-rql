@@ -5,21 +5,16 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type ScriptsResponse struct {
-	Result []storage.RQLRule
-	Error  string
-}
-
-func (inst *RQL) GetScripts() *ScriptsResponse {
+func (inst *RQL) GetScripts() any {
 	client := resty.New()
 	url := "http://0.0.0.0:1666/api/rules"
 	resp, err := client.R().
 		SetResult(&[]storage.RQLRule{}).
 		Get(url)
+	if err != nil {
+		return err
+	}
 	var out []storage.RQLRule
 	out = *resp.Result().(*[]storage.RQLRule)
-	return &ScriptsResponse{
-		Result: out,
-		Error:  errorString(err),
-	}
+	return out
 }

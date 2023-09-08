@@ -194,6 +194,9 @@ func (inst *Module) Dry(b []byte) ([]byte, error) {
 }
 
 func returnType(value goja.Value) any {
+	if value.String() == "undefined" {
+		return value.String()
+	}
 	t := value.ExportType().String()
 	if t == "string" {
 		return value.String()

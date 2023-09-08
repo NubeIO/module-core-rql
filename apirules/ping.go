@@ -9,14 +9,9 @@ type PingResult struct {
 	Ok bool   `json:"ok"`
 }
 
-type PingResponse struct {
-	Result any
-	Error  string
-}
-
 // Ping ping an list of IP address eg: ["192.168.15.1", "192.168.15.2"]
 // will return []PingResult
-func (inst *RQL) Ping(ipList []string) *PingResponse {
+func (inst *RQL) Ping(ipList []string) []PingResult {
 	var r PingResult
 	var out []PingResult
 	for _, ip := range ipList {
@@ -25,8 +20,5 @@ func (inst *RQL) Ping(ipList []string) *PingResponse {
 		r.Ok = ok
 		out = append(out, r)
 	}
-	return &PingResponse{
-		Result: out,
-		Error:  "",
-	}
+	return out
 }
