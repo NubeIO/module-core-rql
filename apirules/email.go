@@ -13,14 +13,10 @@ type Mail struct {
 	Subject       string
 	Message       string
 	SenderAddress string
-	Password      string
+	Token         string
 }
 
-//SendEmail
-//example
-//
-//RQL.SendEmail(body);
-func (inst *RQL) SendEmail(body *Mail) error {
+func (inst *RQL) sendEmail(body *Mail) error {
 	parsed, err := emailBody(body)
 	if err != nil {
 		return err
@@ -29,7 +25,7 @@ func (inst *RQL) SendEmail(body *Mail) error {
 	subject := parsed.Subject
 	message := parsed.Message
 	senderAddress := parsed.SenderAddress
-	password := parsed.Password
+	password := parsed.Token
 	e := email.NewEmail()
 	e.From = senderAddress
 	e.To = to
@@ -38,6 +34,10 @@ func (inst *RQL) SendEmail(body *Mail) error {
 	e.Subject = subject
 	e.HTML = []byte(message)
 	return e.Send("smtp.gmail.com:587", smtp.PlainAuth("", senderAddress, password, "smtp.gmail.com"))
+}
+
+func (inst *RQL) SendEmail(body *Mail) error {
+	return inst.sendEmail(body)
 
 }
 
