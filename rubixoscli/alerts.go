@@ -33,11 +33,9 @@ func (inst *Client) AddAlert(hostIDName string, body *model.Alert) (*model.Alert
 	return resp.Result().(*model.Alert), nil
 }
 
-func (inst *Client) GetAlerts(hostIDName string) ([]model.Alert, error) {
+func (inst *Client) GetAlerts() ([]model.Alert, error) {
 	path := fmt.Sprintf("%s", Paths.Alerts.Path)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
 		SetResult(&[]model.Alert{}).
 		Get(path))
 	if err != nil {
@@ -74,4 +72,40 @@ func (inst *Client) DeleteAlert(hostIDName, uuid string) (*Message, error) {
 		return nil, err
 	}
 	return resp.Result().(*Message), nil
+}
+
+type AlertUpdateStatusBody struct {
+	Status string `json:"status"`
+}
+
+func (inst *Client) UpdateAlertStatus(hostIDName, uuid, status string) (*model.Alert, error) {
+	path := fmt.Sprintf("%s/%s/status", Paths.Alerts.Path, uuid)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("host-uuid", hostIDName).
+		SetHeader("host-name", hostIDName).
+		SetBody(AlertUpdateStatusBody{
+			Status: status,
+		}).
+		SetResult(&model.Alert{}).
+		Patch(path))
+	if err != nil {
+		return nil, err
+	}
+	return resp.Result().(*model.Alert), nil
+}
+
+func (inst *Client) AssignAlertTeams(hostIDName, uuid string, teams []string) ([]*model.AlertTeam, error) {
+	url := fmt.Sprintf("%s/%s/teams", Paths.Alerts.Path, uuid)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("host-uuid", hostIDName).
+		SetHeader("host-name", hostIDName).
+		SetBody(teams).
+		SetResult(&[]*model.AlertTeam{}).
+		Put(url))
+	if err != nil {
+		return nil, err
+	}
+
+	out := resp.Result().(*[]*model.AlertTeam)
+	return *out, nil
 }
