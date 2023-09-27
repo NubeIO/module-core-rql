@@ -1,7 +1,6 @@
 package apirules
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/jordan-wright/email"
@@ -31,8 +30,6 @@ type Mail struct {
 }
 
 func (inst *RQL) sendEmail(body *Mail) any {
-
-	inst.Log(body)
 	if body == nil {
 		return errors.New("email body can not be empty")
 	}
@@ -66,14 +63,4 @@ func (inst *RQL) sendEmail(body *Mail) any {
 func (inst *RQL) SendEmail(body *Mail) any {
 	return inst.sendEmail(body)
 
-}
-
-func emailBody(body any) (*Mail, error) {
-	result := &Mail{}
-	dbByte, err := json.Marshal(body)
-	if err != nil {
-		return result, err
-	}
-	err = json.Unmarshal(dbByte, &result)
-	return result, err
 }
