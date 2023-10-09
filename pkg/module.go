@@ -44,6 +44,6 @@ func (inst *Module) GetInfo() (*shared.Info, error) {
 		Author:     "Nube iO",
 		Website:    "https://nube-io.com",
 		License:    "N/A",
-		HasNetwork: true,
+		HasNetwork: false,
 	}, nil
 }
