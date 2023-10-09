@@ -3,6 +3,7 @@ package rubixoscli
 import (
 	"errors"
 	"fmt"
+	"github.com/NubeIO/nubeio-rubix-lib-auth-go/internaltoken"
 	"github.com/NubeIO/rubix-os/installer"
 	"github.com/NubeIO/rubix-os/nresty"
 	"sync"
@@ -17,12 +18,11 @@ var (
 )
 
 type Client struct {
-	Rest          *resty.Client
-	Installer     *installer.Installer
-	Ip            string `json:"ip"`
-	Port          int    `json:"port"`
-	HTTPS         bool   `json:"https"`
-	ExternalToken string `json:"external_token"`
+	Rest      *resty.Client
+	Installer *installer.Installer
+	Ip        string `json:"ip"`
+	Port      int    `json:"port"`
+	HTTPS     bool   `json:"https"`
 }
 
 type ResponseBody struct {
@@ -58,7 +58,7 @@ func New(cli *Client, installer *installer.Installer) *Client {
 	cli.Rest = resty.New()
 	cli.Installer = installer
 	cli.Rest.SetBaseURL(baseURL)
-	cli.SetTokenHeader(cli.ExternalToken)
+	cli.SetTokenHeader()
 	clients[baseURL] = cli
 	return cli
 }
@@ -74,7 +74,7 @@ func ForceNew(cli *Client, installer *installer.Installer) *Client {
 	cli.Installer = installer
 	baseURL := getBaseUrl(cli)
 	cli.Rest.SetBaseURL(baseURL)
-	cli.SetTokenHeader(cli.ExternalToken)
+	cli.SetTokenHeader()
 	clients[baseURL] = cli
 	return cli
 }
@@ -95,13 +95,10 @@ func getBaseUrl(cli *Client) string {
 	return baseURL
 }
 
-func (inst *Client) SetTokenHeader(token string) *Client {
-	inst.Rest.Header.Set("Authorization", composeToken(token))
+func (inst *Client) SetTokenHeader() *Client {
+	token := internaltoken.GetInternalToken(true)
+	inst.Rest.Header.Set("Authorization", token)
 	return inst
-}
-
-func composeToken(token string) string {
-	return fmt.Sprintf("External %s", token)
 }
 
 type Path struct {
