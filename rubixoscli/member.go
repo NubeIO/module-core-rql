@@ -8,6 +8,10 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
+type UpdateMemberPasswordBody struct {
+	NewPassword string `json:"new_password"`
+}
+
 func (inst *Client) GetMembers() ([]model.Member, error) {
 	url := "/api/members"
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
@@ -72,6 +76,20 @@ func (inst *Client) BulkDeleteMember(memberUUID []string) (bool, error) {
 func (inst *Client) VerifyMember(memberName string) (*interfaces.Message, error) {
 	url := fmt.Sprintf("/api/members/verify/%s", memberName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetResult(&interfaces.Message{}).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	return resp.Result().(*interfaces.Message), nil
+}
+
+func (inst *Client) UpdateMemberPassword(memberUUID string, password string) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/members/%s/change_password", memberUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetBody(UpdateMemberPasswordBody{
+			NewPassword: password,
+		}).
 		SetResult(&interfaces.Message{}).
 		Post(url))
 	if err != nil {

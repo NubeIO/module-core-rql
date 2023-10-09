@@ -8,14 +8,14 @@ require (
 	github.com/NubeIO/lib-date v0.0.6
 	github.com/NubeIO/lib-dhcpd v0.0.2
 	github.com/NubeIO/lib-networking v0.1.0
-	github.com/NubeIO/lib-system v0.0.1
+	github.com/NubeIO/lib-system v0.0.2
 	github.com/NubeIO/lib-systemctl-go v0.3.1
 	github.com/NubeIO/lib-ufw v0.0.3
 	github.com/NubeIO/lib-uuid v0.0.3
-	github.com/NubeIO/nubeio-rubix-lib-auth-go v1.3.0
+	github.com/NubeIO/nubeio-rubix-lib-auth-go v1.3.1
 	github.com/NubeIO/nubeio-rubix-lib-helpers-go v0.2.7
-	github.com/NubeIO/nubeio-rubix-lib-models-go v1.9.2
-	github.com/NubeIO/rubix-os v0.0.21
+	github.com/NubeIO/nubeio-rubix-lib-models-go v1.9.7
+	github.com/NubeIO/rubix-os v0.0.66
 	github.com/NubeIO/rubix-os-client v0.0.2
 	github.com/NubeIO/rubix-registry-go v1.0.0
 	github.com/NubeIO/rubix-ui v0.0.2
@@ -39,11 +39,13 @@ require (
 )
 
 require (
+	github.com/NubeDev/bacnet v0.1.9 // indirect
 	github.com/NubeIO/lib-files v1.0.0 // indirect
 	github.com/NubeIO/lib-schema v0.2.18 // indirect
 	github.com/NubeIO/rubix-assist v0.10.6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
+	github.com/eclipse/paho.mqtt.golang v1.4.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -82,6 +84,7 @@ require (
 	github.com/wailsapp/wails/v2 v2.4.1 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	gonum.org/v1/gonum v0.9.1 // indirect

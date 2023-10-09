@@ -17,6 +17,8 @@ var (
 	clients = map[string]*Client{}
 )
 
+// TODO: WARNING: DON'T OVERRIDE FROM COPYING
+
 type Client struct {
 	Rest      *resty.Client
 	Installer *installer.Installer
@@ -63,34 +65,18 @@ func New(cli *Client, installer *installer.Installer) *Client {
 	return cli
 }
 
-func ForceNew(cli *Client, installer *installer.Installer) *Client {
-	mutex.Lock()
-	defer mutex.Unlock()
-	if cli == nil {
-		log.Fatal("rubix-os client cli can not be empty")
-		return nil
-	}
-	cli.Rest = resty.New()
-	cli.Installer = installer
-	baseURL := getBaseUrl(cli)
-	cli.Rest.SetBaseURL(baseURL)
-	cli.SetTokenHeader()
-	clients[baseURL] = cli
-	return cli
-}
-
 func getBaseUrl(cli *Client) string {
 	if cli.Ip == "" {
 		cli.Ip = "0.0.0.0"
 	}
 	if cli.Port == 0 {
-		cli.Port = 1659
+		cli.Port = 1660
 	}
 	var baseURL string
 	if cli.HTTPS {
-		baseURL = fmt.Sprintf("https://%s:%d/ros", cli.Ip, cli.Port)
+		baseURL = fmt.Sprintf("https://%s:%d", cli.Ip, cli.Port)
 	} else {
-		baseURL = fmt.Sprintf("http://%s:%d/ros", cli.Ip, cli.Port)
+		baseURL = fmt.Sprintf("http://%s:%d", cli.Ip, cli.Port)
 	}
 	return baseURL
 }
@@ -110,7 +96,6 @@ var Paths = struct {
 	Ping         Path
 	Groups       Path
 	Locations    Path
-	Users        Path
 	Edge         Path
 	Apps         Path
 	Tasks        Path
@@ -124,7 +109,6 @@ var Paths = struct {
 	Ping:         Path{Path: "/api/system/ping"},
 	Groups:       Path{Path: "/api/groups"},
 	Locations:    Path{Path: "/api/locations"},
-	Users:        Path{Path: "/api/locations"},
 	Edge:         Path{Path: "/api/edgeapi"},
 	Apps:         Path{Path: "/api/edgeapi/apps"},
 	Tasks:        Path{Path: "/api/tasks"},

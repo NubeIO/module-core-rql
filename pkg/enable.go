@@ -14,7 +14,7 @@ func (inst *Module) Enable() error {
 	props := make(rules.PropertiesMap)
 	props[n] = eng
 	client := "RQL"
-	newStorage, err := storage.New("data")
+	newStorage, err := storage.New(inst.moduleDirectory)
 	if err != nil {
 		log.Errorf("%s: error in making DB: %s", name, err)
 		inst.ErrorOnDB = true

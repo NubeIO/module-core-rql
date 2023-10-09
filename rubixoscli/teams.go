@@ -7,8 +7,22 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
+func (inst *Client) AttachViews(teamUUID string, viewUUIDs []string) ([]model.View, error) {
+	url := fmt.Sprintf("/api/teams/%s/views", teamUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetBody(viewUUIDs).
+		SetResult(&[]model.View{}).
+		Put(url))
+	if err != nil {
+		return nil, err
+	}
+	var out []model.View
+	out = *resp.Result().(*[]model.View)
+	return out, nil
+}
+
 func (inst *Client) GetTeam(teamUUID string) (*model.Team, error) {
-	url := fmt.Sprintf("/api/teams/%s", teamUUID)
+	url := fmt.Sprintf("/api/teams/%s?with_members=true&with_views=true", teamUUID)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&model.Team{}).
 		Get(url))
@@ -20,7 +34,7 @@ func (inst *Client) GetTeam(teamUUID string) (*model.Team, error) {
 }
 
 func (inst *Client) GetTeams() ([]model.Team, error) {
-	url := "/api/teams"
+	url := "/api/teams?with_members=true&with_views=true"
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&[]model.Team{}).
 		Get(url))
@@ -91,19 +105,5 @@ func (inst *Client) UpdateTeamMember(teamUUID string, memberUUIDs []string) ([]m
 	}
 	var out []model.Team
 	out = *resp.Result().(*[]model.Team)
-	return out, nil
-}
-
-func (inst *Client) AttachViews(teamUUID string, viewUUIDs []string) ([]model.View, error) {
-	url := fmt.Sprintf("/api/teams/%s/views", teamUUID)
-	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetBody(viewUUIDs).
-		SetResult(&[]model.View{}).
-		Put(url))
-	if err != nil {
-		return nil, err
-	}
-	var out []model.View
-	out = *resp.Result().(*[]model.View)
 	return out, nil
 }

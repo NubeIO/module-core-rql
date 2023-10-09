@@ -2,8 +2,8 @@ package rubixoscli
 
 import (
 	"fmt"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
@@ -121,15 +121,14 @@ func (inst *Client) EditPoint(hostIDName, uuid string, body *model.Point) (*mode
 	return resp.Result().(*model.Point), nil
 }
 
-func (inst *Client) SyncPoints(hostIDName, deviceUUID string) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/devices/%s/sync/points", deviceUUID)
+func (inst *Client) FFGetPluginSchemaPoint(hostIDName, pluginName string) ([]byte, error) {
+	url := fmt.Sprintf("/proxy/ros/api/plugins/api/%s/schema/json/point", pluginName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
-		SetResult(&interfaces.Message{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.Message), nil
+	return resp.Body(), nil
 }

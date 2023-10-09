@@ -3,6 +3,7 @@ package rubixoscli
 import (
 	"errors"
 	"fmt"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
 	"github.com/NubeIO/rubix-os/nresty"
 )
@@ -34,7 +35,7 @@ func (inst *Client) AddAlert(hostIDName string, body *model.Alert) (*model.Alert
 }
 
 func (inst *Client) GetAlerts() ([]model.Alert, error) {
-	path := fmt.Sprintf("%s", Paths.Alerts.Path)
+	path := fmt.Sprintf("%s?with_teams=true", Paths.Alerts.Path)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&[]model.Alert{}).
 		Get(path))
@@ -47,7 +48,7 @@ func (inst *Client) GetAlerts() ([]model.Alert, error) {
 }
 
 func (inst *Client) GetAlertsByHost(hostIDName string) ([]model.Alert, error) {
-	path := fmt.Sprintf("%s/host/%s", Paths.Alerts.Path, hostIDName)
+	path := fmt.Sprintf("%s/host/%s?with_teams=true", Paths.Alerts.Path, hostIDName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
