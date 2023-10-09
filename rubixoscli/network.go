@@ -7,7 +7,7 @@ import (
 )
 
 func (inst *Client) GetHostNetworks() ([]model.Group, error) {
-	path := fmt.Sprintf("%s?with_hosts=true", Paths.Groups.Path)
+	path := fmt.Sprintf("%s?with_views=true&with_hosts=true", Paths.Groups.Path)
 	resp, err := inst.Rest.R().
 		SetResult(&[]model.Group{}).
 		Get(path)
@@ -18,7 +18,7 @@ func (inst *Client) GetHostNetworks() ([]model.Group, error) {
 }
 
 func (inst *Client) GetHostNetwork(uuid string) (*model.Group, error) {
-	path := fmt.Sprintf("%s/%s?with_hosts=true", Paths.Groups.Path, uuid)
+	path := fmt.Sprintf("%s/%s?with_views=true&with_hosts=true", Paths.Groups.Path, uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&model.Group{}).
 		Get(path))

@@ -8,7 +8,7 @@ import (
 )
 
 func (inst *Client) GetViews() ([]model.View, error) {
-	url := "/api/views"
+	url := "/api/views?with_widgets=true"
 
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&[]model.View{}).
@@ -52,14 +52,26 @@ func (inst *Client) UpdateViewTheme(viewIDName, name string, theme interface{}) 
 	return out, nil
 }
 
+func (inst *Client) GetViewSettings() (*model.ViewSetting, error) {
+	url := fmt.Sprintf("/api/view-settings")
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetResult(&model.ViewSetting{}).
+		Get(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*model.ViewSetting)
+	return out, nil
+}
+
 func (inst *Client) UpdateGlobalTheme(theme interface{}) (*model.View, error) {
 	url := fmt.Sprintf("/api/view-settings")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&model.View{}).
-		SetBody(map[string]interface{}{
-			"theme": theme,
+		SetBody(UpdateGlobalLogo{
+			Theme: theme,
 		}).
-		Patch(url))
+		Put(url))
 	if err != nil {
 		return nil, err
 	}
@@ -67,18 +79,22 @@ func (inst *Client) UpdateGlobalTheme(theme interface{}) (*model.View, error) {
 	return out, nil
 }
 
-func (inst *Client) UpdateGlobalLogo(logo interface{}) (*model.View, error) {
+type UpdateGlobalLogo struct {
+	Theme interface{} `json:"theme"`
+}
+
+func (inst *Client) UpdateGlobalLogo(logo interface{}) (*model.ViewSetting, error) {
 	url := fmt.Sprintf("/api/view-settings")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetResult(&model.View{}).
+		SetResult(&model.ViewSetting{}).
 		SetBody(map[string]interface{}{
 			"logo": logo,
 		}).
-		Patch(url))
+		Put(url))
 	if err != nil {
 		return nil, err
 	}
-	out := resp.Result().(*model.View)
+	out := resp.Result().(*model.ViewSetting)
 	return out, nil
 }
 
@@ -159,7 +175,7 @@ func (inst *Client) DeleteView(viewIDName string) (*bool, error) {
 }
 
 func (inst *Client) GetView(viewIDName string) (*model.View, error) {
-	url := fmt.Sprintf("/api/views/%s", viewIDName)
+	url := fmt.Sprintf("/api/views/%s?with_widgets=true&widget_order=ASC", viewIDName)
 
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&model.View{}).
@@ -187,17 +203,34 @@ func (inst *Client) AddWidgetToView(viewIDName string, widget *model.ViewWidget)
 
 func (inst *Client) EditWidget(widgetUUID string, widget *model.ViewWidget) (*model.ViewWidget, error) {
 	url := fmt.Sprintf("/api/views/widgets/%s", widgetUUID)
-	fmt.Print("Hello, ", widget)
 
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&model.ViewWidget{}).
 		SetBody(widget).
 		Patch(url))
 	if err != nil {
-		fmt.Print("Hello, ", err)
 		return nil, err
 	}
 	out := resp.Result().(*model.ViewWidget)
+	return out, nil
+}
+
+type OrderRequestBody struct {
+	Order int `json:"order"`
+}
+
+func (inst *Client) UpdateWidgetOrder(widgetUUID string, order int) (*bool, error) {
+	url := fmt.Sprintf("/api/views/widgets/%s/order", widgetUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetResult(false).
+		SetBody(OrderRequestBody{
+			Order: order,
+		}).
+		Patch(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*bool)
 	return out, nil
 }
 

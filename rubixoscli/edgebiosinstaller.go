@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
-	"github.com/NubeIO/rubix-os/src/cli/edgebioscli/ebmodel"
+	"github.com/NubeIO/rubix-os/src/cli/bioscli/bmodel"
 )
 
 func (inst *Client) EdgeBiosRubixOsOnEdgeUpload(hostIDName string, upload interfaces.FileUpload) (*interfaces.Message, error) {
@@ -35,15 +35,15 @@ func (inst *Client) EdgeBiosRubixOsOnEdgeInstall(hostIDName string, upload inter
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeBiosRubixOsOnEdgeVersion(hostIDName string) (*ebmodel.Version, error) {
+func (inst *Client) EdgeBiosRubixOsOnEdgeVersion(hostIDName string) (*bmodel.Version, error) {
 	url := fmt.Sprintf("/api/eb/ros/version")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
-		SetResult(&ebmodel.Version{}).
+		SetResult(&bmodel.Version{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*ebmodel.Version), nil
+	return resp.Result().(*bmodel.Version), nil
 }

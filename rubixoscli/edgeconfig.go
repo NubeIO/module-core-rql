@@ -7,6 +7,7 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/NubeIO/rubix-ui/backend/constants"
 	"gopkg.in/yaml.v3"
+	"reflect"
 )
 
 type BacnetClient struct { // this is for bacnet-master
@@ -66,7 +67,7 @@ func (inst *Client) EdgeWriteConfig(hostIDName, appName string) (*Message, error
 		}
 		writeConfig = interfaces.EdgeConfig{
 			AppName:    constants.BacnetServerDriver,
-			Body:       inst.defaultWrapperBACnetConfig(config),
+			Body:       inst.convertConfigToDynamicMap(inst.defaultWrapperBACnetConfig(config)),
 			ConfigName: constants.ConfigYml,
 		}
 	}
@@ -104,7 +105,7 @@ func (inst *Client) BACnetWriteConfig(hostIDName, appName string, config ConfigB
 	if appName == constants.BacnetServerDriver {
 		writeConfig = interfaces.EdgeConfig{
 			AppName:    constants.BacnetServerDriver,
-			Body:       inst.defaultWrapperBACnetConfig(config),
+			Body:       inst.convertConfigToDynamicMap(inst.defaultWrapperBACnetConfig(config)),
 			ConfigName: constants.ConfigYml,
 		}
 	} else {
@@ -133,12 +134,15 @@ func (inst *Client) defaultWrapperBACnetConfig(config ConfigBACnetServer) Config
 	if config.Iface == "" {
 		config.Iface = "eth0"
 	}
+	if config.Port == 0 {
+		config.Port = 47808
+	}
 
 	config.Objects = []string{"ai", "av", "ao", "bi", "bo", "bv"}
 	config.Properties = []string{"name", "pv", "pri"}
 
 	// bacnet-master
-	config.BacnetClient.Commands = []string{"whois", "read_value", "write_value"}
+	config.BacnetClient.Commands = []string{"whois", "read_value", "write_value", "pics"}
 	config.BacnetClient.Tokens = []string{"txn_source", "txn_number"}
 	config.BacnetClient.Enable = true
 
@@ -160,4 +164,22 @@ func (inst *Client) defaultWrapperBACnetConfig(config ConfigBACnetServer) Config
 	config.Mqtt.WriteViaSubscribe = true // if not enabled the point point values will not update over MQTT
 
 	return config
+}
+
+func (inst *Client) convertConfigToDynamicMap(config interface{}) interfaces.DynamicMap {
+	dynamicMap := make(interfaces.DynamicMap)
+
+	// Use reflection to iterate through the struct fields and populate the DynamicMap
+	v := reflect.ValueOf(config)
+	t := reflect.TypeOf(config)
+	for i := 0; i < v.NumField(); i++ {
+		fieldName := t.Field(i).Tag.Get("json")
+		if fieldName == "" {
+			continue
+		}
+		fieldValue := v.Field(i).Interface()
+		dynamicMap[fieldName] = fieldValue
+	}
+
+	return dynamicMap
 }

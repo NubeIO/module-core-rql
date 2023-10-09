@@ -2,7 +2,7 @@ package rubixoscli
 
 import (
 	"fmt"
-	"github.com/NubeIO/rubix-os-client/constants"
+	"github.com/NubeIO/rubix-os/src/cli/constants"
 	"testing"
 )
 

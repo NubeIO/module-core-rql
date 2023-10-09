@@ -6,22 +6,22 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) EdgeListPlugins(hostIDName string) ([]interfaces.Plugin, error, error) {
-	url := fmt.Sprintf("/api/eb/ros/plugins")
+func (inst *Client) EdgeListModules(hostIDName string) ([]interfaces.Module, error, error) {
+	url := fmt.Sprintf("/api/eb/ros/modules")
 	resp, connectionErr, requestErr := nresty.FormatRestyV2Response(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
-		SetResult(&[]interfaces.Plugin{}).
+		SetResult(&[]interfaces.Module{}).
 		Get(url))
 	if connectionErr != nil || requestErr != nil {
 		return nil, connectionErr, requestErr
 	}
-	data := resp.Result().(*[]interfaces.Plugin)
+	data := resp.Result().(*[]interfaces.Module)
 	return *data, nil, nil
 }
 
-func (inst *Client) EdgeUploadPlugin(hostIDName string, body *interfaces.Plugin) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/eb/ros/plugins/upload")
+func (inst *Client) EdgeUploadModule(hostIDName string, body *interfaces.Module) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/eb/ros/modules/upload")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
@@ -34,8 +34,8 @@ func (inst *Client) EdgeUploadPlugin(hostIDName string, body *interfaces.Plugin)
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeMoveFromDownloadToInstallPlugins(hostIDName string) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/eb/ros/plugins/move-from-download-to-install")
+func (inst *Client) EdgeMoveFromDownloadToInstallModules(hostIDName string) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/eb/ros/modules/move-from-download-to-install")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
@@ -47,8 +47,8 @@ func (inst *Client) EdgeMoveFromDownloadToInstallPlugins(hostIDName string) (*in
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeDeletePlugin(hostIDName, pluginName, arch string) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/eb/ros/plugins/name/%s?arch=%s", pluginName, arch)
+func (inst *Client) EdgeDeleteModule(hostIDName, pluginName string) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/eb/ros/modules/name/%s", pluginName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
 		SetHeader("host-name", hostIDName).
@@ -60,8 +60,8 @@ func (inst *Client) EdgeDeletePlugin(hostIDName, pluginName, arch string) (*inte
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeDeleteDownloadPlugins(hostIDName string) (*interfaces.Message, error, error) {
-	url := fmt.Sprintf("/api/eb/ros/plugins/download-plugins")
+func (inst *Client) EdgeDeleteDownloadModules(hostIDName string) (*interfaces.Message, error, error) {
+	url := fmt.Sprintf("/api/eb/ros/modules/download-modules")
 	// we use v2 here, coz it shows requestErr when there is no plugins' directory on download path
 	resp, connectionErr, requestErr := nresty.FormatRestyV2Response(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).

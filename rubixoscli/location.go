@@ -7,7 +7,7 @@ import (
 )
 
 func (inst *Client) GetLocations() (data []model.Location, response *Response) {
-	path := Paths.Locations.Path
+	path := fmt.Sprintf("%s?with_views=true&with_groups=true&with_hosts=true", Paths.Locations.Path)
 	response = &Response{}
 	resp, err := inst.Rest.R().
 		SetResult(&[]model.Location{}).
@@ -16,7 +16,7 @@ func (inst *Client) GetLocations() (data []model.Location, response *Response) {
 }
 
 func (inst *Client) GetLocation(uuid string) (data *model.Location, response *Response) {
-	path := fmt.Sprintf("%s/%s", Paths.Locations.Path, uuid)
+	path := fmt.Sprintf("%s/%s?with_views=true&with_groups=true&with_hosts=true", Paths.Locations.Path, uuid)
 	response = &Response{}
 	resp, err := inst.Rest.R().
 		SetResult(&model.Location{}).

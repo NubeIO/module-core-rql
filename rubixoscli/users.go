@@ -7,45 +7,6 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) GetUsers() (data []user.User, response *Response) {
-	path := fmt.Sprintf(Paths.Users.Path)
-	response = &Response{}
-	resp, err := inst.Rest.R().
-		SetResult(&[]user.User{}).
-		Get(path)
-	return *resp.Result().(*[]user.User), response.buildResponse(resp, err)
-}
-
-func (inst *Client) AddUser(body *user.User) (data *user.User, response *Response) {
-	path := fmt.Sprintf(Paths.Users.Path)
-	response = &Response{}
-	resp, err := inst.Rest.R().
-		SetBody(body).
-		SetResult(&user.User{}).
-		Post(path)
-	return resp.Result().(*user.User), response.buildResponse(resp, err)
-}
-
-func (inst *Client) UpdateUser(uuid string, body *user.User) (data *user.User, response *Response) {
-	path := fmt.Sprintf("%s/%s", Paths.Users.Path, uuid)
-	response = &Response{}
-	resp, err := inst.Rest.R().
-		SetBody(body).
-		SetResult(&user.User{}).
-		Patch(path)
-	return resp.Result().(*user.User), response.buildResponse(resp, err)
-}
-
-func (inst *Client) DeleteUser(uuid string, body *user.User) (data *user.User, response *Response) {
-	path := fmt.Sprintf("%s/%s", Paths.Users.Path, uuid)
-	response = &Response{}
-	resp, err := inst.Rest.R().
-		SetBody(body).
-		SetResult(&user.User{}).
-		Patch(path)
-	return resp.Result().(*user.User), response.buildResponse(resp, err)
-}
-
 type TokenCreate struct {
 	Name    string `json:"name" binding:"required"`
 	Blocked *bool  `json:"blocked" binding:"required"`
