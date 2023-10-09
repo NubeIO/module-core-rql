@@ -63,34 +63,18 @@ func New(cli *Client, installer *installer.Installer) *Client {
 	return cli
 }
 
-func ForceNew(cli *Client, installer *installer.Installer) *Client {
-	mutex.Lock()
-	defer mutex.Unlock()
-	if cli == nil {
-		log.Fatal("rubix-os client cli can not be empty")
-		return nil
-	}
-	cli.Rest = resty.New()
-	cli.Installer = installer
-	baseURL := getBaseUrl(cli)
-	cli.Rest.SetBaseURL(baseURL)
-	cli.SetTokenHeader()
-	clients[baseURL] = cli
-	return cli
-}
-
 func getBaseUrl(cli *Client) string {
 	if cli.Ip == "" {
 		cli.Ip = "0.0.0.0"
 	}
 	if cli.Port == 0 {
-		cli.Port = 1659
+		cli.Port = 1660
 	}
 	var baseURL string
 	if cli.HTTPS {
-		baseURL = fmt.Sprintf("https://%s:%d/ros", cli.Ip, cli.Port)
+		baseURL = fmt.Sprintf("https://%s:%d", cli.Ip, cli.Port)
 	} else {
-		baseURL = fmt.Sprintf("http://%s:%d/ros", cli.Ip, cli.Port)
+		baseURL = fmt.Sprintf("http://%s:%d", cli.Ip, cli.Port)
 	}
 	return baseURL
 }

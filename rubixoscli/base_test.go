@@ -10,14 +10,14 @@ var client = New(&Client{
 	Rest:      nil,
 	Installer: nil,
 	Ip:        "0.0.0.0",
-	Port:      1659,
+	Port:      1660,
 	HTTPS:     false,
 }, &installer.Installer{})
 
-func TestClient_PingRubixOs(t *testing.T) {
-	networking, _, err := client.GetNetworking()
+func TestClient_GetAlerts(t *testing.T) {
+	alerts, err := client.GetAlerts()
 	if err != nil {
 		return
 	}
-	pprint.Print(networking)
+	pprint.Print(alerts)
 }
