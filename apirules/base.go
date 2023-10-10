@@ -31,12 +31,11 @@ func getToken() string {
 }
 
 var cli = rubixoscli.New(&rubixoscli.Client{
-	Rest:          nil,
-	Installer:     nil,
-	Ip:            "0.0.0.0",
-	Port:          1659,
-	HTTPS:         false,
-	ExternalToken: getToken(),
+	Rest:      nil,
+	Installer: nil,
+	Ip:        "0.0.0.0",
+	Port:      1659,
+	HTTPS:     false,
 }, &installer.Installer{})
 
 func errorString(err error) string {
