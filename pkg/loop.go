@@ -47,8 +47,11 @@ func (inst *Module) Loop() {
 				if canRun.CanRun {
 					result, err := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
 					if err != nil {
-						_, err := inst.Storage.UpdateResult(rule.UUID, err.Error())
-						log.Errorf("%s: run rules loop update-result err: %s", name, err.Error())
+						log.Errorf("%s: run rules loop execute-with-script err: %s", name, err.Error())
+						_, e := inst.Storage.UpdateResult(rule.UUID, err.Error())
+						if e != nil {
+							log.Errorf("%s: run rules loop update-result err: %s", name, e.Error())
+						}
 						continue
 					}
 					if result == nil {
