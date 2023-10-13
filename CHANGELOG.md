@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [v0.0.3](https://github.com/NubeIO/module-core-rql/tree/v0.0.3) (2023-10-13)
+
+- Fix: null pointer exception
+
 ## [v0.0.2](https://github.com/NubeIO/module-core-rql/tree/v0.0.2) (2023-10-09)
 
 - Use internal token in rubixoscli
