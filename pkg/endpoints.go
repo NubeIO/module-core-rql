@@ -4,12 +4,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/NubeIO/lib-uuid/uuid"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/dop251/goja"
-	"time"
 )
+
+type Message struct {
+	Message interface{} `json:"message,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
+}
 
 func (inst *Module) check() error {
 	if !inst.pluginIsEnabled {
@@ -75,11 +81,7 @@ func (inst *Module) DeleteRule(uuid string) ([]byte, error) {
 	return json.Marshal(Message{Message: "ok"})
 }
 
-type RunExistingBody struct {
-	Body interface{} `json:"body"`
-}
-
-// ReuseRuleRun will be used when wanting to run a pre created rule
+// RunExistingRuleOnce will be used when wanting to run a pre created rule
 // get existing rule script
 // pass in some parameters
 // run the rule and return the result
@@ -102,71 +104,48 @@ RQL.Result = out;
     }
 }
 */
-func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
-	start := time.Now()
-	inst.Client.Err = ""
-	inst.Client.Return = nil
-	inst.Client.TimeTaken = ""
-
+func (inst *Module) RunExistingRuleOnce(nameUUID string) ([]byte, error) {
 	existingRule, err := inst.Storage.SelectRule(nameUUID)
 	if err != nil {
-		return nil, err
+		inst.Client.Err = err.Error()
+		return json.Marshal(inst.Client)
 	}
 	if existingRule == nil {
-		return nil, errors.New("failed to get existing rule to run")
-	}
-
-	name := uuid.ShortUUID("")
-	newRule := &storage.RQLRule{
-		Name:     name,
-		Script:   existingRule.Script,
-		Schedule: "1 sec",
-	}
-
-	value, err := inst.executeRule(newRule)
-	if err != nil {
-		inst.Client.Err = err.Error()
-		inst.Client.TimeTaken = time.Since(start).String()
+		inst.Client.Err = "failed to get existing rule to run"
 		return json.Marshal(inst.Client)
 	}
 
-	inst.Client.Return = returnType(value)
-	inst.Client.TimeTaken = time.Since(start).String()
-	return json.Marshal(inst.Client)
+	return inst.executeRuleOnce(existingRule.Script)
 }
 
-type Message struct {
-	Message interface{} `json:"message,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
-}
-
-func (inst *Module) Dry(b []byte) ([]byte, error) {
-	start := time.Now()
-	inst.Client.Err = ""
-	inst.Client.Return = nil
-	inst.Client.TimeTaken = ""
-
+func (inst *Module) DryRunFromEditor(b []byte) ([]byte, error) {
 	var body *rules.Body
 	err := json.Unmarshal(b, &body)
 	if err != nil {
-		return nil, err
-	}
-	if err != nil {
 		inst.Client.Err = err.Error()
 		return json.Marshal(inst.Client)
 	}
-
-	name := uuid.ShortUUID("")
-	schedule := "1 sec"
 	script := fmt.Sprint(body.Script)
+	return inst.executeRuleOnce(script)
+}
+
+func (inst *Module) executeRuleOnce(script string) ([]byte, error) {
+	start := time.Now()
+	inst.Client.Err = ""
+	inst.Client.Return = nil
+	inst.Client.TimeTaken = ""
 
 	newRule := &storage.RQLRule{
-		Name:     name,
+		Name:     uuid.ShortUUID(""),
 		Script:   script,
-		Schedule: schedule,
+		Schedule: "1 sec",
 	}
 
-	value, err := inst.executeRule(newRule)
+	err := inst.Rules.AddRule(newRule, inst.Props)
+	if err != nil {
+		return nil, err
+	}
+	value, err := inst.Rules.ExecuteAndRemove(newRule.Name, inst.Props, false)
 	if err != nil {
 		inst.Client.Err = err.Error()
 		inst.Client.TimeTaken = time.Since(start).String()
@@ -176,19 +155,6 @@ func (inst *Module) Dry(b []byte) ([]byte, error) {
 	inst.Client.Return = returnType(value)
 	inst.Client.TimeTaken = time.Since(start).String()
 	return json.Marshal(inst.Client)
-}
-
-func (inst *Module) executeRule(newRule *storage.RQLRule) (goja.Value, error) {
-	err1 := inst.Rules.AddRule(newRule, inst.Props)
-	if err1 != nil {
-		return nil, err1
-	}
-	value, err2 := inst.Rules.ExecuteAndRemove(newRule.Name, inst.Props, false)
-	if err2 != nil {
-		return nil, err2
-	}
-	
-	return value, nil
 }
 
 func returnType(value goja.Value) any {

@@ -109,11 +109,11 @@ func (inst *Module) Post(path string, body []byte) ([]byte, error) {
 
 	_, subPath, nameUUID := rootPathSplit(path) // run an existing
 	if subPath == "run" {
-		return inst.ReuseRuleRun(body, nameUUID)
+		return inst.RunExistingRuleOnce(nameUUID)
 	}
 
 	if path == apiRun { // run a rule
-		return inst.Dry(body)
+		return inst.DryRunFromEditor(body)
 	}
 	if path == apiVars { // add variable
 		return inst.AddVariable(body)
