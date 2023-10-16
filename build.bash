@@ -12,6 +12,7 @@ fi
 
 path=$HOME/$code_path/rubix-os
 
+
 echo $path
 echo "****MODULES****"
 ls  $path/data/modules
