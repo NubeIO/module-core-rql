@@ -2,6 +2,7 @@ package apirules
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/tidwall/gjson"
@@ -106,14 +107,10 @@ func (inst *RQL) getVariable(uuidName string) (*storage.RQLVariables, error) {
 	}
 	for _, variable := range out {
 		if variable.Name == uuidName {
-			if err != nil {
-				return &variable, err
-			}
+			return &variable, err
 		}
 		if variable.UUID == uuidName {
-			if err != nil {
-				return &variable, err
-			}
+			return &variable, err
 		}
 	}
 	return nil, err
@@ -123,6 +120,9 @@ func (inst *RQL) GetVariable(uuidName string) any {
 	out, err := inst.getVariable(uuidName)
 	if err != nil {
 		return err
+	}
+	if out == nil {
+		return errors.New(fmt.Sprintf("failed to find var, name-uuid: %s", uuidName))
 	}
 	return out
 }

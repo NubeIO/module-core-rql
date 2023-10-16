@@ -194,6 +194,9 @@ func (inst *Module) Dry(b []byte) ([]byte, error) {
 }
 
 func returnType(value goja.Value) any {
+	if value == nil {
+		return nil
+	}
 	if value.String() == "undefined" {
 		return value.String()
 	}
