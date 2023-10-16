@@ -9,7 +9,6 @@ import (
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/dop251/goja"
 	"time"
-	log "github.com/sirupsen/logrus"
 )
 
 func (inst *Module) check() error {
@@ -123,16 +122,14 @@ func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 		Script:   existingRule.Script,
 		Schedule: "1 sec",
 	}
-	err = inst.Rules.AddRule(newRule, inst.Props)
+
+	value, err := inst.executeRule(newRule)
 	if err != nil {
 		inst.Client.Err = err.Error()
+		inst.Client.TimeTaken = time.Since(start).String()
 		return json.Marshal(inst.Client)
 	}
-	value, err := inst.Rules.ExecuteAndRemove(name, inst.Props, false)
-	if err != nil {
-		inst.Client.Err = err.Error()
-		return json.Marshal(inst.Client)
-	}
+
 	inst.Client.Return = returnType(value)
 	inst.Client.TimeTaken = time.Since(start).String()
 	return json.Marshal(inst.Client)
@@ -168,19 +165,30 @@ func (inst *Module) Dry(b []byte) ([]byte, error) {
 		Script:   script,
 		Schedule: schedule,
 	}
-	err = inst.Rules.AddRule(newRule, inst.Props)
+
+	value, err := inst.executeRule(newRule)
 	if err != nil {
 		inst.Client.Err = err.Error()
+		inst.Client.TimeTaken = time.Since(start).String()
 		return json.Marshal(inst.Client)
 	}
-	value, err := inst.Rules.ExecuteAndRemove(name, inst.Props, false)
-	if err != nil {
-		inst.Client.Err = err.Error()
-		return json.Marshal(inst.Client)
-	}
+
 	inst.Client.Return = returnType(value)
 	inst.Client.TimeTaken = time.Since(start).String()
 	return json.Marshal(inst.Client)
+}
+
+func (inst *Module) executeRule(newRule *storage.RQLRule) (goja.Value, error) {
+	err1 := inst.Rules.AddRule(newRule, inst.Props)
+	if err1 != nil {
+		return nil, err1
+	}
+	value, err2 := inst.Rules.ExecuteAndRemove(newRule.Name, inst.Props, false)
+	if err2 != nil {
+		return nil, err2
+	}
+	
+	return value, nil
 }
 
 func returnType(value goja.Value) any {
