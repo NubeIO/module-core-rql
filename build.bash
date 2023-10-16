@@ -17,4 +17,4 @@ echo "****MODULES****"
 ls  $path/data/modules
 echo "****MODULES****"
 
-go build -o module-core-rql && mv -f module-core-rql $path/data/modules && cd $path && bash build.bash system
+go build -o module-core-rql && mv -f module-core-rql $path/data/rubix-os/data/modules/module-core-rql/v0.0.2 && cd $path && bash build.bash system
