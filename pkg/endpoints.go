@@ -9,6 +9,7 @@ import (
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/dop251/goja"
 	"time"
+	log "github.com/sirupsen/logrus"
 )
 
 func (inst *Module) check() error {
@@ -108,16 +109,6 @@ func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 	inst.Client.Return = nil
 	inst.Client.TimeTaken = ""
 
-	var body *RunExistingBody
-	err := json.Unmarshal(b, &body)
-	if err != nil {
-		return nil, err
-	}
-	if err != nil {
-		inst.Client.Err = err.Error()
-		return json.Marshal(inst.Client)
-	}
-
 	existingRule, err := inst.Storage.SelectRule(nameUUID)
 	if err != nil {
 		return nil, err
@@ -127,7 +118,6 @@ func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 	}
 
 	name := uuid.ShortUUID("")
-	inst.Props["Input"] = body
 	newRule := &storage.RQLRule{
 		Name:     name,
 		Script:   existingRule.Script,
