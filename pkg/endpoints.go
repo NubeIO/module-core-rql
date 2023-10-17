@@ -101,6 +101,9 @@ RQL.Result = out;
         "a":100
     }
 }
+
+
+curl -i -X POST -H "Content-Type: application/json" -d '{"body":{"a":100}}' http://0.0.0.0:1660/api/modules/module-core-rql/rules/run/test2
 */
 func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 	start := time.Now()
@@ -111,16 +114,13 @@ func (inst *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 	var body *RunExistingBody
 	err := json.Unmarshal(b, &body)
 	if err != nil {
-		return nil, err
-	}
-	if err != nil {
 		inst.Client.Err = err.Error()
 		return json.Marshal(inst.Client)
 	}
 
 	existingRule, err := inst.Storage.SelectRule(nameUUID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("failed to get existing rule to run")
 	}
 	if existingRule == nil {
 		return nil, errors.New("failed to get existing rule to run")
