@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [v0.0.5](https://github.com/NubeIO/module-core-rql/tree/v0.0.5) (2023-10-18)
+
+- Fix: rox proxy path
+
 ## [v0.0.4](https://github.com/NubeIO/module-core-rql/tree/v0.0.4) (2023-10-18)
 
 - Fix: rox proxy
