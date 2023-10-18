@@ -34,7 +34,7 @@ var cli = rubixoscli.New(&rubixoscli.Client{
 	Rest:      nil,
 	Installer: nil,
 	Ip:        "0.0.0.0",
-	Port:      1659,
+	Port:      1660,
 	HTTPS:     false,
 }, &installer.Installer{})
 

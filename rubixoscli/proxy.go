@@ -7,7 +7,7 @@ import (
 )
 
 func (inst *Client) ProxyGET(hostIDName, path string) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/%s", path)
+	path = fmt.Sprintf("/proxy/api/%s", path)
 	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
 	resp, err := inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).
