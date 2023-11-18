@@ -16,8 +16,6 @@ require (
 	github.com/NubeIO/nubeio-rubix-lib-helpers-go v0.2.7
 	github.com/NubeIO/nubeio-rubix-lib-models-go v1.9.7
 	github.com/NubeIO/rubix-os v0.0.66
-	github.com/NubeIO/rubix-os-client v0.0.2
-	github.com/NubeIO/rubix-registry-go v1.0.0
 	github.com/NubeIO/rubix-ui v0.0.2
 	github.com/andanhm/go-prettytime v1.1.0
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1

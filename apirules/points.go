@@ -14,6 +14,34 @@ func (inst *RQL) GetPoints(hostIDName string) any {
 	return resp
 }
 
+type AllHostsPoints struct {
+	HostUUID string
+	HostName string
+	Points   []model.Point
+	Error    error
+	Count    int
+}
+
+func (inst *RQL) GetPointsAllHosts() any {
+	resp, err := cli.GetHosts()
+	if err != nil {
+		return err
+	}
+	var out []AllHostsPoints
+	for _, host := range resp {
+		points, err := cli.GetPoints(host.UUID)
+		newHost := AllHostsPoints{
+			HostUUID: host.UUID,
+			HostName: host.Name,
+			Points:   points,
+			Error:    err,
+			Count:    len(points),
+		}
+		out = append(out, newHost)
+	}
+	return out
+}
+
 func (inst *RQL) GetPoint(hostIDName, uuid string) any {
 	resp, err := cli.GetPoint(hostIDName, uuid)
 	if err != nil {

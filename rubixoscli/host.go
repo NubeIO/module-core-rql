@@ -6,13 +6,15 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) GetHosts() (data []model.Host, response *Response) {
+func (inst *Client) GetHosts() (data []model.Host, err error) {
 	path := fmt.Sprintf("%s?with_tags=true&with_comments=true&with_views=true", Paths.Hosts.Path)
-	response = &Response{}
 	resp, err := inst.Rest.R().
 		SetResult(&[]model.Host{}).
 		Get(path)
-	return *resp.Result().(*[]model.Host), response.buildResponse(resp, err)
+	if err != nil {
+		return nil, err
+	}
+	return *resp.Result().(*[]model.Host), nil
 }
 
 func (inst *Client) GetHost(uuid string) (data *model.Host, err error) {

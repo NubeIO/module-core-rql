@@ -4,6 +4,14 @@ import (
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
 )
 
+func (inst *RQL) GetHosts() any {
+	resp, err := cli.GetHosts()
+	if err != nil {
+		return err
+	}
+	return resp
+}
+
 func (inst *RQL) GetGroups() any {
 	resp, err := cli.GetHostNetworks()
 	if err != nil {
