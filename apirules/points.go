@@ -14,12 +14,41 @@ func (inst *RQL) GetPoints(hostIDName string) any {
 	return resp
 }
 
-func (inst *RQL) GetPointsByModule(hostIDName, name string) any {
-	resp, err := cli.GetPointsByModule(hostIDName, name)
+func (inst *RQL) GetPointsByModule(hostIDName, moduleName string) any {
+	resp, err := cli.GetPointsByModule(hostIDName, moduleName)
 	if err != nil {
 		return err
 	}
 	return resp
+}
+
+type AllHostsPointsByModule struct {
+	HostUUID string
+	HostName string
+	Points   []*model.Point
+	Error    error
+	Count    int
+}
+
+func (inst *RQL) GetPointsByModuleAllHosts(moduleName string) any {
+	resp, err := cli.GetHosts()
+	if err != nil {
+		return err
+	}
+	var out []AllHostsPointsByModule
+	for _, host := range resp {
+		hostUUID := host.UUID
+		points, err := cli.GetPointsByModule(hostUUID, moduleName)
+		newHost := AllHostsPointsByModule{
+			HostUUID: host.UUID,
+			HostName: host.Name,
+			Points:   points,
+			Error:    err,
+			Count:    len(points),
+		}
+		out = append(out, newHost)
+	}
+	return out
 }
 
 type AllHostsPoints struct {

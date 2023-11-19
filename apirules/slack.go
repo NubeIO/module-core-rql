@@ -5,12 +5,29 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func (inst *RQL) Slack(token, channelId, message string) any {
+/*
+let token = "";
+let channel = "C066S807J2D";
+let title = "DCJ";
+let message = `new message ${RQL.RandInt(1, 100)}`;
+let colour = "#FF0000";
+
+RQL.Result = RQL.Slack(token, channel, title, message, colour);
+*/
+
+func (inst *RQL) Slack(token, channelId, title, message, colour string) any {
 	api := slack.New(token)
+	if colour == "" {
+		colour = "#3AA3E3"
+	}
+	attachment := slack.Attachment{
+		Title: title,
+		Text:  message,
+		Color: colour,
+	}
 	channelID, _, err := api.PostMessage(
 		channelId,
-		slack.MsgOptionText(message, false),
-		slack.MsgOptionAsUser(true), // Add this if you want that the bot would post message as a user, otherwise it will send response using the default slackbot
+		slack.MsgOptionAttachments(attachment),
 	)
 	if err != nil {
 		return err

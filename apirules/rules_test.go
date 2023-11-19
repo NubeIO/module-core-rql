@@ -9,26 +9,30 @@ import (
 
 func TestPG(t *testing.T) {
 	var ChannelId = "C066S807J2D"
-	api := slack.New("xoxb")
-	//attachment := slack.Attachment{
-	//	Pretext: "alert",
-	//	Text:    "<@UJ6T8ALCR> <@aidan> alert from device ABC",
-	//	// Uncomment the following part to send a field too
-	//	/*
-	//		Fields: []slack.AttachmentField{
-	//			slack.AttachmentField{
-	//				Title: "a",
-	//				Value: "no",
-	//			},
-	//		},
-	//	*/
-	//}
+	api := slack.New("xoxb-5464317668054-cp4cqDdInhyw9qRM79bETeUY")
+	attachment := slack.Attachment{
+		Title: "DCJ",
+		Text:  "count: 66 <@Aidan>",
+		Color: "#FF0000",
+	}
+
+	users, err := api.GetUsers()
+	if err != nil {
+		return
+	}
+
+	for _, user := range users {
+		fmt.Println(user.ID)
+		fmt.Println(user.Name)
+	}
+
+	//fmt.Println(users)
 
 	channelID, timestamp, err := api.PostMessage(
 		ChannelId,
-		slack.MsgOptionText("Ping failed <@Aidan>", false),
-		//slack.MsgOptionAttachments(attachment),
-		slack.MsgOptionAsUser(true), // Add this if you want that the bot would post message as a user, otherwise it will send response using the default slackbot
+		slack.MsgOptionText("", false),
+		slack.MsgOptionAttachments(attachment),
+		//slack.MsgOptionAsUser(true), // Add this if you want that the bot would post message as a user, otherwise it will send response using the default slackbot
 	)
 	if err != nil {
 		fmt.Printf("%s\n", err)
