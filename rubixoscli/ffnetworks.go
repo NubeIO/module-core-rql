@@ -95,7 +95,7 @@ func (inst *Client) FFDeleteNetwork(hostIDName, uuid string) (bool, error) {
 	return true, nil
 }
 
-func (inst *Client) FFGetNetworkByPluginName(hostIDName, pluginName string, withPoints ...bool) (*model.Network, error) {
+func (inst *Client) GetNetworkByPluginName(hostIDName, pluginName string, withPoints ...bool) (*model.Network, error) {
 	url := fmt.Sprintf("/proxy/ros/api/networks/plugin/%s?with_tags=true&with_meta_tags=true", pluginName)
 	if len(withPoints) > 0 {
 		url = fmt.Sprintf("/proxy/ros/api/networks/plugin/%s?with_points=true&with_tags=true&with_meta_tags=true", pluginName)

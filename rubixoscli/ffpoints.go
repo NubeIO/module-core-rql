@@ -69,6 +69,18 @@ func (inst *Client) GetPoints(hostIDName string) ([]model.Point, error) {
 	return out, nil
 }
 
+func (inst *Client) GetPointsByModule(hostIDName, moduleName string) ([]*model.Point, error) {
+	network, err := inst.GetNetworkByPluginName(hostIDName, moduleName, true)
+	if err != nil {
+		return nil, err
+	}
+	var out []*model.Point
+	for _, device := range network.Devices {
+		out = append(out, device.Points...)
+	}
+	return out, nil
+}
+
 func (inst *Client) GetPointPriority(hostIDName, uuid string) (*model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("host-uuid", hostIDName).

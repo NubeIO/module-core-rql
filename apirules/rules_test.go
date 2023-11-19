@@ -8,8 +8,8 @@ import (
 )
 
 func TestPG(t *testing.T) {
-	var ChannelId = "C05DNBFP1M4"
-	api := slack.New("")
+	var ChannelId = "C066S807J2D"
+	api := slack.New("xoxb")
 	//attachment := slack.Attachment{
 	//	Pretext: "alert",
 	//	Text:    "<@UJ6T8ALCR> <@aidan> alert from device ABC",
@@ -26,7 +26,7 @@ func TestPG(t *testing.T) {
 
 	channelID, timestamp, err := api.PostMessage(
 		ChannelId,
-		slack.MsgOptionText("Ping failed <@UJ6T8ALCR>", false),
+		slack.MsgOptionText("Ping failed <@Aidan>", false),
 		//slack.MsgOptionAttachments(attachment),
 		slack.MsgOptionAsUser(true), // Add this if you want that the bot would post message as a user, otherwise it will send response using the default slackbot
 	)

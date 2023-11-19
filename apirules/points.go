@@ -14,6 +14,14 @@ func (inst *RQL) GetPoints(hostIDName string) any {
 	return resp
 }
 
+func (inst *RQL) GetPointsByModule(hostIDName, name string) any {
+	resp, err := cli.GetPointsByModule(hostIDName, name)
+	if err != nil {
+		return err
+	}
+	return resp
+}
+
 type AllHostsPoints struct {
 	HostUUID string
 	HostName string
