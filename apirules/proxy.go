@@ -1,17 +1,23 @@
 package apirules
 
 /*
-let apiGet = RQL.Get("rc", "points?with_priority=true");
-let points = RQL.ToPoints(apiGet.Body());
+	let apiGet = RQL.Get("rc", "points?with_priority=true");
+	let points = RQL.ToPoints(apiGet.Body());
 
-let resp = {
-  status: apiGet.Status(),
-  points: points,
-  count: points.length,
-};
+	let resp = {
+	  status: apiGet.Status(),
+	  points: points,
+	  count: points.length,
+	};
 
-RQL.Result = resp;
+	RQL.Result = resp;
 
+*/
+
+/*
+let apiGet = RQL.Get("rc", "system/device");
+let str = JSON.parse(apiGet.String());
+RQL.Result = str.global_uuid;
 */
 
 func (inst *RQL) Get(hostIDName, path string) any {
