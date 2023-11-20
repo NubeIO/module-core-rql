@@ -1,7 +1,7 @@
 package apirules
 
 import (
-	"fmt"
+	"errors"
 	"github.com/slack-go/slack"
 )
 
@@ -15,7 +15,18 @@ let colour = "#FF0000";
 RQL.Result = RQL.Slack(token, channel, title, message, colour);
 */
 
-func (inst *RQL) Slack(token, channelId, title, message, colour string) any {
+func (inst *RQL) Slack(channelId, title, message, colour string) any {
+
+	c, err := inst.getConfig()
+
+	if c == nil {
+		return errors.New("please add token in config")
+	}
+	token := c.SlackToken
+	if token == "" {
+		return errors.New("please add token in config, maybe after adding restart rubix-os")
+	}
+
 	api := slack.New(token)
 	if colour == "" {
 		colour = "#3AA3E3"
@@ -25,12 +36,12 @@ func (inst *RQL) Slack(token, channelId, title, message, colour string) any {
 		Text:  message,
 		Color: colour,
 	}
-	channelID, _, err := api.PostMessage(
+	_, _, err = api.PostMessage(
 		channelId,
 		slack.MsgOptionAttachments(attachment),
 	)
 	if err != nil {
 		return err
 	}
-	return fmt.Sprintf("message successfully sent to channel %s", channelID)
+	return true
 }

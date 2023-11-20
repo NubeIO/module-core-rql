@@ -14,6 +14,7 @@ type RQL struct {
 	Err       string           `json:"err"`
 	TimeTaken string           `json:"time_taken"`
 	Storage   storage.IStorage `json:"-"`
+	Config    any              `json:"config"`
 }
 
 func getToken() string {

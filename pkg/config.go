@@ -9,8 +9,8 @@ import (
 )
 
 type Config struct {
-	Schedule Schedule `yaml:"schedule"`
-	LogLevel string   `yaml:"log_level"`
+	SlackToken string `yaml:"slack_token"`
+	LogLevel   string `yaml:"log_level"`
 }
 
 type Schedule struct {
@@ -18,13 +18,9 @@ type Schedule struct {
 }
 
 func (inst *Module) DefaultConfig() *Config {
-	schedule := Schedule{
-		Frequency: 60 * time.Second,
-	}
-
 	return &Config{
-		Schedule: schedule,
-		LogLevel: "INFO",
+		SlackToken: "",
+		LogLevel:   "INFO",
 	}
 }
 

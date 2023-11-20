@@ -21,6 +21,7 @@ func (inst *Module) Enable() error {
 	}
 	newClient := &apirules.RQL{
 		Storage: newStorage,
+		Config:  inst.GetConfig(),
 	}
 	props[client] = newClient
 	inst.Rules = eng

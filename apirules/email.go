@@ -33,7 +33,6 @@ func (inst *RQL) sendEmail(body *Mail) any {
 	if body == nil {
 		return errors.New("email body can not be empty")
 	}
-
 	to := body.To
 	if len(to) <= 0 {
 		return errors.New("to address can not be empty")

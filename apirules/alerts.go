@@ -33,6 +33,65 @@ func (inst *RQL) GetAlerts() any {
 	return resp
 }
 
+type alertsByHost struct {
+	HostUUID               string
+	HostName               string
+	AlertsActive           []model.Alert
+	AlertsActiveCount      int
+	AlertsAcknowledge      []model.Alert
+	AlertsAcknowledgeCount int
+	AlertsClosed           []model.Alert
+	AlertsClosedCount      int
+	TotalAlertsCount       int
+	Error                  error
+}
+
+// 	GetAlertsByHost filter active | acknowledge | closed
+func (inst *RQL) GetAlertsByHost() any {
+	resp, err := cli.GetHosts()
+	if err != nil {
+		return err
+	}
+	var out []alertsByHost
+	var alertsActive []model.Alert
+	var alertsAcknowledge []model.Alert
+	var alertsClosed []model.Alert
+	var active = "active"
+	var acknowledge = "acknowledged"
+	var closed = "closed"
+
+	for _, host := range resp {
+		alerts, err := cli.GetAlertsByHost(host.UUID)
+		for _, alert := range alerts {
+			if alert.Status == active {
+				alertsActive = append(alertsActive, alert)
+			}
+			if alert.Status == acknowledge {
+				alertsAcknowledge = append(alertsAcknowledge, alert)
+			}
+			if alert.Status == closed {
+				alertsClosed = append(alertsClosed, alert)
+			}
+		}
+		newHost := alertsByHost{
+			HostUUID:               host.UUID,
+			HostName:               host.Name,
+			AlertsActive:           alertsActive,
+			AlertsActiveCount:      len(alertsActive),
+			AlertsAcknowledge:      alertsAcknowledge,
+			AlertsAcknowledgeCount: len(alertsAcknowledge),
+			AlertsClosed:           alertsClosed,
+			AlertsClosedCount:      len(alertsClosed),
+			TotalAlertsCount:       len(alerts),
+			Error:                  err,
+		}
+		out = append(out, newHost)
+
+	}
+
+	return out
+}
+
 func (inst *RQL) AddAlert(hostIDName string, body any) any {
 	b, err := alertBody(body)
 	if err != nil {

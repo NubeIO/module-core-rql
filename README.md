@@ -140,3 +140,29 @@ for (let host of hostList) {
 RQL.Result = out;
 
 ```
+
+### get all alerts and send a summery to slack
+```js
+let alerts = RQL.GetAlertsByHost("");
+
+let token = "";
+let channel = "C066S807J2D";
+let title = `DCJ Alerts ${RQL.Day()} ${RQL.Date()}`;
+
+let colour = "#FF0000";
+
+let message = "";
+
+for (let i = 0; i < alerts.length; i++) {
+  let alert = alerts[i];
+  let hostName = alert.HostName;
+  let alertsCount = alert.TotalAlertsCount;
+  let alertsActiveCount = alert.AlertsActiveCount;
+
+  message += `host: *${hostName}*:  total-count: *${alertsCount}* active-count: *${alertsActiveCount}*`;
+  message += "\n";
+}
+
+RQL.Result = RQL.Slack(token, channel, title, message, colour);
+
+```

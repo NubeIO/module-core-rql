@@ -9,7 +9,7 @@ import (
 
 func TestPG(t *testing.T) {
 	var ChannelId = "C066S807J2D"
-	api := slack.New("xoxb-5464317668054-cp4cqDdInhyw9qRM79bETeUY")
+	api := slack.New("")
 	attachment := slack.Attachment{
 		Title: "DCJ",
 		Text:  "count: 66 <@Aidan>",
