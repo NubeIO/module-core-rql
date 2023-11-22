@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.0.6
+
+- Add methods to get all points from all hosts
+- update to slack method
+
 ## [v0.0.5](https://github.com/NubeIO/module-core-rql/tree/v0.0.5) (2023-10-18)
 
 - Fix: rox proxy path
