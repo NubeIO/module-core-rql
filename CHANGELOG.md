@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.0.7
+- Test
+
 ## v0.0.6
 
 - Add methods to get all points from all hosts
