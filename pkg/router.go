@@ -30,6 +30,10 @@ func InitRouter() {
 }
 
 func (m *Module) CallModule(method http.Method, api string, args nargs.Args, body []byte) ([]byte, error) {
+	err := m.check()
+	if err != nil {
+		return nil, err
+	}
 	module := shared.Module(m)
 	return route.CallHandler(&module, method, api, args, body)
 }
