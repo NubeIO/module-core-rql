@@ -3,15 +3,14 @@ package rubixoscli
 import (
 	"fmt"
 
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) GetPointHistories(hostIDName string, pointUUIDs []string) ([]model.PointHistory, error) {
-	url := fmt.Sprintf("/proxy/ros/api/histories/points/point_uuids")
+func (inst *Client) GetPointHistories(hostUUID string, pointUUIDs []string) ([]model.PointHistory, error) {
+	url := fmt.Sprintf("/host/ros/api/histories/points/point-uuids")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]model.PointHistory{}).
 		SetBody(pointUUIDs).
 		Post(url))
@@ -23,11 +22,10 @@ func (inst *Client) GetPointHistories(hostIDName string, pointUUIDs []string) ([
 	return out, nil
 }
 
-func (inst *Client) GetPointHistoriesWithInterval(hostIDName, lowerBound, upperBound string, pointUUIDs []string) ([]model.PointHistory, error) {
-	url := fmt.Sprintf("/proxy/ros/api/histories/points/point_uuids?timestamp_gt=%s&&timestamp_lt=%s", lowerBound, upperBound)
+func (inst *Client) GetPointHistoriesWithInterval(hostUUID, lowerBound, upperBound string, pointUUIDs []string) ([]model.PointHistory, error) {
+	url := fmt.Sprintf("/host/ros/api/histories/points/point-uuids?timestamp_gt=%s&&timestamp_lt=%s", lowerBound, upperBound)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]model.PointHistory{}).
 		SetBody(pointUUIDs).
 		Post(url))

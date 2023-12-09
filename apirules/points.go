@@ -3,7 +3,7 @@ package apirules
 import (
 	"encoding/json"
 	"github.com/NubeIO/module-core-rql/helpers/float"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 )
 
 // GetPoints retrieves points from the RubixOS API for the given host ID name.

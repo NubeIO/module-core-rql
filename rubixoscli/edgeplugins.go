@@ -6,11 +6,10 @@ import (
 	"github.com/NubeIO/rubix-ui/backend/rumodel"
 )
 
-func (inst *Client) EdgeGetPlugins(hostIDName string) ([]rumodel.Plugin, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins")
+func (inst *Client) EdgeGetPlugins(hostUUID string) ([]rumodel.Plugin, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]rumodel.Plugin{}).
 		Get(url))
 	if err != nil {
@@ -20,11 +19,10 @@ func (inst *Client) EdgeGetPlugins(hostIDName string) ([]rumodel.Plugin, error) 
 	return *data, nil
 }
 
-func (inst *Client) EdgeGetPlugin(hostIDName, pluginName string) (*rumodel.Plugin, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/path/%s", pluginName)
+func (inst *Client) EdgeGetPlugin(hostUUID, pluginName string) (*rumodel.Plugin, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/name/%s", pluginName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&rumodel.Plugin{}).
 		Get(url))
 	if err != nil {
@@ -33,11 +31,10 @@ func (inst *Client) EdgeGetPlugin(hostIDName, pluginName string) (*rumodel.Plugi
 	return resp.Result().(*rumodel.Plugin), nil
 }
 
-func (inst *Client) EdgeGetConfigPlugin(hostIDName, pluginName string) (*string, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/config/%s?by_plugin_name=true", pluginName)
+func (inst *Client) EdgeGetConfigPlugin(hostUUID, pluginName string) (*string, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/%s/config?by_plugin_name=true", pluginName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(url))
 	if err != nil {
 		return nil, err
@@ -46,12 +43,11 @@ func (inst *Client) EdgeGetConfigPlugin(hostIDName, pluginName string) (*string,
 	return &response, nil
 }
 
-func (inst *Client) EdgeUpdateConfigPlugin(hostIDName, pluginName, config string) (*string, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/config/%s?by_plugin_name=true", pluginName)
+func (inst *Client) EdgeUpdateConfigPlugin(hostUUID, pluginName, config string) (*string, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/%s/config?by_plugin_name=true", pluginName)
 	body := map[string]string{"data": config}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Post(url))
 	if err != nil {
@@ -61,12 +57,11 @@ func (inst *Client) EdgeUpdateConfigPlugin(hostIDName, pluginName, config string
 	return &response, nil
 }
 
-func (inst *Client) EdgeEnablePlugin(hostIDName, pluginName string, enable bool) (*string, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/enable/%s?by_plugin_name=true", pluginName)
+func (inst *Client) EdgeEnablePlugin(hostUUID, pluginName string, enable bool) (*string, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/%s/enable?by_plugin_name=true", pluginName)
 	body := map[string]bool{"enabled": enable}
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Post(url))
 	if err != nil {
@@ -80,11 +75,10 @@ func (inst *Client) EdgeEnablePlugin(hostIDName, pluginName string, enable bool)
 	return &output, nil
 }
 
-func (inst *Client) EdgeRestartPlugin(hostIDName, pluginName string) (*string, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/restart/%s?by_plugin_name=true", pluginName)
+func (inst *Client) EdgeRestartPlugin(hostUUID, pluginName string) (*string, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/%s/restart?by_plugin_name=true", pluginName)
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Post(url))
 	if err != nil {
 		return nil, err

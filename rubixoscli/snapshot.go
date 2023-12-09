@@ -66,11 +66,10 @@ type SnapshotRestoreLog struct {
 	CreatedAt   time.Time     `json:"created_at" get:"true"`
 }
 
-func (inst *Client) EdgeGetSnapshots(hostIDName string) ([]Snapshots, error) {
-	url := fmt.Sprintf("/api/edge/snapshots")
+func (inst *Client) EdgeGetSnapshots(hostUUID string) ([]Snapshots, error) {
+	url := fmt.Sprintf("/api/host/snapshots")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]Snapshots{}).
 		Get(url))
 	if err != nil {
@@ -87,11 +86,10 @@ func (inst *Client) EdgeGetSnapshots(hostIDName string) ([]Snapshots, error) {
 	return out, nil
 }
 
-func (inst *Client) EdgeGetSnapshotsCreateLogs(hostIDName string) ([]SnapshotCreateLog, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/create-logs")
+func (inst *Client) EdgeGetSnapshotsCreateLogs(hostUUID string) ([]SnapshotCreateLog, error) {
+	url := fmt.Sprintf("/api/host/snapshots/create-logs")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]SnapshotCreateLog{}).
 		Get(url))
 	if err != nil {
@@ -102,11 +100,10 @@ func (inst *Client) EdgeGetSnapshotsCreateLogs(hostIDName string) ([]SnapshotCre
 	return out, nil
 }
 
-func (inst *Client) EdgeEditSnapshotLog(hostIDName string, uuid string, body *SnapshotCreateRequest) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/create-logs/%s", uuid)
+func (inst *Client) EdgeEditSnapshotLog(hostUUID string, uuid string, body *SnapshotCreateRequest) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/create-logs/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&Message{}).
 		Patch(url))
@@ -116,11 +113,10 @@ func (inst *Client) EdgeEditSnapshotLog(hostIDName string, uuid string, body *Sn
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeDeleteSnapshotLog(hostIDName string, uuid string) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/create-logs/%s", uuid)
+func (inst *Client) EdgeDeleteSnapshotLog(hostUUID string, uuid string) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/create-logs/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		Delete(url))
 	if err != nil {
@@ -129,11 +125,10 @@ func (inst *Client) EdgeDeleteSnapshotLog(hostIDName string, uuid string) (*Mess
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeGetSnapshotsRestoreLogs(hostIDName string) ([]SnapshotRestoreLog, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/restore-logs")
+func (inst *Client) EdgeGetSnapshotsRestoreLogs(hostUUID string) ([]SnapshotRestoreLog, error) {
+	url := fmt.Sprintf("/api/host/snapshots/restore-logs")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]SnapshotRestoreLog{}).
 		Get(url))
 	if err != nil {
@@ -144,11 +139,10 @@ func (inst *Client) EdgeGetSnapshotsRestoreLogs(hostIDName string) ([]SnapshotRe
 	return out, nil
 }
 
-func (inst *Client) EdgeEditSnapshotRestoreLog(hostIDName string, uuid string, body *SnapshotCreateRequest) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/restore-logs/%s", uuid)
+func (inst *Client) EdgeEditSnapshotRestoreLog(hostUUID string, uuid string, body *SnapshotCreateRequest) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/restore-logs/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&Message{}).
 		Patch(url))
@@ -158,11 +152,10 @@ func (inst *Client) EdgeEditSnapshotRestoreLog(hostIDName string, uuid string, b
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeDeleteSnapshotRestoreLog(hostIDName string, uuid string) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/restore-logs/%s", uuid)
+func (inst *Client) EdgeDeleteSnapshotRestoreLog(hostUUID string, uuid string) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/restore-logs/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		Delete(url))
 	if err != nil {
@@ -171,11 +164,10 @@ func (inst *Client) EdgeDeleteSnapshotRestoreLog(hostIDName string, uuid string)
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeCreateSnapshot(hostIDName string, body *SnapshotCreateRequest) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/create")
+func (inst *Client) EdgeCreateSnapshot(hostUUID string, body *SnapshotCreateRequest) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/create")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&Message{}).
 		Post(url))
@@ -185,11 +177,10 @@ func (inst *Client) EdgeCreateSnapshot(hostIDName string, body *SnapshotCreateRe
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeEditSnapshot(hostIDName, fileName string, body *SnapshotCreateRequest) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/%s", fileName)
+func (inst *Client) EdgeEditSnapshot(hostUUID, fileName string, body *SnapshotCreateRequest) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/file/%s", fileName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&Message{}).
 		Patch(url))
@@ -199,11 +190,10 @@ func (inst *Client) EdgeEditSnapshot(hostIDName, fileName string, body *Snapshot
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeDeleteSnapshot(hostIDName, fileName string) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots?file=%s", fileName)
+func (inst *Client) EdgeDeleteSnapshot(hostUUID, fileName string) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots?file=%s", fileName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		Delete(url))
 	if err != nil {
@@ -212,8 +202,8 @@ func (inst *Client) EdgeDeleteSnapshot(hostIDName, fileName string) (*Message, e
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeUploadSnapshot(hostIDName, description, path string) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/upload")
+func (inst *Client) EdgeUploadSnapshot(hostUUID, description, path string) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/upload")
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -250,13 +240,12 @@ func (inst *Client) EdgeUploadSnapshot(hostIDName, description, path string) (*M
 	return resp.Result().(*Message), nil
 }
 
-func (inst *Client) EdgeDownloadSnapshot(hostIDName, fileName, destination string) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/download?file=%s", fileName)
+func (inst *Client) EdgeDownloadSnapshot(hostUUID, fileName, destination string) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/download?file=%s", fileName)
 	fmt.Println(url)
 
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Post(url))
 	if err != nil {
 		return nil, err
@@ -267,11 +256,10 @@ func (inst *Client) EdgeDownloadSnapshot(hostIDName, fileName, destination strin
 	}, nil
 }
 
-func (inst *Client) EdgeRestoreSnapshot(hostIDName string, body *SnapshotRestoreRequest) (*Message, error) {
-	url := fmt.Sprintf("/api/edge/snapshots/restore")
+func (inst *Client) EdgeRestoreSnapshot(hostUUID string, body *SnapshotRestoreRequest) (*Message, error) {
+	url := fmt.Sprintf("/api/host/snapshots/restore")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&Message{}).
 		Post(url))

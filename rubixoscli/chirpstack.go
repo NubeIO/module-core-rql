@@ -11,12 +11,11 @@ const limit = "2000"
 // most nube supported sensors are now added as OTA devices
 
 // CSLogin to CS with username and password to get token if not provided in config
-func (inst *Client) CSLogin(hostIDName, user, pass string) (string, error) {
+func (inst *Client) CSLogin(hostUUID, user, pass string) (string, error) {
 	token := &CSLoginToken{}
-	url := "/proxy/chirp/api/internal/login"
+	url := "/chirp/api/internal/login"
 	_, err := inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(CSCredentials{
 			Email:    user,
 			Password: pass,
@@ -30,12 +29,11 @@ func (inst *Client) CSLogin(hostIDName, user, pass string) (string, error) {
 }
 
 // CSGetAdminTokens get all https://github.com/NubeIO/rubix-ce/issues/890
-func (inst *Client) CSGetAdminTokens(hostIDName, token string) (*chirpstack.GetTokens, error) {
-	q := fmt.Sprintf("/proxy/chirp/api/internal/api-keys?limit=30&isAdmin=true")
+func (inst *Client) CSGetAdminTokens(hostUUID, token string) (*chirpstack.GetTokens, error) {
+	q := fmt.Sprintf("/chirp/api/internal/api-keys?limit=30&isAdmin=true")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.GetTokens{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetHeader("cs-token", token).
 		Get(q))
 	if err != nil {
@@ -44,12 +42,11 @@ func (inst *Client) CSGetAdminTokens(hostIDName, token string) (*chirpstack.GetT
 	return resp.Result().(*chirpstack.GetTokens), nil
 }
 
-func (inst *Client) CSAddAdminToken(hostIDName, token string, body *chirpstack.AdminToken) (*chirpstack.AdminTokenResponse, error) {
-	q := fmt.Sprintf("/proxy/chirp/api/internal/api-keys")
+func (inst *Client) CSAddAdminToken(hostUUID, token string, body *chirpstack.AdminToken) (*chirpstack.AdminTokenResponse, error) {
+	q := fmt.Sprintf("/chirp/api/internal/api-keys")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.AdminTokenResponse{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetHeader("cs-token", token).
 		SetBody(body).
 		Post(q))
@@ -75,12 +72,11 @@ type CSLoginToken struct {
 }
 
 // CSGetApplications get all
-func (inst *Client) CSGetApplications(hostIDName string) (*chirpstack.Applications, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/applications=%s", limit)
+func (inst *Client) CSGetApplications(hostUUID string) (*chirpstack.Applications, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/applications=%s", limit)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Applications{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(q))
 	if err != nil {
 		return nil, err
@@ -89,12 +85,11 @@ func (inst *Client) CSGetApplications(hostIDName string) (*chirpstack.Applicatio
 }
 
 // CSGetGateways get all gateways
-func (inst *Client) CSGetGateways(hostIDName string) (*chirpstack.Gateways, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/gateways?limit=%s", limit)
+func (inst *Client) CSGetGateways(hostUUID string) (*chirpstack.Gateways, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/gateways?limit=%s", limit)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Gateways{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(q))
 	if err != nil {
 		return nil, err
@@ -103,12 +98,11 @@ func (inst *Client) CSGetGateways(hostIDName string) (*chirpstack.Gateways, erro
 }
 
 // CSGetDevices get all
-func (inst *Client) CSGetDevices(hostIDName, applicationID string) (*chirpstack.Devices, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices?limit=%s&applicationID=%s", limit, applicationID)
+func (inst *Client) CSGetDevices(hostUUID, applicationID string) (*chirpstack.Devices, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices?limit=%s&applicationID=%s", limit, applicationID)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Devices{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(q))
 	if err != nil {
 		return nil, err
@@ -117,12 +111,11 @@ func (inst *Client) CSGetDevices(hostIDName, applicationID string) (*chirpstack.
 }
 
 // CSGetDevice get a device
-func (inst *Client) CSGetDevice(hostIDName, devEui string) (*chirpstack.Device, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+func (inst *Client) CSGetDevice(hostUUID, devEui string) (*chirpstack.Device, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Device{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(q))
 	if err != nil {
 		return nil, err
@@ -131,12 +124,11 @@ func (inst *Client) CSGetDevice(hostIDName, devEui string) (*chirpstack.Device, 
 }
 
 // CSGetDeviceProfiles get all
-func (inst *Client) CSGetDeviceProfiles(hostIDName string) (*chirpstack.DeviceProfiles, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/device-profiles?limit=%s", limit)
+func (inst *Client) CSGetDeviceProfiles(hostUUID string) (*chirpstack.DeviceProfiles, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/device-profiles?limit=%s", limit)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceProfiles{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(q))
 	if err != nil {
 		return nil, err
@@ -145,12 +137,11 @@ func (inst *Client) CSGetDeviceProfiles(hostIDName string) (*chirpstack.DevicePr
 }
 
 // CSAddDevice add all
-func (inst *Client) CSAddDevice(hostIDName string, body *chirpstack.Device) (*chirpstack.Device, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices")
+func (inst *Client) CSAddDevice(hostUUID string, body *chirpstack.Device) (*chirpstack.Device, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Device{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Post(q))
 	if err != nil {
@@ -160,12 +151,11 @@ func (inst *Client) CSAddDevice(hostIDName string, body *chirpstack.Device) (*ch
 }
 
 // CSEditDevice edit object
-func (inst *Client) CSEditDevice(hostIDName, devEui string, body *chirpstack.Device) (*chirpstack.Device, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices/%s/", devEui)
+func (inst *Client) CSEditDevice(hostUUID, devEui string, body *chirpstack.Device) (*chirpstack.Device, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Device{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Put(q))
 	if err != nil {
@@ -175,11 +165,10 @@ func (inst *Client) CSEditDevice(hostIDName, devEui string, body *chirpstack.Dev
 }
 
 // CSDeleteDevice delete
-func (inst *Client) CSDeleteDevice(hostIDName, devEui string) (bool, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+func (inst *Client) CSDeleteDevice(hostUUID, devEui string) (bool, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Delete(q))
 	if err != nil {
 		return false, err
@@ -188,12 +177,11 @@ func (inst *Client) CSDeleteDevice(hostIDName, devEui string) (bool, error) {
 }
 
 // CSDeviceOTAKeysUpdate active a device
-func (inst *Client) CSDeviceOTAKeysUpdate(hostIDName, devEui string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
+func (inst *Client) CSDeviceOTAKeysUpdate(hostUUID, devEui string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceKey{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Put(q))
 	if err != nil {
@@ -204,12 +192,11 @@ func (inst *Client) CSDeviceOTAKeysUpdate(hostIDName, devEui string, body *chirp
 }
 
 // CSDeviceOTAKeys active a device
-func (inst *Client) CSDeviceOTAKeys(hostIDName, devEui string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
+func (inst *Client) CSDeviceOTAKeys(hostUUID, devEui string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceKey{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Post(q))
 	if err != nil {
@@ -220,12 +207,11 @@ func (inst *Client) CSDeviceOTAKeys(hostIDName, devEui string, body *chirpstack.
 }
 
 // CSActivateDevice active a device
-func (inst *Client) CSActivateDevice(hostIDName, devEui string, body *chirpstack.DeviceActivation) (*chirpstack.DeviceActivation, error) {
-	q := fmt.Sprintf("/proxy/ros/api/plugins/api/lorawan/cs/devices/activate/%s", devEui)
+func (inst *Client) CSActivateDevice(hostUUID, devEui string, body *chirpstack.DeviceActivation) (*chirpstack.DeviceActivation, error) {
+	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/activate/%s", devEui)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceActivation{}).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Put(q))
 	if err != nil {

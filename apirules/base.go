@@ -2,10 +2,10 @@ package apirules
 
 import (
 	"fmt"
+	"github.com/NubeIO/lib-module-go/shared"
 	"github.com/NubeIO/module-core-rql/rubixoscli"
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/NubeIO/rubix-os/installer"
-	"github.com/NubeIO/rubix-os/module/shared"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 )

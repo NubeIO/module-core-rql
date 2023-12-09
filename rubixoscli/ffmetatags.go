@@ -17,12 +17,11 @@ type NetworkTags struct {
 	Value       string `json:"value"`
 }
 
-func (inst *Client) FFAddNetworkTags(hostIDName, uuid string, body []*MetaTags) ([]NetworkTags, error) {
+func (inst *Client) FFAddNetworkTags(hostUUID, uuid string, body []*MetaTags) ([]NetworkTags, error) {
 	tagsType := "networks"
-	url := fmt.Sprintf("/proxy/ros/api/%s/meta_tags/uuid/%s", tagsType, uuid)
+	url := fmt.Sprintf("/host/ros/api/%s/%s/meta-tags", tagsType, uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]NetworkTags{}).
 		SetBody(body).
 		Put(url))
@@ -46,12 +45,11 @@ type DeviceTags struct {
 	Value      string `json:"value"`
 }
 
-func (inst *Client) FFAddDeviceTags(hostIDName, uuid string, body []*MetaTags) ([]DeviceTags, error) {
+func (inst *Client) FFAddDeviceTags(hostUUID, uuid string, body []*MetaTags) ([]DeviceTags, error) {
 	tagsType := "devices"
-	url := fmt.Sprintf("/proxy/ros/api/%s/meta_tags/uuid/%s", tagsType, uuid)
+	url := fmt.Sprintf("/host/ros/api/%s/%s/meta-tags", tagsType, uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]DeviceTags{}).
 		SetBody(body).
 		Put(url))
@@ -75,12 +73,11 @@ type PointTags struct {
 	Value      string `json:"value"`
 }
 
-func (inst *Client) FFAddPointTags(hostIDName, uuid string, body []*MetaTags) ([]PointTags, error) {
+func (inst *Client) FFAddPointTags(hostUUID, uuid string, body []*MetaTags) ([]PointTags, error) {
 	tagsType := "points"
-	url := fmt.Sprintf("/proxy/ros/api/%s/meta_tags/uuid/%s", tagsType, uuid)
+	url := fmt.Sprintf("/host/ros/api/%s/%s/meta-tags", tagsType, uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]PointTags{}).
 		SetBody(body).
 		Put(url))

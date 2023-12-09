@@ -7,11 +7,10 @@ import (
 	"github.com/NubeIO/rubix-os/src/cli/bioscli/bmodel"
 )
 
-func (inst *Client) EdgeBiosRubixOsOnEdgeUpload(hostIDName string, upload interfaces.FileUpload) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/eb/ros/upload")
+func (inst *Client) EdgeBiosRubixOsOnEdgeUpload(hostUUID string, upload interfaces.FileUpload) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/host/ros/upload")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(upload).
 		SetResult(&interfaces.Message{}).
 		Post(url))
@@ -21,11 +20,10 @@ func (inst *Client) EdgeBiosRubixOsOnEdgeUpload(hostIDName string, upload interf
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeBiosRubixOsOnEdgeInstall(hostIDName string, upload interfaces.FileUpload) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/eb/ros/install")
+func (inst *Client) EdgeBiosRubixOsOnEdgeInstall(hostUUID string, upload interfaces.FileUpload) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/host/ros/install")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(upload).
 		SetResult(&interfaces.Message{}).
 		Post(url))
@@ -35,11 +33,10 @@ func (inst *Client) EdgeBiosRubixOsOnEdgeInstall(hostIDName string, upload inter
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeBiosRubixOsOnEdgeVersion(hostIDName string) (*bmodel.Version, error) {
-	url := fmt.Sprintf("/api/eb/ros/version")
+func (inst *Client) EdgeBiosRubixOsOnEdgeVersion(hostUUID string) (*bmodel.Version, error) {
+	url := fmt.Sprintf("/api/host/ros/version")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&bmodel.Version{}).
 		Get(url))
 	if err != nil {

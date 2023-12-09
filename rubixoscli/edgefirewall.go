@@ -8,11 +8,10 @@ import (
 	"github.com/NubeIO/rubix-os/services/system"
 )
 
-func (inst *Client) EdgeFirewallList(hostIDName string) ([]ufw.UFWStatus, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/firewall/")
+func (inst *Client) EdgeFirewallList(hostUUID string) ([]ufw.UFWStatus, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/firewall")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]ufw.UFWStatus{}).
 		Get(url))
 	if err != nil {
@@ -21,11 +20,10 @@ func (inst *Client) EdgeFirewallList(hostIDName string) ([]ufw.UFWStatus, error)
 	return *resp.Result().(*[]ufw.UFWStatus), nil
 }
 
-func (inst *Client) EdgeFirewallStatus(hostIDName string) (*ufw.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/firewall/status/")
+func (inst *Client) EdgeFirewallStatus(hostUUID string) (*ufw.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/firewall/status")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&ufw.Message{}).
 		Post(url))
 	if err != nil {
@@ -34,11 +32,10 @@ func (inst *Client) EdgeFirewallStatus(hostIDName string) (*ufw.Message, error) 
 	return resp.Result().(*ufw.Message), nil
 }
 
-func (inst *Client) EdgeFirewallEnable(hostIDName string) (*ufw.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/firewall/enable/")
+func (inst *Client) EdgeFirewallEnable(hostUUID string) (*ufw.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/firewall/enable")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&ufw.Message{}).
 		Post(url))
 	if err != nil {
@@ -47,11 +44,10 @@ func (inst *Client) EdgeFirewallEnable(hostIDName string) (*ufw.Message, error) 
 	return resp.Result().(*ufw.Message), nil
 }
 
-func (inst *Client) EdgeFirewallDisable(hostIDName string) (*ufw.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/firewall/disable/")
+func (inst *Client) EdgeFirewallDisable(hostUUID string) (*ufw.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/firewall/disable")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&ufw.Message{}).
 		Post(url))
 	if err != nil {
@@ -60,11 +56,10 @@ func (inst *Client) EdgeFirewallDisable(hostIDName string) (*ufw.Message, error)
 	return resp.Result().(*ufw.Message), nil
 }
 
-func (inst *Client) EdgeFirewallPortOpen(hostIDName string, body system.UFWBody) (*ufw.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/firewall/port/open/")
+func (inst *Client) EdgeFirewallPortOpen(hostUUID string, body system.UFWBody) (*ufw.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/firewall/port/open")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&ufw.Message{}).
 		Post(url))
@@ -74,8 +69,8 @@ func (inst *Client) EdgeFirewallPortOpen(hostIDName string, body system.UFWBody)
 	return resp.Result().(*ufw.Message), nil
 }
 
-func (inst *Client) EdgeFirewallPortClose(hostIDName string, body system.UFWBody) (*ufw.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/firewall/port/close/")
+func (inst *Client) EdgeFirewallPortClose(hostUUID string, body system.UFWBody) (*ufw.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/firewall/port/close")
 	if body.Port == 1662 {
 		return nil, errors.New("port 1662 can not be closed")
 	}
@@ -83,8 +78,7 @@ func (inst *Client) EdgeFirewallPortClose(hostIDName string, body system.UFWBody
 		return nil, errors.New("port 22 can not be closed")
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&ufw.Message{}).
 		Post(url))

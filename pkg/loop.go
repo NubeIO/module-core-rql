@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (inst *Module) addAll(allRules []storage.RQLRule) {
+func (m *Module) addAll(allRules []storage.RQLRule) {
 	for _, rule := range allRules {
 		name := rule.Name
 		schedule := rule.Schedule
@@ -18,40 +18,40 @@ func (inst *Module) addAll(allRules []storage.RQLRule) {
 			Script:   script,
 			Schedule: schedule,
 		}
-		err := inst.Rules.AddRule(newRule, inst.Props)
+		err := m.Rules.AddRule(newRule, m.Props)
 		if err != nil {
 			log.Info(fmt.Sprintf("%s", err.Error()))
 		}
 	}
 }
 
-func (inst *Module) Loop() {
+func (m *Module) Loop() {
 	var firstLoop = true
 	for {
-		if inst.ErrorOnDB {
+		if m.ErrorOnDB {
 			continue
 		}
-		allRules, err := inst.Storage.SelectAllEnabledRules()
+		allRules, err := m.Storage.SelectAllEnabledRules()
 		if err != nil {
 			continue
 		}
 		if firstLoop {
-			inst.addAll(allRules) // add all existing rules from DB
+			m.addAll(allRules) // add all existing rules from DB
 		}
-		for _, rule := range allRules { //TODO add a lock, so we can add a goroutine
+		for _, rule := range allRules { // TODO add a lock, so we can add a goroutine
 			if !rule.Enable {
 				continue
 			}
-			canRun, err := inst.Rules.CanExecute(rule.Name)
+			canRun, err := m.Rules.CanExecute(rule.Name)
 			if err != nil {
 				log.Errorf("%s: run rules loop execute err: %s", name, err.Error())
 			}
 			if canRun != nil && rule.Enable {
 				if canRun.CanRun {
-					result, err := inst.Rules.ExecuteWithScript(rule.Name, inst.Props, rule.Script, rule.Schedule)
+					result, err := m.Rules.ExecuteWithScript(rule.Name, m.Props, rule.Script, rule.Schedule)
 					if err != nil {
 						log.Errorf("%s: run rules loop execute-with-script err: %s", name, err.Error())
-						_, e := inst.Storage.UpdateResult(rule.UUID, err.Error())
+						_, e := m.Storage.UpdateResult(rule.UUID, err.Error())
 						if e != nil {
 							log.Errorf("%s: run rules loop update-result err: %s", name, e.Error())
 						}
@@ -61,7 +61,7 @@ func (inst *Module) Loop() {
 						continue
 					}
 					if result.String() != "undefined" {
-						_, err := inst.Storage.UpdateResult(rule.UUID, returnType(result))
+						_, err := m.Storage.UpdateResult(rule.UUID, returnType(result))
 						log.Info(result)
 						if err != nil {
 							log.Errorf("%s: run rules loop update-result err: %s", name, err.Error())

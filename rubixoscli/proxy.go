@@ -3,76 +3,61 @@ package rubixoscli
 import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"strings"
+	"path"
 )
 
-func fixPath(path string) string {
-	path = strings.Replace(path, "//", "/", -1) // makes this /api//host/123 => /api/host/123
-	return path
-}
-
-func (inst *Client) ProxyGET(hostIDName, path string) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/api/%s", path)
-	path = fixPath(path)
+func (inst *Client) ProxyHostRosGET(hostUUID, url string) (*resty.Response, error) {
+	url = path.Join("/host/ros", url)
 	resp, err := inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
-		Get(path)
+		SetHeader("X-Host", hostUUID).
+		Get(url)
 	if err != nil {
 		return nil, err
 	}
 	return resp, err
 }
 
-func (inst *Client) ProxyPOST(hostIDName, path string, body interface{}) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/api/%s", path)
-	path = fixPath(path)
+func (inst *Client) ProxyHostRosPOST(hostUUID, url string, body interface{}) (*resty.Response, error) {
+	url = path.Join("/host/ros", url)
 	resp, err := inst.Rest.R().
 		SetBody(body).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
-		Post(path)
+		SetHeader("X-Host", hostUUID).
+		Post(url)
 	if err != nil {
 		return nil, err
 	}
 	return resp, err
 }
 
-func (inst *Client) ProxyPATCH(hostIDName, path string, body interface{}) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/api/%s", path)
-	path = fixPath(path)
+func (inst *Client) ProxyHostRosPATCH(hostUUID, url string, body interface{}) (*resty.Response, error) {
+	url = path.Join("/host/ros", url)
 	resp, err := inst.Rest.R().
 		SetBody(body).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
-		Patch(path)
+		SetHeader("X-Host", hostUUID).
+		Patch(url)
 	if err != nil {
 		return nil, err
 	}
 	return resp, err
 }
 
-func (inst *Client) ProxyPUT(hostIDName, path string, body interface{}) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/api/%s", path)
-	path = fixPath(path)
+func (inst *Client) ProxyHostRosPUT(hostUUID, url string, body interface{}) (*resty.Response, error) {
+	url = path.Join("/host/ros", url)
 	resp, err := inst.Rest.R().
 		SetBody(body).
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
-		Put(path)
+		SetHeader("X-Host", hostUUID).
+		Put(url)
 	if err != nil {
 		return nil, err
 	}
 	return resp, err
 }
 
-func (inst *Client) ProxyDELETE(hostIDName, path string) (*resty.Response, error) {
-	path = fmt.Sprintf("/proxy/api/%s", path)
-	path = fixPath(path)
+func (inst *Client) ProxyHostRosDELETE(hostUUID, url string) (*resty.Response, error) {
+	url = fmt.Sprintf("/host/ros/%s", url)
 	resp, err := inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
-		Delete(path)
+		SetHeader("X-Host", hostUUID).
+		Delete(url)
 	if err != nil {
 		return nil, err
 	}

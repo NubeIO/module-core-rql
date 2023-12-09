@@ -7,11 +7,10 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) FFLogin(hostIDName string, body *user.User) (*TokenResponse, error) {
-	url := fmt.Sprintf("/proxy/ros/api/users/login")
+func (inst *Client) FFLogin(hostUUID string, body *user.User) (*TokenResponse, error) {
+	url := fmt.Sprintf("/host/ros/api/users/login")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&TokenResponse{}).
 		Post(url))
@@ -21,11 +20,10 @@ func (inst *Client) FFLogin(hostIDName string, body *user.User) (*TokenResponse,
 	return resp.Result().(*TokenResponse), nil
 }
 
-func (inst *Client) FFGenerateToken(hostIDName, jtwToken string, body *TokenCreate) (*externaltoken.ExternalToken, error) {
-	url := fmt.Sprintf("/proxy/ros/api/tokens/generate")
+func (inst *Client) FFGenerateToken(hostUUID, jtwToken string, body *TokenCreate) (*externaltoken.ExternalToken, error) {
+	url := fmt.Sprintf("/host/ros/api/tokens/generate")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetHeader("Authorization", jtwToken).
 		SetBody(body).
 		SetResult(&externaltoken.ExternalToken{}).

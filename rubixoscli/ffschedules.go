@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
@@ -34,11 +34,10 @@ type Schedule struct {
 	UpdatedOn         time.Time   `json:"updated_on"`
 }
 
-func (inst *Client) FFGetSchedules(hostIDName string) ([]Schedule, error) {
-	url := fmt.Sprintf("/proxy/ros/api/schedules")
+func (inst *Client) FFGetSchedules(hostUUID string) ([]Schedule, error) {
+	url := fmt.Sprintf("/host/ros/api/schedules")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]Schedule{}).
 		Get(url))
 	if err != nil {
@@ -49,11 +48,10 @@ func (inst *Client) FFGetSchedules(hostIDName string) ([]Schedule, error) {
 	return out, nil
 }
 
-func (inst *Client) FFGetSchedule(hostIDName, uuid string) (*Schedule, error) {
-	url := fmt.Sprintf("/proxy/ros/api/schedules/%s", uuid)
+func (inst *Client) FFGetSchedule(hostUUID, uuid string) (*Schedule, error) {
+	url := fmt.Sprintf("/host/ros/api/schedules/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Schedule{}).
 		Get(url))
 	if err != nil {
@@ -62,23 +60,21 @@ func (inst *Client) FFGetSchedule(hostIDName, uuid string) (*Schedule, error) {
 	return resp.Result().(*Schedule), nil
 }
 
-func (inst *Client) FFDeleteSchedule(hostIDName, uuid string) (bool, error) {
+func (inst *Client) FFDeleteSchedule(hostUUID, uuid string) (bool, error) {
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetPathParams(map[string]string{"uuid": uuid}).
-		Delete("/proxy/ros/api/schedules/{uuid}"))
+		Delete("/host/ros/api/schedules/{uuid}"))
 	if err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func (inst *Client) FFAddSchedule(hostIDName string, body *Schedule) (*Schedule, error) {
-	url := fmt.Sprintf("/proxy/ros/api/schedules")
+func (inst *Client) FFAddSchedule(hostUUID string, body *Schedule) (*Schedule, error) {
+	url := fmt.Sprintf("/host/ros/api/schedules")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Schedule{}).
 		SetBody(body).
 		Post(url))
@@ -88,11 +84,10 @@ func (inst *Client) FFAddSchedule(hostIDName string, body *Schedule) (*Schedule,
 	return resp.Result().(*Schedule), nil
 }
 
-func (inst *Client) FFEditSchedule(hostIDName, uuid string, body *Schedule) (*Schedule, error) {
-	url := fmt.Sprintf("/proxy/ros/api/schedules/%s", uuid)
+func (inst *Client) FFEditSchedule(hostUUID, uuid string, body *Schedule) (*Schedule, error) {
+	url := fmt.Sprintf("/host/ros/api/schedules/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Schedule{}).
 		SetBody(body).
 		Patch(url))

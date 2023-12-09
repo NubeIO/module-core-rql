@@ -14,22 +14,20 @@ type WiresExport struct {
 	Message     string        `json:"message"`
 }
 
-func (inst *Client) WiresUpload(hostID string, body interface{}) (data interface{}, response *Response) {
+func (inst *Client) WiresUpload(hostUUID string, body interface{}) (data interface{}, response *Response) {
 	path := fmt.Sprintf("%s/upload", Paths.Wires.Path)
 	response = &Response{}
 	resp, err := inst.Rest.R().
-		SetHeader("host-uuid", hostID).
-		SetHeader("host-name", hostID).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Post(path)
 	return resp.String(), response.buildResponse(resp, err)
 }
 
-func (inst *Client) WiresBackup(hostID string) (data interface{}, err error) {
+func (inst *Client) WiresBackup(hostUUID string) (data interface{}, err error) {
 	path := fmt.Sprintf("%s/backup", Paths.Wires.Path)
 	resp, err := inst.Rest.R().
-		SetHeader("host-uuid", hostID).
-		SetHeader("host-name", hostID).
+		SetHeader("X-Host", hostUUID).
 		Get(path)
 	if resp.IsSuccess() {
 		r := &WiresExport{}

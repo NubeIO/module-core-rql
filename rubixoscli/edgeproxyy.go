@@ -7,11 +7,10 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) EdgeSystemCtlAction(hostIDName, serviceName string, action interfaces.Action) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/proxy/eb/api/systemctl/%s?unit=%s", action, serviceName)
+func (inst *Client) EdgeSystemCtlAction(hostUUID, serviceName string, action interfaces.Action) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/host/bios/api/systemctl/%s?unit=%s", action, serviceName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&interfaces.Message{}).
 		Post(url))
 	if err != nil {
@@ -20,11 +19,10 @@ func (inst *Client) EdgeSystemCtlAction(hostIDName, serviceName string, action i
 	return resp.Result().(*interfaces.Message), nil
 }
 
-func (inst *Client) EdgeSystemCtlState(hostIDName, serviceName string) (*systemctl.SystemState, error) {
-	url := fmt.Sprintf("/proxy/eb/api/systemctl/state?unit=%s", serviceName)
+func (inst *Client) EdgeSystemCtlState(hostUUID, serviceName string) (*systemctl.SystemState, error) {
+	url := fmt.Sprintf("/host/bios/api/systemctl/state?unit=%s", serviceName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&systemctl.SystemState{}).
 		Get(url))
 	if err != nil {

@@ -7,36 +7,36 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (inst *Module) Enable() error {
+func (m *Module) Enable() error {
 	log.Infof("plugin is enabling...%s", name)
 	eng := rules.NewRuleEngine()
 	n := "Core"
 	props := make(rules.PropertiesMap)
 	props[n] = eng
 	client := "RQL"
-	newStorage, err := storage.New(inst.moduleDirectory)
+	newStorage, err := storage.New(m.moduleDirectory)
 	if err != nil {
 		log.Errorf("%s: error in making DB: %s", name, err)
-		inst.ErrorOnDB = true
+		m.ErrorOnDB = true
 	}
 	newClient := &apirules.RQL{
 		Storage: newStorage,
-		Config:  inst.GetConfig(),
-		ROS:     inst.grpcMarshaller,
+		Config:  m.GetConfig(),
+		ROS:     m.grpcMarshaller,
 	}
 
 	props[client] = newClient
-	inst.Rules = eng
-	inst.Client = newClient
-	inst.Props = props
-	inst.Storage = newStorage
+	m.Rules = eng
+	m.Client = newClient
+	m.Props = props
+	m.Storage = newStorage
 	log.Infof("plugin is enabled...%s", name)
-	go inst.Loop()
-	inst.pluginIsEnabled = true
+	go m.Loop()
+	m.pluginIsEnabled = true
 	return nil
 }
 
-func (inst *Module) Disable() error {
+func (m *Module) Disable() error {
 	log.Infof("plugin is disabled...%s", name)
 	return nil
 }

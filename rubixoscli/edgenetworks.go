@@ -8,11 +8,10 @@ import (
 	"github.com/NubeIO/rubix-os/services/system"
 )
 
-func (inst *Client) EdgeGetNetworks(hostIDName string) ([]networking.NetworkInterfaces, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/")
+func (inst *Client) EdgeGetNetworks(hostUUID string) ([]networking.NetworkInterfaces, error) {
+	url := fmt.Sprintf("/host/ros/api/networking")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]networking.NetworkInterfaces{}).
 		Get(url))
 	if err != nil {
@@ -23,11 +22,10 @@ func (inst *Client) EdgeGetNetworks(hostIDName string) ([]networking.NetworkInte
 }
 
 // EdgeDHCPPortExists check if the interface is a static or fixed ip, will return true if port is a set to dhcp
-func (inst *Client) EdgeDHCPPortExists(hostIDName string, body *system.NetworkingBody) (*system.DHCPPortExists, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/interfaces/exists")
+func (inst *Client) EdgeDHCPPortExists(hostUUID string, body *system.NetworkingBody) (*system.DHCPPortExists, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/interfaces/exists")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&system.DHCPPortExists{}).
 		SetBody(body).
 		Post(url))
@@ -37,11 +35,10 @@ func (inst *Client) EdgeDHCPPortExists(hostIDName string, body *system.Networkin
 	return resp.Result().(*system.DHCPPortExists), nil
 }
 
-func (inst *Client) EdgeDHCPSetAsAuto(hostIDName string, body *system.NetworkingBody) (*system.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/interfaces/auto")
+func (inst *Client) EdgeDHCPSetAsAuto(hostUUID string, body *system.NetworkingBody) (*system.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/interfaces/auto")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&system.Message{}).
 		SetBody(body).
 		Post(url))
@@ -51,11 +48,10 @@ func (inst *Client) EdgeDHCPSetAsAuto(hostIDName string, body *system.Networking
 	return resp.Result().(*system.Message), nil
 }
 
-func (inst *Client) EdgeDHCPSetStaticIP(hostIDName string, body *dhcpd.SetStaticIP) (string, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/interfaces/static")
+func (inst *Client) EdgeDHCPSetStaticIP(hostUUID string, body *dhcpd.SetStaticIP) (string, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/interfaces/static")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		Post(url))
 	if err != nil {
@@ -64,11 +60,10 @@ func (inst *Client) EdgeDHCPSetStaticIP(hostIDName string, body *dhcpd.SetStatic
 	return resp.String(), nil
 }
 
-func (inst *Client) EdgeRestartNetworking(hostIDName string) (*system.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/networks/restart/")
+func (inst *Client) EdgeRestartNetworking(hostUUID string) (*system.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/networks/restart")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(system.Message{}).
 		Post(url))
 	if err != nil {
@@ -77,11 +72,10 @@ func (inst *Client) EdgeRestartNetworking(hostIDName string) (*system.Message, e
 	return resp.Result().(*system.Message), nil
 }
 
-func (inst *Client) EdgeInterfaceUpDown(hostIDName string, port system.NetworkingBody) (*system.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/networks/interfaces/reset/")
+func (inst *Client) EdgeInterfaceUpDown(hostUUID string, port system.NetworkingBody) (*system.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/networks/interfaces/reset")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(port).
 		SetResult(system.Message{}).
 		Post(url))
@@ -91,11 +85,10 @@ func (inst *Client) EdgeInterfaceUpDown(hostIDName string, port system.Networkin
 	return resp.Result().(*system.Message), nil
 }
 
-func (inst *Client) EdgeInterfaceUp(hostIDName string, port system.NetworkingBody) (*system.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/networks/interfaces/up/")
+func (inst *Client) EdgeInterfaceUp(hostUUID string, port system.NetworkingBody) (*system.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/networks/interfaces/up")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(port).
 		SetResult(system.Message{}).
 		Post(url))
@@ -105,11 +98,10 @@ func (inst *Client) EdgeInterfaceUp(hostIDName string, port system.NetworkingBod
 	return resp.Result().(*system.Message), nil
 }
 
-func (inst *Client) EdgeInterfaceDown(hostIDName string, port system.NetworkingBody) (*system.Message, error) {
-	url := fmt.Sprintf("/proxy/ros/api/networking/networks/interfaces/down/")
+func (inst *Client) EdgeInterfaceDown(hostUUID string, port system.NetworkingBody) (*system.Message, error) {
+	url := fmt.Sprintf("/host/ros/api/networking/networks/interfaces/down")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(port).
 		SetResult(system.Message{}).
 		Post(url))

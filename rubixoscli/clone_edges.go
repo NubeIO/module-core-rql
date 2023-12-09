@@ -5,11 +5,10 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) SyncEdgeDevices(hostIDName string) (*interfaces.Message, error) {
-	url := "/api/clone_edges"
+func (inst *Client) SyncEdgeDevices(hostUUID string) (*interfaces.Message, error) {
+	url := "/api/host/clone-things-to-cloud"
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&interfaces.Message{}).
 		Get(url))
 	if err != nil {

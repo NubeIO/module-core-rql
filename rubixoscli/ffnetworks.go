@@ -3,9 +3,11 @@ package rubixoscli
 import (
 	"errors"
 	"fmt"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
-	"github.com/NubeIO/rubix-os/nresty"
 	"net/url"
+
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
+	"github.com/NubeIO/rubix-os/interfaces"
+	"github.com/NubeIO/rubix-os/nresty"
 )
 
 func (inst *Client) FFGetNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, overrideUrl ...string) ([]model.Network, error) {
@@ -28,7 +30,7 @@ func (inst *Client) FFGetNetworks(hostUUID string, withDevices bool, showCloneNe
 	return out, nil
 }
 
-func (inst *Client) FFGetPaginatedNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, limit, offset int, search string) (*PaginationResponse, error) {
+func (inst *Client) FFGetPaginatedNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, limit, offset int, search string) (*interfaces.PaginationResponse, error) {
 	requestURL := fmt.Sprintf("/host/ros/api/networks/paginate?with_tags=true&with_meta_tags=true&show_clone_networks=%t&limit=%v&offset=%v", showCloneNetworks, limit, offset)
 	if withDevices {
 		requestURL += "&with_devices=true"
@@ -38,12 +40,12 @@ func (inst *Client) FFGetPaginatedNetworks(hostUUID string, withDevices bool, sh
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&PaginationResponse{}).
+		SetResult(&interfaces.PaginationResponse{}).
 		Get(requestURL))
 	if err != nil {
 		return nil, err
 	}
-	out := resp.Result().(*PaginationResponse)
+	out := resp.Result().(*interfaces.PaginationResponse)
 	return out, nil
 }
 

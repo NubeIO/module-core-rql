@@ -29,11 +29,10 @@ type RQLRuleResponse struct {
 	TimeTaken string      `json:"time_taken"`
 }
 
-func (inst *Client) TestRunRule(hostIDName string, body *RQLRule) (*RQLRuleResponse, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules/dry")
+func (inst *Client) TestRunRule(hostUUID string, body *RQLRule) (*RQLRuleResponse, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules/dry")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLRuleResponse{}).
 		SetBody(body).
 		Post(url))
@@ -43,11 +42,10 @@ func (inst *Client) TestRunRule(hostIDName string, body *RQLRule) (*RQLRuleRespo
 	return resp.Result().(*RQLRuleResponse), nil
 }
 
-func (inst *Client) SelectAllRules(hostIDName string) ([]RQLRule, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules")
+func (inst *Client) SelectAllRules(hostUUID string) ([]RQLRule, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]RQLRule{}).
 		Get(url))
 	if err != nil {
@@ -61,11 +59,10 @@ func (inst *Client) SelectAllRules(hostIDName string) ([]RQLRule, error) {
 	return out, nil
 }
 
-func (inst *Client) SelectRule(hostIDName, uuid string) (*RQLRule, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules/%s", uuid)
+func (inst *Client) SelectRule(hostUUID, uuid string) (*RQLRule, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLRule{}).
 		Get(url))
 	if err != nil {
@@ -74,11 +71,10 @@ func (inst *Client) SelectRule(hostIDName, uuid string) (*RQLRule, error) {
 	return resp.Result().(*RQLRule), nil
 }
 
-func (inst *Client) RunExistingRule(hostIDName, uuid string) (*RQLRuleResponse, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules/run/%s", uuid)
+func (inst *Client) RunExistingRule(hostUUID, uuid string) (*RQLRuleResponse, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules/%s/run", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLRuleResponse{}).
 		Post(url))
 	if err != nil {
@@ -87,11 +83,10 @@ func (inst *Client) RunExistingRule(hostIDName, uuid string) (*RQLRuleResponse, 
 	return resp.Result().(*RQLRuleResponse), nil
 }
 
-func (inst *Client) AddRule(hostIDName string, body *RQLRule) (*RQLRule, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules")
+func (inst *Client) AddRule(hostUUID string, body *RQLRule) (*RQLRule, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLRule{}).
 		SetBody(body).
 		Post(url))
@@ -107,11 +102,10 @@ func (inst *Client) AddRule(hostIDName string, body *RQLRule) (*RQLRule, error) 
 	return resp.Result().(*RQLRule), nil
 }
 
-func (inst *Client) UpdateRule(hostIDName, uuid string, body *RQLRule) (*RQLRule, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules/%s", uuid)
+func (inst *Client) UpdateRule(hostUUID, uuid string, body *RQLRule) (*RQLRule, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLRule{}).
 		SetBody(body).
 		Patch(url))
@@ -121,11 +115,10 @@ func (inst *Client) UpdateRule(hostIDName, uuid string, body *RQLRule) (*RQLRule
 	return resp.Result().(*RQLRule), nil
 }
 
-func (inst *Client) DeleteRule(hostIDName, uuid string) (*Message, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/rules/%s", uuid)
+func (inst *Client) DeleteRule(hostUUID, uuid string) (*Message, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/rules/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		Delete(url))
 	if err != nil {
@@ -141,11 +134,10 @@ type RQLVariables struct {
 	Password string `json:"password"`
 }
 
-func (inst *Client) SelectAllVars(hostIDName string) ([]RQLVariables, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/vars")
+func (inst *Client) SelectAllVars(hostUUID string) ([]RQLVariables, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/vars")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]RQLVariables{}).
 		Get(url))
 	if err != nil {
@@ -159,11 +151,10 @@ func (inst *Client) SelectAllVars(hostIDName string) ([]RQLVariables, error) {
 	return out, nil
 }
 
-func (inst *Client) SelectOneVar(hostIDName, uuid string) (*RQLVariables, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/vars/%s", uuid)
+func (inst *Client) SelectOneVar(hostUUID, uuid string) (*RQLVariables, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/vars/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLVariables{}).
 		Get(url))
 	if err != nil {
@@ -172,11 +163,10 @@ func (inst *Client) SelectOneVar(hostIDName, uuid string) (*RQLVariables, error)
 	return resp.Result().(*RQLVariables), nil
 }
 
-func (inst *Client) AddVar(hostIDName string, body *RQLVariables) (*RQLVariables, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/vars")
+func (inst *Client) AddVar(hostUUID string, body *RQLVariables) (*RQLVariables, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/vars")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLVariables{}).
 		SetBody(body).
 		Post(url))
@@ -186,11 +176,10 @@ func (inst *Client) AddVar(hostIDName string, body *RQLVariables) (*RQLVariables
 	return resp.Result().(*RQLVariables), nil
 }
 
-func (inst *Client) UpdateVar(hostIDName, uuid string, body *RQLVariables) (*RQLVariables, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/vars/%s", uuid)
+func (inst *Client) UpdateVar(hostUUID, uuid string, body *RQLVariables) (*RQLVariables, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/vars/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&RQLVariables{}).
 		SetBody(body).
 		Patch(url))
@@ -200,11 +189,10 @@ func (inst *Client) UpdateVar(hostIDName, uuid string, body *RQLVariables) (*RQL
 	return resp.Result().(*RQLVariables), nil
 }
 
-func (inst *Client) DeleteVar(hostIDName, uuid string) (*Message, error) {
-	url := fmt.Sprintf("/api/modules/module-core-rql/vars/%s", uuid)
+func (inst *Client) DeleteVar(hostUUID, uuid string) (*Message, error) {
+	url := fmt.Sprintf("/api/modules/module-core-rql/api/vars/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		Delete(url))
 	if err != nil {
