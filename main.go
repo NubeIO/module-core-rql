@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/NubeIO/lib-module-go/shared"
 	"github.com/NubeIO/module-core-rql/pkg"
-	"github.com/NubeIO/rubix-os/module/shared"
 	"github.com/hashicorp/go-plugin"
 )
 

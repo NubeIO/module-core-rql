@@ -2,8 +2,8 @@ package rubixoscli
 
 import (
 	"fmt"
+	"github.com/NubeIO/lib-utils-go/pprint"
 	"github.com/NubeIO/rubix-os/services/system"
-	"github.com/NubeIO/rubix-os/utils/pprint"
 	"testing"
 )
 

@@ -1,10 +1,10 @@
 package pkg
 
 import (
+	"github.com/NubeIO/lib-module-go/shared"
 	"github.com/NubeIO/module-core-rql/apirules"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
-	"github.com/NubeIO/rubix-os/module/shared"
 	"github.com/patrickmn/go-cache"
 	"time"
 )
@@ -24,21 +24,21 @@ type Module struct {
 	pluginIsEnabled bool
 }
 
-func (inst *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
+func (m *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
 	grpcMarshaller := shared.GRPCMarshaller{DbHelper: dbHelper}
-	inst.dbHelper = dbHelper
-	inst.moduleName = moduleName
-	inst.grpcMarshaller = &grpcMarshaller
-	inst.store = cache.New(5*time.Minute, 10*time.Minute)
-	dir, err := inst.dbHelper.CreateModuleDataDir(moduleName)
+	m.dbHelper = dbHelper
+	m.moduleName = moduleName
+	m.grpcMarshaller = &grpcMarshaller
+	m.store = cache.New(5*time.Minute, 10*time.Minute)
+	dir, err := m.grpcMarshaller.CreateModuleDir(moduleName)
 	if err != nil {
 		return err
 	}
-	inst.moduleDirectory = dir
+	m.moduleDirectory = *dir
 	return nil
 }
 
-func (inst *Module) GetInfo() (*shared.Info, error) {
+func (m *Module) GetInfo() (*shared.Info, error) {
 	return &shared.Info{
 		Name:       name,
 		Author:     "Nube iO",

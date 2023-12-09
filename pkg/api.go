@@ -75,73 +75,73 @@ func removeEmptyStrings(s []string) []string {
 	return r
 }
 
-func (inst *Module) Get(path string) ([]byte, error) {
+func (m *Module) Get(path string) ([]byte, error) {
 
-	err := inst.check()
+	err := m.check()
 	if err != nil {
 		return nil, err
 	}
 
 	if path == apiRules {
-		return inst.SelectAllRules()
+		return m.SelectAllRules()
 	}
 
 	_, uuid, combined := getPathUUID(path)
 	if path == combined { // get a rule by name or uuid http://0.0.0.0:1660/api/modules/module-core-rql/rules/test
-		return inst.SelectRule(uuid)
+		return m.SelectRule(uuid)
 	}
 
 	if path == apiVars { // get all variable
-		return inst.SelectAllVariables()
+		return m.SelectAllVariables()
 	}
 
 	if path == combined { // get a variable
-		return inst.SelectVariable(uuid)
+		return m.SelectVariable(uuid)
 	}
 
 	return nil, errors.New(path)
 }
 
-func (inst *Module) Post(path string, body []byte) ([]byte, error) {
+func (m *Module) Post(path string, body []byte) ([]byte, error) {
 	if path == apiRules {
-		return inst.AddRule(body)
+		return m.AddRule(body)
 	}
 
 	_, subPath, nameUUID := rootPathSplit(path) // run an existing
 	if subPath == "run" {
-		return inst.ReuseRuleRun(body, nameUUID)
+		return m.ReuseRuleRun(body, nameUUID)
 	}
 
 	if path == apiRun { // run a rule
-		return inst.Dry(body)
+		return m.Dry(body)
 	}
 	if path == apiVars { // add variable
-		return inst.AddVariable(body)
+		return m.AddVariable(body)
 	}
 
 	return nil, errors.New(errNotFound)
 }
 
-func (inst *Module) Put(path, uuid string, body []byte) ([]byte, error) {
+func (m *Module) Put(path, uuid string, body []byte) ([]byte, error) {
 	return nil, errors.New(errNotFound)
 }
 
-func (inst *Module) Patch(path, uuid string, body []byte) ([]byte, error) {
+func (m *Module) Patch(path, uuid string, body []byte) ([]byte, error) {
 	if path == apiRules { // update a rule
-		return inst.UpdateRule(uuid, body)
+		return m.UpdateRule(uuid, body)
 	}
 	if path == apiVars { // update variable
-		return inst.UpdateVariable(body, uuid)
+		return m.UpdateVariable(body, uuid)
 	}
 	return nil, errors.New(errNotFound)
 }
 
-func (inst *Module) Delete(path, uuid string) ([]byte, error) {
+func (m *Module) Delete(path, uuid string) ([]byte, error) {
 	if path == apiRules { // delete a rule
-		return inst.DeleteRule(uuid)
+		return m.DeleteRule(uuid)
 	}
 	if path == apiVars { // delete a var
-		return inst.DeleteVariable(uuid)
+		return m.DeleteVariable(uuid)
 	}
 	return nil, errors.New(errNotFound)
 }
