@@ -105,7 +105,7 @@ RQL.Result = out;
 - add a new script called test and paste in the example code above
 - call the end point below as per the curl example
 
-curl -i -X POST -H "Content-Type: application/json" -d '{"body":{"a":100}}' http://0.0.0.0:1660/api/modules/module-core-rql/rules/run/test
+curl -i -X POST -H "Content-Type: application/json" -d '{"body":{"a":100}}' http://0.0.0.0:1660/api/modules/module-core-rql/rules/:uuid/run
 */
 func (m *Module) ReuseRuleRun(b []byte, nameUUID string) ([]byte, error) {
 	start := time.Now()
