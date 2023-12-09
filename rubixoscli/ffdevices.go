@@ -2,16 +2,27 @@ package rubixoscli
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
+	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) AddDevice(hostIDName string, device *model.Device) (*model.Device, error) {
-	url := fmt.Sprintf("/proxy/ros/api/devices?with_tags=true&with_meta_tags=true")
+type PointDiscoverableCountType struct {
+	DeviceInstance int         `json:"deviceInstance"`
+	Mac            string      `json:"mac"`
+	ObjectCount    int         `json:"object_count"`
+	TimeTaken      string      `json:"time_taken"`
+	Errors         interface{} `json:"errors"`
+	ObjectsAdded   int         `json:"objects_added"`
+	Objects        interface{} `json:"objects"`
+}
+
+func (inst *Client) AddDevice(hostUUID string, device *model.Device) (*model.Device, error) {
+	url := fmt.Sprintf("/host/ros/api/devices?with_tags=true&with_meta_tags=true")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Device{}).
 		SetBody(device).
 		Post(url))
@@ -21,16 +32,15 @@ func (inst *Client) AddDevice(hostIDName string, device *model.Device) (*model.D
 	return resp.Result().(*model.Device), nil
 }
 
-func (inst *Client) GetDevices(hostIDName string, withPoints ...bool) ([]model.Device, error) {
-	url := fmt.Sprintf("/proxy/ros/api/devices?with_tags=true&with_meta_tags=true")
+func (inst *Client) GetDevices(hostUUID string, withPoints ...bool) ([]model.Device, error) {
+	url := fmt.Sprintf("/host/ros/api/devices?with_tags=true&with_meta_tags=true")
 	if len(withPoints) > 0 {
 		if withPoints[0] == true {
-			url = fmt.Sprintf("/proxy/ros/api/devices?with_points=true&with_tags=true&with_meta_tags=true")
+			url = fmt.Sprintf("/host/ros/api/devices?with_points=true&with_tags=true&with_meta_tags=true")
 		}
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]model.Device{}).
 		Get(url))
 	if err != nil {
@@ -41,16 +51,34 @@ func (inst *Client) GetDevices(hostIDName string, withPoints ...bool) ([]model.D
 	return out, nil
 }
 
-func (inst *Client) GetDevice(hostIDName, uuid string, withPoints ...bool) (*model.Device, error) {
-	url := fmt.Sprintf("/proxy/ros/api/devices/%s?with_tags=true&with_meta_tags=true", uuid)
+func (inst *Client) GetPaginatedDevices(hostUUID string, networkUUID string, limit, offset int, search string, withPoints bool) (*interfaces.PaginationResponse, error) {
+	requestURL := fmt.Sprintf("/host/ros/api/devices/paginate?with_tags=true&with_meta_tags=true&network_uuid=%s&limit=%v&offset=%v", networkUUID, limit, offset)
+	if withPoints {
+		requestURL += "&with_devices=true"
+	}
+	if search != "" {
+		requestURL += "&search_keyword=" + url.QueryEscape(search) // Ensure proper URL encoding for search value
+	}
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&interfaces.PaginationResponse{}).
+		Get(requestURL))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*interfaces.PaginationResponse)
+	return out, nil
+}
+
+func (inst *Client) GetDevice(hostUUID, uuid string, withPoints ...bool) (*model.Device, error) {
+	url := fmt.Sprintf("/host/ros/api/devices/%s?with_tags=true&with_meta_tags=true", uuid)
 	if len(withPoints) > 0 {
 		if withPoints[0] == true {
-			url = fmt.Sprintf("/proxy/ros/api/devices/%s?with_points=true&with_tags=true&with_meta_tags=true&with_priority=true", uuid)
+			url = fmt.Sprintf("/host/ros/api/devices/%s?with_points=true&with_tags=true&with_meta_tags=true&with_priority=true", uuid)
 		}
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Device{}).
 		Get(url))
 	if err != nil {
@@ -59,11 +87,10 @@ func (inst *Client) GetDevice(hostIDName, uuid string, withPoints ...bool) (*mod
 	return resp.Result().(*model.Device), nil
 }
 
-func (inst *Client) EditDevice(hostIDName, uuid string, device *model.Device) (*model.Device, error) {
-	url := fmt.Sprintf("/proxy/ros/api/devices/%s", uuid)
+func (inst *Client) EditDevice(hostUUID, uuid string, device *model.Device) (*model.Device, error) {
+	url := fmt.Sprintf("/host/ros/api/devices/%s", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Device{}).
 		SetBody(device).
 		Patch(url))
@@ -73,26 +100,68 @@ func (inst *Client) EditDevice(hostIDName, uuid string, device *model.Device) (*
 	return resp.Result().(*model.Device), nil
 }
 
-func (inst *Client) DeleteDevice(hostIDName, uuid string) (bool, error) {
+func (inst *Client) DeleteDevice(hostUUID, uuid string) (bool, error) {
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetPathParams(map[string]string{"uuid": uuid}).
-		Delete("/proxy/ros/api/devices/{uuid}"))
+		Delete("/host/ros/api/devices/{uuid}"))
 	if err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func (inst *Client) FFGetPluginSchemaDevice(hostIDName, pluginName string) ([]byte, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/api/%s/schema/json/device", pluginName)
+func (inst *Client) FFGetPluginSchemaDevice(hostUUID, pluginName string) ([]byte, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/devices/schema", pluginName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
 	return resp.Body(), nil
+}
+
+func (inst *Client) UpdateDeviceTag(hostUUID, deviceUUID string, body []model.Tag) ([]model.Tag, error) {
+	url := fmt.Sprintf("/host/ros/api/devices/%s/tags", deviceUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&[]model.Tag{}).
+		SetBody(body).
+		Put(url))
+	if err != nil {
+		return nil, err
+	}
+
+	var out []model.Tag
+	out = *resp.Result().(*[]model.Tag)
+	return out, nil
+}
+
+func (inst *Client) PingDevice(hostUUID, pluginName string, body interface{}) (bool, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/devices/ping", pluginName)
+	_, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetBody(body).
+		Post(url))
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (inst *Client) GetDiscoverablePointsCount(hostUUID string, body interface{}) (*PointDiscoverableCountType, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/device/objects/size")
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&PointDiscoverableCountType{}).
+		SetBody(body).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	var out PointDiscoverableCountType
+	out = *resp.Result().(*PointDiscoverableCountType)
+	return &out, nil
 }

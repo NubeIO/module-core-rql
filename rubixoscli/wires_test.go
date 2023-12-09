@@ -8,7 +8,7 @@ import (
 )
 
 func TestClient_WiresUpload(t *testing.T) {
-	plan, _ := ioutil.ReadFile("wires-example.json")
+	plan, _ := ioutil.ReadFile("wires-example-io16.json")
 	var data interface{}
 	err := json.Unmarshal(plan, &data)
 	fmt.Println(err)

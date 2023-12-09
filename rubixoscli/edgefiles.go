@@ -12,11 +12,10 @@ type FilesExists struct {
 	Exists bool   `json:"exists"`
 }
 
-func (inst *Client) EdgeFileExists(hostIDName, path string) (*FilesExists, error) {
-	url := fmt.Sprintf("/proxy/ros/api/files/exists/?file=%s", path)
+func (inst *Client) EdgeFileExists(hostUUID, path string) (*FilesExists, error) {
+	url := fmt.Sprintf("/host/ros/api/files/exists/?file=%s", path)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&FilesExists{}).
 		Get(url))
 	if err != nil {
@@ -25,7 +24,7 @@ func (inst *Client) EdgeFileExists(hostIDName, path string) (*FilesExists, error
 	return resp.Result().(*FilesExists), nil
 }
 
-func (inst *Client) EdgeDeleteDataFile(hostIDName, path string) (*Message, error) {
+func (inst *Client) EdgeDeleteDataFile(hostUUID, path string) (*Message, error) {
 	if path == "/" {
 		return nil, errors.New("the root dir can not be deleted")
 	}
@@ -35,10 +34,9 @@ func (inst *Client) EdgeDeleteDataFile(hostIDName, path string) (*Message, error
 	if !strings.Contains(path, "/data") {
 		return nil, errors.New(fmt.Sprintf("path %s must be in the /data dir", path))
 	}
-	url := fmt.Sprintf("/proxy/ros/api/files/delete/?file=%s", path)
+	url := fmt.Sprintf("/host/ros/api/files/delete/?file=%s", path)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		Delete(url))
 	if err != nil {

@@ -74,7 +74,7 @@ func (inst *Client) BulkDeleteMember(memberUUID []string) (bool, error) {
 }
 
 func (inst *Client) VerifyMember(memberName string) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/members/verify/%s", memberName)
+	url := fmt.Sprintf("/api/members/username/%s/verify", memberName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(&interfaces.Message{}).
 		Post(url))
@@ -85,7 +85,7 @@ func (inst *Client) VerifyMember(memberName string) (*interfaces.Message, error)
 }
 
 func (inst *Client) UpdateMemberPassword(memberUUID string, password string) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/members/%s/change_password", memberUUID)
+	url := fmt.Sprintf("/api/members/%s/change-password", memberUUID)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetBody(UpdateMemberPasswordBody{
 			NewPassword: password,

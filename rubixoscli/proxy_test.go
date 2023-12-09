@@ -8,12 +8,12 @@ import (
 )
 
 func TestClient_ProxyPOST(t *testing.T) {
-	plan, _ := ioutil.ReadFile("proxy-example.json")
+	plan, _ := ioutil.ReadFile("proxy-example-io16.json")
 	var data interface{}
 	err := json.Unmarshal(plan, &data)
 	fmt.Println(err)
 
-	post, err := client.ProxyPOST("rc", "/api/system/scanner", data)
+	post, err := client.ProxyHostRosPOST("rc", "/api/system/scanner", data)
 	if err != nil {
 		fmt.Println(err)
 		return

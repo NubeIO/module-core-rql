@@ -19,7 +19,7 @@ var client = New(&Client{
 }, installerObj)
 
 func TestClient_Alerts(t *testing.T) {
-	alerts, err := client.GetAlerts()
+	alerts, err := client.GetAlerts([]string{"active"})
 	fmt.Println("alert", alerts)
 	fmt.Println("error", err)
 }

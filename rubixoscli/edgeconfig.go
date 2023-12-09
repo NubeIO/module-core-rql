@@ -46,12 +46,12 @@ type ConfigBACnetServer struct {
 }
 
 // EdgeWriteConfig replace the config file of a nube app
-func (inst *Client) EdgeWriteConfig(hostIDName, appName string) (*Message, error) {
+func (inst *Client) EdgeWriteConfig(hostUUID, appName string) (*Message, error) {
 	pushConfig := false
-	var writeConfig interfaces.EdgeConfig
+	var writeConfig interfaces.HostConfig
 	if appName == constants.BacnetServerDriver {
 		pushConfig = true
-		resp, connectionErr, requestErr := inst.EdgeReadConfig(hostIDName, appName, constants.ConfigYml)
+		resp, connectionErr, requestErr := inst.EdgeReadConfig(hostUUID, appName, constants.ConfigYml)
 		var config ConfigBACnetServer
 		if connectionErr != nil {
 			return nil, connectionErr
@@ -65,17 +65,16 @@ func (inst *Client) EdgeWriteConfig(hostIDName, appName string) (*Message, error
 				return nil, err
 			}
 		}
-		writeConfig = interfaces.EdgeConfig{
+		writeConfig = interfaces.HostConfig{
 			AppName:    constants.BacnetServerDriver,
 			Body:       inst.convertConfigToDynamicMap(inst.defaultWrapperBACnetConfig(config)),
 			ConfigName: constants.ConfigYml,
 		}
 	}
 	if pushConfig {
-		url := fmt.Sprintf("/api/edge/config")
+		url := fmt.Sprintf("/api/host/config")
 		resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-			SetHeader("host-uuid", hostIDName).
-			SetHeader("host-name", hostIDName).
+			SetHeader("X-Host", hostUUID).
 			SetResult(&Message{}).
 			SetBody(writeConfig).
 			Post(url))
@@ -87,23 +86,22 @@ func (inst *Client) EdgeWriteConfig(hostIDName, appName string) (*Message, error
 	return nil, nil
 }
 
-func (inst *Client) EdgeReadConfig(hostIDName, appName, configName string) (*interfaces.EdgeConfigResponse, error, error) {
-	url := fmt.Sprintf("/api/edge/config?app_name=%s&config_name=%s", appName, configName)
+func (inst *Client) EdgeReadConfig(hostUUID, appName, configName string) (*interfaces.HostConfigResponse, error, error) {
+	url := fmt.Sprintf("/api/host/config?app_name=%s&config_name=%s", appName, configName)
 	resp, connectionError, requestErr := nresty.FormatRestyV2Response(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
-		SetResult(&interfaces.EdgeConfigResponse{}).
+		SetHeader("X-Host", hostUUID).
+		SetResult(&interfaces.HostConfigResponse{}).
 		Get(url))
 	if connectionError != nil || requestErr != nil {
 		return nil, connectionError, requestErr
 	}
-	return resp.Result().(*interfaces.EdgeConfigResponse), nil, nil
+	return resp.Result().(*interfaces.HostConfigResponse), nil, nil
 }
 
-func (inst *Client) BACnetWriteConfig(hostIDName, appName string, config ConfigBACnetServer) (*Message, error) {
-	var writeConfig interfaces.EdgeConfig
+func (inst *Client) BACnetWriteConfig(hostUUID, appName string, config ConfigBACnetServer) (*Message, error) {
+	var writeConfig interfaces.HostConfig
 	if appName == constants.BacnetServerDriver {
-		writeConfig = interfaces.EdgeConfig{
+		writeConfig = interfaces.HostConfig{
 			AppName:    constants.BacnetServerDriver,
 			Body:       inst.convertConfigToDynamicMap(inst.defaultWrapperBACnetConfig(config)),
 			ConfigName: constants.ConfigYml,
@@ -111,10 +109,9 @@ func (inst *Client) BACnetWriteConfig(hostIDName, appName string, config ConfigB
 	} else {
 		return nil, errors.New(fmt.Sprintf("app name must be bacnet: %s", appName))
 	}
-	url := fmt.Sprintf("/api/edge/config")
+	url := fmt.Sprintf("/api/host/config")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&Message{}).
 		SetBody(writeConfig).
 		Post(url))

@@ -6,10 +6,10 @@ import (
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) ConfigureOpenVPN(uuid string) (*interfaces.Message, error) {
-	url := fmt.Sprintf("/api/hosts/%s/configure-openvpn", uuid)
+func (inst *Client) ConfigureOpenVPN(hostUUID string) (*interfaces.Message, error) {
+	url := fmt.Sprintf("/api/host/configure-openvpn")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", uuid).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&interfaces.Message{}).
 		Get(url))
 	if err != nil {

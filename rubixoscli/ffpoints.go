@@ -126,26 +126,19 @@ func (inst *Client) FFGetPluginSchemaPoint(hostUUID, pluginName string) ([]byte,
 	return resp.Body(), nil
 }
 
-type PaginationResponse struct {
-	Total  int64       `json:"total"`
-	Offset *int        `json:"offset"`
-	Limit  *int        `json:"limit"`
-	Data   interface{} `json:"data"`
-}
-
-func (inst *Client) GetPaginatedPointsByDeviceUUID(hostUUID, deviceUUID string, limit, offset int, search string) (*PaginationResponse, error) {
+func (inst *Client) GetPaginatedPointsByDeviceUUID(hostUUID, deviceUUID string, limit, offset int, search string) (*interfaces.PaginationResponse, error) {
 	requestURL := fmt.Sprintf("/host/ros/api/points/paginate?with_tags=true&with_meta_tags=true&with_priority=true&device_uuid=%v&limit=%v&offset=%v", deviceUUID, limit, offset)
 	if search != "" {
 		requestURL += "&search_keyword=" + url.QueryEscape(search) // Ensure proper URL encoding for search value
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&PaginationResponse{}).
+		SetResult(&interfaces.PaginationResponse{}).
 		Get(requestURL))
 	if err != nil {
 		return nil, err
 	}
-	out := resp.Result().(*PaginationResponse)
+	out := resp.Result().(*interfaces.PaginationResponse)
 	return out, nil
 }
 
