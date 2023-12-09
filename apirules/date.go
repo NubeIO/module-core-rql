@@ -2,6 +2,8 @@ package apirules
 
 import (
 	"fmt"
+	"github.com/NubeIO/module-core-rql/helpers"
+
 	"time"
 )
 
@@ -180,14 +182,21 @@ func (inst *RQL) formattedCurrentTime(format string) string {
 	return inst.currentTime().Format(format)
 }
 
-// TimeUTC returns the current time in UTC format.
+// DateTimeUTC returns the current time in UTC format.
 // Example usage:
 //   result := inst.TimeUTC()
 // where:
 // - inst is the receiver instance of type RQL.
 // The returned time is in Coordinated Universal Time (UTC).
-func (inst *RQL) TimeUTC() time.Time {
+func (inst *RQL) DateTimeUTC() time.Time {
 	return inst.currentTime()
+}
+
+// DateTime returns the current local time as a new `time.Time` value.
+// Example usage:
+//   result := inst.DateTime()
+func (inst *RQL) DateTime() time.Time {
+	return time.Now()
 }
 
 // TimeDate returns the current time in the format "2006-01-02 15:04:05".
@@ -295,38 +304,21 @@ func (inst *RQL) TimeDateDay() string {
 // Returns:
 //   - t: the time.Time value corresponding to the parsed date string.
 //   - If the date string is not in a valid format, it returns a zero value of type time.Time.
-func (inst *RQL) ParseDateTime(dateStr string) time.Time {
+func (inst *RQL) ParseDateTime(dateStr string) any {
 	t, err := inst.parseDateTime(dateStr)
 	if err != nil {
-		return time.Time{}
+		return err
 	}
 	return t
 }
 
 // handle error
 func (inst *RQL) parseDateTime(dateStr string) (time.Time, error) {
-	// Potential date and time formats
-	var layouts = []string{
-		"2006-01-02T15:04:05Z07:00",
-		"2006-01-02T15:04:05",
-		"2006-01-02 15:04:05",
-		"2006-01-02",
-		"02-01-2006",
-		"01/02/2006",
-		"2006/01/02",
-		"15:04:05",            // Time only
-		"01/02/2006",          // Date only
-		"2006/01/02 15:04:05", // Date and time
+	tt, err := helpers.DateTimeParse(dateStr).TimeIn("UTC")
+	if err != nil {
+		return time.Time{}, err
 	}
-
-	for _, layout := range layouts {
-		t, err := time.Parse(layout, dateStr)
-		if err == nil {
-			return t, nil
-		}
-	}
-
-	return time.Time{}, fmt.Errorf("invalid date: %s", dateStr)
+	return tt, nil
 }
 
 // TimeDiff Define a struct to hold the time difference in various units
