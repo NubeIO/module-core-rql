@@ -2,10 +2,11 @@ package apirules
 
 import (
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	argspkg "github.com/NubeIO/rubix-os/args"
 )
 
-func (inst *RQL) GetHosts() any {
-	resp, err := cli.GetHosts()
+func (inst *RQL) GetHosts(args argspkg.Args) any {
+	resp, err := inst.ROS.GetHosts(args)
 	if err != nil {
 		return err
 	}

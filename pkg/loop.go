@@ -38,7 +38,10 @@ func (inst *Module) Loop() {
 		if firstLoop {
 			inst.addAll(allRules) // add all existing rules from DB
 		}
-		for _, rule := range allRules {
+		for _, rule := range allRules { //TODO add a lock, so we can add a goroutine
+			if !rule.Enable {
+				continue
+			}
 			canRun, err := inst.Rules.CanExecute(rule.Name)
 			if err != nil {
 				log.Errorf("%s: run rules loop execute err: %s", name, err.Error())
@@ -59,13 +62,11 @@ func (inst *Module) Loop() {
 					}
 					if result.String() != "undefined" {
 						_, err := inst.Storage.UpdateResult(rule.UUID, returnType(result))
-						log.Info(1111)
 						log.Info(result)
 						if err != nil {
 							log.Errorf("%s: run rules loop update-result err: %s", name, err.Error())
 						}
 					}
-
 				}
 			}
 		}

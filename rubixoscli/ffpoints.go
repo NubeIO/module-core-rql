@@ -2,17 +2,18 @@ package rubixoscli
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
+	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) EdgeGetPoints(hostIDName string) ([]model.Point, error) {
+func (inst *Client) EdgeGetPoints(hostUUID string) ([]model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]model.Point{}).
-		Get("/proxy/ros/api/points?with_tags=true&with_meta_tags=true"))
+		Get("/host/ros/api/points?with_tags=true&with_meta_tags=true"))
 	if err != nil {
 		return nil, err
 	}
@@ -25,14 +26,13 @@ type pointPriority struct {
 	Priority *model.Priority
 }
 
-func (inst *Client) WritePointValue(hostIDName, uuid string, value *model.Priority) (*model.Point, error) {
+func (inst *Client) WritePointValue(hostUUID, uuid string, value *model.Priority) (*model.Point, error) {
 	body := &pointPriority{
 		Priority: value,
 	}
-	url := fmt.Sprintf("/proxy/ros/api/points/write/%s", uuid)
+	url := fmt.Sprintf("/host/ros/api/points/%s/write", uuid)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&model.Point{}).
 		Patch(url))
@@ -42,25 +42,23 @@ func (inst *Client) WritePointValue(hostIDName, uuid string, value *model.Priori
 	return resp.Result().(*model.Point), nil
 }
 
-func (inst *Client) AddPoint(hostIDName string, body *model.Point) (*model.Point, error) {
+func (inst *Client) AddPoint(hostUUID string, body *model.Point) (*model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Point{}).
 		SetBody(body).
-		Post("/proxy/ros/api/points"))
+		Post("/host/ros/api/points"))
 	if err != nil {
 		return nil, err
 	}
 	return resp.Result().(*model.Point), nil
 }
 
-func (inst *Client) GetPoints(hostIDName string) ([]model.Point, error) {
+func (inst *Client) GetPoints(hostUUID string) ([]model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&[]model.Point{}).
-		Get("/proxy/ros/api/points?with_tags=true&with_meta_tags=true"))
+		Get("/host/ros/api/points?with_tags=true&with_meta_tags=true"))
 	if err != nil {
 		return nil, err
 	}
@@ -69,78 +67,128 @@ func (inst *Client) GetPoints(hostIDName string) ([]model.Point, error) {
 	return out, nil
 }
 
-func (inst *Client) GetPointsByModule(hostIDName, moduleName string) ([]*model.Point, error) {
-	network, err := inst.GetNetworkByPluginName(hostIDName, moduleName, true)
-	if err != nil {
-		return nil, err
-	}
-	var out []*model.Point
-	for _, device := range network.Devices {
-		out = append(out, device.Points...)
-	}
-	return out, nil
-}
-
-func (inst *Client) GetPointPriority(hostIDName, uuid string) (*model.Point, error) {
+func (inst *Client) GetPointPriority(hostUUID, uuid string) (*model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Point{}).
 		SetPathParams(map[string]string{"uuid": uuid}).
-		Get("/proxy/ros/api/points/{uuid}?with_priority=true"))
+		Get("/host/ros/api/points/{uuid}?with_priority=true"))
 	if err != nil {
 		return nil, err
 	}
 	return resp.Result().(*model.Point), nil
 }
 
-func (inst *Client) GetPoint(hostIDName, uuid string) (*model.Point, error) {
+func (inst *Client) GetPoint(hostUUID, uuid string) (*model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetResult(&model.Point{}).
 		SetPathParams(map[string]string{"uuid": uuid}).
-		Get("/proxy/ros/api/points/{uuid}?with_tags=true&with_meta_tags=true"))
+		Get("/host/ros/api/points/{uuid}?with_tags=true&with_meta_tags=true"))
 	if err != nil {
 		return nil, err
 	}
 	return resp.Result().(*model.Point), nil
 }
 
-func (inst *Client) DeletePoint(hostIDName, uuid string) (bool, error) {
+func (inst *Client) DeletePoint(hostUUID, uuid string) (bool, error) {
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetPathParams(map[string]string{"uuid": uuid}).
-		Delete("/proxy/ros/api/points/{uuid}"))
+		Delete("/host/ros/api/points/{uuid}"))
 	if err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func (inst *Client) EditPoint(hostIDName, uuid string, body *model.Point) (*model.Point, error) {
+func (inst *Client) EditPoint(hostUUID, uuid string, body *model.Point) (*model.Point, error) {
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&model.Point{}).
 		SetPathParams(map[string]string{"uuid": uuid}).
-		Patch("/proxy/ros/api/points/{uuid}"))
+		Patch("/host/ros/api/points/{uuid}"))
 	if err != nil {
 		return nil, err
 	}
 	return resp.Result().(*model.Point), nil
 }
 
-func (inst *Client) FFGetPluginSchemaPoint(hostIDName, pluginName string) ([]byte, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/api/%s/schema/json/point", pluginName)
+func (inst *Client) FFGetPluginSchemaPoint(hostUUID, pluginName string) ([]byte, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/points/schema", pluginName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
 	return resp.Body(), nil
+}
+
+type PaginationResponse struct {
+	Total  int64       `json:"total"`
+	Offset *int        `json:"offset"`
+	Limit  *int        `json:"limit"`
+	Data   interface{} `json:"data"`
+}
+
+func (inst *Client) GetPaginatedPointsByDeviceUUID(hostUUID, deviceUUID string, limit, offset int, search string) (*PaginationResponse, error) {
+	requestURL := fmt.Sprintf("/host/ros/api/points/paginate?with_tags=true&with_meta_tags=true&with_priority=true&device_uuid=%v&limit=%v&offset=%v", deviceUUID, limit, offset)
+	if search != "" {
+		requestURL += "&search_keyword=" + url.QueryEscape(search) // Ensure proper URL encoding for search value
+	}
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&PaginationResponse{}).
+		Get(requestURL))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*PaginationResponse)
+	return out, nil
+}
+
+func (inst *Client) GetSearchedPointsByDevice(hostUUID, deviceUUID, search string, limit, offset int) ([]model.Point, error) {
+	url := fmt.Sprintf("/host/ros/api/points?with_tags=true&with_meta_tags=true&with_priority=true&device_uuid=%v&search_keyword=%v&limit=%v&offset=%v", deviceUUID, search, limit, offset)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&[]model.Point{}).
+		Get(url))
+	if err != nil {
+		return nil, err
+	}
+	var out []model.Point
+	out = *resp.Result().(*[]model.Point)
+	return out, nil
+}
+
+func (inst *Client) CountSearchedPointsByDevice(hostUUID, deviceUUID, search string) (*interfaces.Count, error) {
+	url := fmt.Sprintf("/host/ros/api/points/count?device_uuid=%v&search_keyword=%v", deviceUUID, search)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&interfaces.Count{}).
+		Get(url))
+	if err != nil {
+		return nil, err
+	}
+	var out interfaces.Count
+	out = *resp.Result().(*interfaces.Count)
+	return &out, nil
+}
+
+func (inst *Client) UpdatePointTags(hostUUID, pointUUID string, body []model.Tag) ([]model.Tag, error) {
+	url := fmt.Sprintf("/host/ros/api/points/%s/tags", pointUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&[]model.Tag{}).
+		SetBody(body).
+		Put(url))
+	if err != nil {
+		return nil, err
+	}
+
+	var out []model.Tag
+	out = *resp.Result().(*[]model.Tag)
+	return out, nil
 }

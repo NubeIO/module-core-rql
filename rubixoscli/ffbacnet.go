@@ -1,7 +1,9 @@
 package rubixoscli
 
 import (
+	"errors"
 	"fmt"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/pkg/v1/model"
 	"github.com/NubeIO/rubix-os/nresty"
 )
@@ -37,11 +39,10 @@ type discoveredDevice struct {
 }
 
 // BacnetWhoIs do a whois on an existing network
-func (inst *Client) BacnetWhoIs(hostIDName string, body *WhoIsOpts) (*DiscoveredBACnetDevices, error) {
-	url := "/proxy/ros/api/plugins/api/bacnetmaster/master/whois"
+func (inst *Client) BacnetWhoIs(hostUUID string, body *WhoIsOpts) (*DiscoveredBACnetDevices, error) {
+	url := "/host/ros/api/plugins/api/bacnetmaster/master/whois"
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&DiscoveredBACnetDevices{}).
 		Post(url))
@@ -65,11 +66,10 @@ type DiscoveredDevices struct {
 }
 
 // BacnetDiscoveredDevices discover devices will do a whois
-func (inst *Client) BacnetDiscoveredDevices(hostIDName string, body *WhoIsOpts) (*DiscoveredDevices, error) {
-	url := "/proxy/ros/api/plugins/api/bacnetmaster/read/devices"
+func (inst *Client) BacnetDiscoveredDevices(hostUUID string, body *WhoIsOpts) (*DiscoveredDevices, error) {
+	url := "/host/ros/api/plugins/api/bacnetmaster/read/devices"
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(body).
 		SetResult(&DiscoveredDevices{}).
 		Post(url))
@@ -93,21 +93,20 @@ type DiscoveredPoints struct {
 }
 
 type BACnetOpts struct {
-	DeviceInstance   string   `json:"deviceInstance"`
-	Mac              string   `json:"mac"`
-	NetworkNumber    string   `json:"dnet"`
-	MacMSTP          string   `json:"dadr"`
-	ApiTimeout       int      `json:"api_timeout"`
-	Timeout          int      `json:"timeout"`
-	KnownObjectsList []object `json:"known_object_list"`
+	DeviceInstance   string         `json:"deviceInstance"`
+	Mac              string         `json:"mac"`
+	NetworkNumber    string         `json:"dnet"`
+	MacMSTP          string         `json:"dadr"`
+	ApiTimeout       int            `json:"api_timeout"`
+	Timeout          int            `json:"timeout"`
+	KnownObjectsList []bacnetObject `json:"known_object_list"`
 }
 
 // BacnetDevicePoints get points from an added device
-func (inst *Client) BacnetDevicePoints(hostIDName string, opts *BACnetOpts) (*DiscoveredPoints, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/api/%s/read/points", bacnetMaster)
+func (inst *Client) BacnetDevicePoints(hostUUID string, opts *BACnetOpts) (*DiscoveredPoints, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/read/points", bacnetMaster)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
 		SetResult(&DiscoveredPoints{}).
 		Post(url))
@@ -121,27 +120,26 @@ func (inst *Client) BacnetDevicePoints(hostIDName string, opts *BACnetOpts) (*Di
 	return nil, nil
 }
 
-type object struct {
+type bacnetObject struct {
 	ObjectType     string `json:"objectType"`
 	ObjectInstance int    `json:"objectInstance"`
 }
 
 type ObjectsList struct {
-	DeviceInstance int      `json:"deviceInstance"`
-	Mac            string   `json:"mac"`
-	ObjectCount    int      `json:"object_count"`
-	TimeTaken      string   `json:"time_taken"`
-	Errors         []string `json:"errors"`
-	ObjectsAdded   int      `json:"objects_added"`
-	Objects        []object `json:"objects"`
+	DeviceInstance int            `json:"deviceInstance"`
+	Mac            string         `json:"mac"`
+	ObjectCount    int            `json:"object_count"`
+	TimeTaken      string         `json:"time_taken"`
+	Errors         []string       `json:"errors"`
+	ObjectsAdded   int            `json:"objects_added"`
+	Objects        []bacnetObject `json:"objects"`
 }
 
 // BacnetDeviceObjects get device objects
-func (inst *Client) BacnetDeviceObjects(hostIDName string, opts *BACnetOpts) (*ObjectsList, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/api/%s/read/objects/discover", bacnetMaster)
+func (inst *Client) BacnetDeviceObjects(hostUUID string, opts *BACnetOpts) (*ObjectsList, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/read/objects/discover", bacnetMaster)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
 		SetResult(&ObjectsList{}).
 		Post(url))
@@ -155,12 +153,150 @@ func (inst *Client) BacnetDeviceObjects(hostIDName string, opts *BACnetOpts) (*O
 	return nil, nil
 }
 
-// BacnetDeviceObjectsSize get device objects size/count
-func (inst *Client) BacnetDeviceObjectsSize(hostIDName string, opts *BACnetOpts) (*ObjectsList, error) {
-	url := fmt.Sprintf("/proxy/ros/api/plugins/api/%s/read/objects/discover", bacnetMaster)
+type PriArray struct {
+	P1  *float64 `json:"_1"`
+	P2  *float64 `json:"_2"`
+	P3  *float64 `json:"_3"`
+	P4  *float64 `json:"_4"`
+	P5  *float64 `json:"_5"`
+	P6  *float64 `json:"_6"`
+	P7  *float64 `json:"_7"`
+	P8  *float64 `json:"_8"`
+	P9  *float64 `json:"_9"`
+	P10 *float64 `json:"_10"`
+	P11 *float64 `json:"_11"`
+	P12 *float64 `json:"_12"`
+	P13 *float64 `json:"_13"`
+	P14 *float64 `json:"_14"`
+	P15 *float64 `json:"_15"`
+	P16 *float64 `json:"_16"`
+}
+
+type WriteArrayBody struct {
+	TimeOut  int      `json:"timeout"`
+	Priority PriArray `json:"priority"`
+}
+
+type PayloadReadPV struct {
+	ObjectType     string  `json:"objectType"`
+	ObjectInstance string  `json:"objectInstance"`
+	DeviceInstance int     `json:"deviceInstance"`
+	Mac            string  `json:"mac"`
+	Value          float64 `json:"value"`
+	TxnSource      string  `json:"txn_source"`
+	TxnNumber      string  `json:"txn_number"`
+	Error          string  `json:"error"`
+}
+
+func (inst *Client) ReadBacnetPointValue(hostUUID, pointUUID string) (string, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/read/pv", pointUUID)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("host-uuid", hostIDName).
-		SetHeader("host-name", hostIDName).
+		SetHeader("X-Host", hostUUID).
+		Get(url))
+	if err != nil {
+		return "", err
+	}
+	out := resp.String()
+	return out, nil
+}
+
+func (inst *Client) WriteBacnetPointValue(hostUUID, pointUUID string, body interface{}) (*PayloadReadPV, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pv", pointUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetBody(body).
+		SetResult(&PayloadReadPV{}).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*PayloadReadPV)
+	if out != nil {
+		return out, nil
+	}
+	return nil, nil
+}
+
+type PayloadPri struct {
+	ObjectType     string    `json:"objectType"`
+	ObjectInstance string    `json:"objectInstance"`
+	Value          *PriArray `json:"value"`
+	DeviceInstance int       `json:"deviceInstance"`
+	Mac            string    `json:"mac"`
+	TxnSource      string    `json:"txn_source"`
+	TxnNumber      string    `json:"txn_number"`
+	Error          string    `json:"error"`
+}
+
+func (inst *Client) ReadBacnetPriorityArray(hostUUID, pointUUID string) (*PayloadPri, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/read/pri", pointUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&PayloadPri{}).
+		Get(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*PayloadPri)
+	if out != nil {
+		return out, nil
+	}
+	return nil, nil
+}
+
+func (inst *Client) WriteBacnetPriorityArray(hostUUID, pointUUID string, body interface{}) (*PriArray, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pri", pointUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetBody(body).
+		SetResult(&PriArray{}).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*PriArray)
+	if out != nil {
+		return out, nil
+	}
+	return nil, nil
+}
+
+type WriteBacnetPriorityArrayNull struct {
+	Timeout        int `json:"timeout"`
+	PriorityNumber int `json:"priority_number"`
+}
+
+func (inst *Client) WriteBacnetPriorityArrayNull(hostUUID, pointUUID string, body *WriteBacnetPriorityArrayNull) (*PriArray, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pri/null", pointUUID)
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetBody(body).
+		SetResult(&PriArray{}).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*PriArray)
+	if out != nil {
+		return out, nil
+	}
+	return nil, nil
+}
+
+// ------------ BACNET Objects Discovery
+
+type DeviceObjectsBody struct {
+	DeviceUUID       string         `json:"deviceUUID"`
+	ApiTimeout       int            `json:"api_timeout"`
+	Timeout          int            `json:"timeout"`
+	KnownObjectsList []bacnetObject `json:"known_object_list"`
+}
+
+// BacnetDeviceObjectsSize get device objects size/count
+func (inst *Client) BacnetDeviceObjectsSize(hostUUID string, opts *DeviceObjectsBody) (*ObjectsList, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/device/objects/size")
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
 		SetResult(&ObjectsList{}).
 		Post(url))
@@ -172,4 +308,104 @@ func (inst *Client) BacnetDeviceObjectsSize(hostIDName string, opts *BACnetOpts)
 		return out, nil
 	}
 	return nil, nil
+}
+
+type ErrorsWithTime struct {
+	Errors    []string `json:"errors"`
+	TimeTaken string   `json:"time_taken"`
+}
+
+type DeviceObjectsList struct {
+	DeviceInstance int            `json:"deviceInstance"`
+	Mac            string         `json:"mac"`
+	ObjectCount    int            `json:"object_count"`
+	ObjectsAdded   int            `json:"objects_added"`
+	Objects        []bacnetObject `json:"objects"`
+	ErrorsWithTime
+}
+
+// BacnetDeviceObjectsList get device objects list
+func (inst *Client) BacnetDeviceObjectsList(hostUUID string, opts *DeviceObjectsBody) (*DeviceObjectsList, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discover/device")
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetBody(opts).
+		SetResult(&DeviceObjectsList{}).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*DeviceObjectsList)
+	if out != nil {
+		return out, nil
+	}
+	return nil, nil
+}
+
+// BacnetDeviceObjectsListCount get device objects list count
+func (inst *Client) BacnetDeviceObjectsListCount(hostUUID, deviceUUID string) (any, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discovered/count/object-count-%s", deviceUUID)
+	var temp *int
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&temp).
+		Get(url))
+	if err != nil {
+		return 0, err
+	}
+	if resp != nil {
+		return resp.Result(), nil
+	}
+	return 0, nil
+}
+
+// ------------ BACNET Points Discovery
+
+type DeviceDiscoveredPoints struct {
+	ObjectListLength int           `json:"object_list_length"`
+	DiscoveredCount  int           `json:"discovered_count"`
+	ErrorOnAddCount  int           `json:"error_on_add_count"`
+	Points           []model.Point `json:"points"`
+	ErrorsWithTime
+}
+
+// BacnetDevicePointsList get device points by its objects list
+func (inst *Client) BacnetDevicePointsList(hostUUID string, opts *DeviceObjectsBody) (*DeviceDiscoveredPoints, error) {
+	if opts == nil {
+		return nil, errors.New("options body can not be empty")
+	}
+	if opts.KnownObjectsList == nil {
+		return nil, errors.New("please pass in the objects to discover")
+	}
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/nonpics/points/device")
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetBody(opts).
+		SetResult(&DeviceDiscoveredPoints{}).
+		Post(url))
+	if err != nil {
+		return nil, err
+	}
+	out := resp.Result().(*DeviceDiscoveredPoints)
+	if out != nil {
+		return out, nil
+	}
+	return nil, nil
+}
+
+// BacnetDevicePointsListCount get device points list count
+func (inst *Client) BacnetDevicePointsListCount(hostUUID, deviceUUID string) (any, error) {
+	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discovered/count/points-count-%s", deviceUUID)
+	var temp *int
+	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
+		SetHeader("X-Host", hostUUID).
+		SetResult(&temp).
+		Get(url))
+	if err != nil {
+		return 0, err
+	}
+	if resp != nil {
+		return resp.Result(), nil
+	}
+	return 0, nil
 }

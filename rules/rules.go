@@ -55,6 +55,7 @@ func (inst *RuleEngine) AddRule(body *storage.RQLRule, props PropertiesMap) erro
 	name := body.Name
 	script := body.Script
 	sch := body.Schedule
+
 	if inst.RuleLocked(name) {
 		return errors.New(fmt.Sprintf("rule:%s is already being processed", name))
 	}
@@ -211,8 +212,8 @@ func (inst *RuleEngine) execute(name string, props PropertiesMap, reset bool) (g
 	rule.lock = true
 	rule.State = Processing
 	v, err := rule.vm.RunString(rule.script)
-
 	if err != nil {
+		inst.resetRule(name, props)
 		return nil, err
 	}
 	rule.lock = false
@@ -221,6 +222,7 @@ func (inst *RuleEngine) execute(name string, props PropertiesMap, reset bool) (g
 	rule.TimeCompleted = time.Now()
 	nextTime, err := ttime.AdjustTime(rule.TimeCompleted, rule.Schedule)
 	if err != nil {
+		inst.resetRule(name, props)
 		return nil, err
 	}
 	rule.NextTimeScheduled = nextTime

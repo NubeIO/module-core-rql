@@ -70,13 +70,13 @@ func getBaseUrl(cli *Client) string {
 		cli.Ip = "0.0.0.0"
 	}
 	if cli.Port == 0 {
-		cli.Port = 1660
+		cli.Port = 1659
 	}
 	var baseURL string
 	if cli.HTTPS {
-		baseURL = fmt.Sprintf("https://%s:%d", cli.Ip, cli.Port)
+		baseURL = fmt.Sprintf("https://%s:%d/ros", cli.Ip, cli.Port)
 	} else {
-		baseURL = fmt.Sprintf("http://%s:%d", cli.Ip, cli.Port)
+		baseURL = fmt.Sprintf("http://%s:%d/ros", cli.Ip, cli.Port)
 	}
 	return baseURL
 }

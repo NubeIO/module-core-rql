@@ -5,6 +5,7 @@ import (
 	"github.com/NubeIO/module-core-rql/rubixoscli"
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/NubeIO/rubix-os/installer"
+	"github.com/NubeIO/rubix-os/module/shared"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 )
@@ -15,6 +16,7 @@ type RQL struct {
 	TimeTaken string           `json:"time_taken"`
 	Storage   storage.IStorage `json:"-"`
 	Config    any              `json:"config"`
+	ROS       shared.Marshaller
 }
 
 func getToken() string {
@@ -35,7 +37,7 @@ var cli = rubixoscli.New(&rubixoscli.Client{
 	Rest:      nil,
 	Installer: nil,
 	Ip:        "0.0.0.0",
-	Port:      1660,
+	Port:      1659,
 	HTTPS:     false,
 }, &installer.Installer{})
 
