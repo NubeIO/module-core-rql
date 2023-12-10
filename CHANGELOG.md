@@ -1,7 +1,7 @@
 # CHANGELOG
 
-## v0.0.7
-- Test
+## [v0.0.8](https://github.com/NubeIO/module-core-rql/tree/v0.0.8) (2023-12-11)
+- Refactor all APIs to work with ROS 0.2x
 
 ## v0.0.6
 
