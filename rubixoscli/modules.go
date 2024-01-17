@@ -2,30 +2,30 @@ package rubixoscli
 
 import (
 	"fmt"
-	"github.com/NubeIO/rubix-os/interfaces"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/nresty"
 	"io"
 )
 
-func (inst *Client) StoreListModules() ([]interfaces.Module, error, error) {
+func (inst *Client) StoreListModules() ([]dto.Module, error, error) {
 	url := fmt.Sprintf("/api/store/modules")
 	resp, connectionErr, requestErr := nresty.FormatRestyV2Response(inst.Rest.R().
-		SetResult(&[]interfaces.Module{}).
+		SetResult(&[]dto.Module{}).
 		Get(url))
 	if connectionErr != nil || requestErr != nil {
 		return nil, connectionErr, requestErr
 	}
-	return *resp.Result().(*[]interfaces.Module), nil, nil
+	return *resp.Result().(*[]dto.Module), nil, nil
 }
 
-func (inst *Client) StoreUploadModule(fileName string, reader io.Reader) (*interfaces.UploadResponse, error) {
+func (inst *Client) StoreUploadModule(fileName string, reader io.Reader) (*dto.UploadResponse, error) {
 	url := fmt.Sprintf("/api/store/modules")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetResult(&interfaces.UploadResponse{}).
+		SetResult(&dto.UploadResponse{}).
 		SetFileReader("file", fileName, reader).
 		Post(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.UploadResponse), nil
+	return resp.Result().(*dto.UploadResponse), nil
 }

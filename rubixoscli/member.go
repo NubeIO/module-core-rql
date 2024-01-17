@@ -2,9 +2,9 @@ package rubixoscli
 
 import (
 	"fmt"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
@@ -73,27 +73,27 @@ func (inst *Client) BulkDeleteMember(memberUUID []string) (bool, error) {
 	return true, nil
 }
 
-func (inst *Client) VerifyMember(memberName string) (*interfaces.Message, error) {
+func (inst *Client) VerifyMember(memberName string) (*dto.Message, error) {
 	url := fmt.Sprintf("/api/members/username/%s/verify", memberName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetResult(&interfaces.Message{}).
+		SetResult(&dto.Message{}).
 		Post(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.Message), nil
+	return resp.Result().(*dto.Message), nil
 }
 
-func (inst *Client) UpdateMemberPassword(memberUUID string, password string) (*interfaces.Message, error) {
+func (inst *Client) UpdateMemberPassword(memberUUID string, password string) (*dto.Message, error) {
 	url := fmt.Sprintf("/api/members/%s/change-password", memberUUID)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetBody(UpdateMemberPasswordBody{
 			NewPassword: password,
 		}).
-		SetResult(&interfaces.Message{}).
+		SetResult(&dto.Message{}).
 		Post(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.Message), nil
+	return resp.Result().(*dto.Message), nil
 }

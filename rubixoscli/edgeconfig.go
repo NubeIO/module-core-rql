@@ -3,7 +3,7 @@ package rubixoscli
 import (
 	"errors"
 	"fmt"
-	"github.com/NubeIO/rubix-os/interfaces"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/NubeIO/rubix-ui/backend/constants"
 	"gopkg.in/yaml.v3"
@@ -48,7 +48,7 @@ type ConfigBACnetServer struct {
 // EdgeWriteConfig replace the config file of a nube app
 func (inst *Client) EdgeWriteConfig(hostUUID, appName string) (*Message, error) {
 	pushConfig := false
-	var writeConfig interfaces.HostConfig
+	var writeConfig dto.HostConfig
 	if appName == constants.BacnetServerDriver {
 		pushConfig = true
 		resp, connectionErr, requestErr := inst.EdgeReadConfig(hostUUID, appName, constants.ConfigYml)
@@ -65,7 +65,7 @@ func (inst *Client) EdgeWriteConfig(hostUUID, appName string) (*Message, error) 
 				return nil, err
 			}
 		}
-		writeConfig = interfaces.HostConfig{
+		writeConfig = dto.HostConfig{
 			AppName:    constants.BacnetServerDriver,
 			Body:       inst.convertConfigToDynamicMap(inst.defaultWrapperBACnetConfig(config)),
 			ConfigName: constants.ConfigYml,
@@ -86,22 +86,22 @@ func (inst *Client) EdgeWriteConfig(hostUUID, appName string) (*Message, error) 
 	return nil, nil
 }
 
-func (inst *Client) EdgeReadConfig(hostUUID, appName, configName string) (*interfaces.HostConfigResponse, error, error) {
+func (inst *Client) EdgeReadConfig(hostUUID, appName, configName string) (*dto.HostConfigResponse, error, error) {
 	url := fmt.Sprintf("/api/host/config?app_name=%s&config_name=%s", appName, configName)
 	resp, connectionError, requestErr := nresty.FormatRestyV2Response(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.HostConfigResponse{}).
+		SetResult(&dto.HostConfigResponse{}).
 		Get(url))
 	if connectionError != nil || requestErr != nil {
 		return nil, connectionError, requestErr
 	}
-	return resp.Result().(*interfaces.HostConfigResponse), nil, nil
+	return resp.Result().(*dto.HostConfigResponse), nil, nil
 }
 
 func (inst *Client) BACnetWriteConfig(hostUUID, appName string, config ConfigBACnetServer) (*Message, error) {
-	var writeConfig interfaces.HostConfig
+	var writeConfig dto.HostConfig
 	if appName == constants.BacnetServerDriver {
-		writeConfig = interfaces.HostConfig{
+		writeConfig = dto.HostConfig{
 			AppName:    constants.BacnetServerDriver,
 			Body:       inst.convertConfigToDynamicMap(inst.defaultWrapperBACnetConfig(config)),
 			ConfigName: constants.ConfigYml,
@@ -163,8 +163,8 @@ func (inst *Client) defaultWrapperBACnetConfig(config ConfigBACnetServer) Config
 	return config
 }
 
-func (inst *Client) convertConfigToDynamicMap(config interface{}) interfaces.DynamicMap {
-	dynamicMap := make(interfaces.DynamicMap)
+func (inst *Client) convertConfigToDynamicMap(config interface{}) dto.DynamicMap {
+	dynamicMap := make(dto.DynamicMap)
 
 	// Use reflection to iterate through the struct fields and populate the DynamicMap
 	v := reflect.ValueOf(config)

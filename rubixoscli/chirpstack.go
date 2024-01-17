@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/NubeIO/rubix-ui/backend/chirpstack"
+	"strings"
 )
 
 const limit = "2000"
@@ -72,8 +73,13 @@ type CSLoginToken struct {
 }
 
 // CSGetApplications get all
-func (inst *Client) CSGetApplications(hostUUID string) (*chirpstack.Applications, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/applications=%s", limit)
+func (inst *Client) CSGetApplications(hostUUID, pluginName string) (*chirpstack.Applications, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/applications=%s", limit)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/applications=%s", limit)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Applications{}).
 		SetHeader("X-Host", hostUUID).
@@ -85,8 +91,13 @@ func (inst *Client) CSGetApplications(hostUUID string) (*chirpstack.Applications
 }
 
 // CSGetGateways get all gateways
-func (inst *Client) CSGetGateways(hostUUID string) (*chirpstack.Gateways, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/gateways?limit=%s", limit)
+func (inst *Client) CSGetGateways(hostUUID, pluginName string) (*chirpstack.Gateways, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/gateways?limit=%s", limit)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/gateways?limit=%s", limit)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Gateways{}).
 		SetHeader("X-Host", hostUUID).
@@ -98,8 +109,13 @@ func (inst *Client) CSGetGateways(hostUUID string) (*chirpstack.Gateways, error)
 }
 
 // CSGetDevices get all
-func (inst *Client) CSGetDevices(hostUUID, applicationID string) (*chirpstack.Devices, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices?limit=%s&applicationID=%s", limit, applicationID)
+func (inst *Client) CSGetDevices(hostUUID, applicationID, pluginName string) (*chirpstack.Devices, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices?limit=%s&applicationID=%s", limit, applicationID)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices?limit=%s&applicationID=%s", limit, applicationID)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Devices{}).
 		SetHeader("X-Host", hostUUID).
@@ -111,8 +127,13 @@ func (inst *Client) CSGetDevices(hostUUID, applicationID string) (*chirpstack.De
 }
 
 // CSGetDevice get a device
-func (inst *Client) CSGetDevice(hostUUID, devEui string) (*chirpstack.Device, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+func (inst *Client) CSGetDevice(hostUUID, devEui, pluginName string) (*chirpstack.Device, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices/%s", devEui)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Device{}).
 		SetHeader("X-Host", hostUUID).
@@ -124,8 +145,13 @@ func (inst *Client) CSGetDevice(hostUUID, devEui string) (*chirpstack.Device, er
 }
 
 // CSGetDeviceProfiles get all
-func (inst *Client) CSGetDeviceProfiles(hostUUID string) (*chirpstack.DeviceProfiles, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/device-profiles?limit=%s", limit)
+func (inst *Client) CSGetDeviceProfiles(hostUUID, pluginName string) (*chirpstack.DeviceProfiles, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/device-profiles?limit=%s", limit)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/device-profiles?limit=%s", limit)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceProfiles{}).
 		SetHeader("X-Host", hostUUID).
@@ -137,8 +163,13 @@ func (inst *Client) CSGetDeviceProfiles(hostUUID string) (*chirpstack.DeviceProf
 }
 
 // CSAddDevice add all
-func (inst *Client) CSAddDevice(hostUUID string, body *chirpstack.Device) (*chirpstack.Device, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices")
+func (inst *Client) CSAddDevice(hostUUID, pluginName string, body *chirpstack.Device) (*chirpstack.Device, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices")
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices")
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Device{}).
 		SetHeader("X-Host", hostUUID).
@@ -151,8 +182,13 @@ func (inst *Client) CSAddDevice(hostUUID string, body *chirpstack.Device) (*chir
 }
 
 // CSEditDevice edit object
-func (inst *Client) CSEditDevice(hostUUID, devEui string, body *chirpstack.Device) (*chirpstack.Device, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+func (inst *Client) CSEditDevice(hostUUID, devEui, pluginName string, body *chirpstack.Device) (*chirpstack.Device, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices/%s", devEui)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.Device{}).
 		SetHeader("X-Host", hostUUID).
@@ -165,8 +201,13 @@ func (inst *Client) CSEditDevice(hostUUID, devEui string, body *chirpstack.Devic
 }
 
 // CSDeleteDevice delete
-func (inst *Client) CSDeleteDevice(hostUUID, devEui string) (bool, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+func (inst *Client) CSDeleteDevice(hostUUID, devEui, pluginName string) (bool, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices/%s", devEui)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/%s", devEui)
+	}
 	_, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		Delete(q))
@@ -177,8 +218,13 @@ func (inst *Client) CSDeleteDevice(hostUUID, devEui string) (bool, error) {
 }
 
 // CSDeviceOTAKeysUpdate active a device
-func (inst *Client) CSDeviceOTAKeysUpdate(hostUUID, devEui string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
+func (inst *Client) CSDeviceOTAKeysUpdate(hostUUID, devEui, pluginName string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices/keys/%s", devEui)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceKey{}).
 		SetHeader("X-Host", hostUUID).
@@ -192,8 +238,13 @@ func (inst *Client) CSDeviceOTAKeysUpdate(hostUUID, devEui string, body *chirpst
 }
 
 // CSDeviceOTAKeys active a device
-func (inst *Client) CSDeviceOTAKeys(hostUUID, devEui string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
+func (inst *Client) CSDeviceOTAKeys(hostUUID, devEui, pluginName string, body *chirpstack.DeviceKey) (*chirpstack.DeviceKey, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices/keys/%s", devEui)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/keys/%s", devEui)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceKey{}).
 		SetHeader("X-Host", hostUUID).
@@ -207,8 +258,13 @@ func (inst *Client) CSDeviceOTAKeys(hostUUID, devEui string, body *chirpstack.De
 }
 
 // CSActivateDevice active a device
-func (inst *Client) CSActivateDevice(hostUUID, devEui string, body *chirpstack.DeviceActivation) (*chirpstack.DeviceActivation, error) {
-	q := fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/activate/%s", devEui)
+func (inst *Client) CSActivateDevice(hostUUID, devEui, pluginName string, body *chirpstack.DeviceActivation) (*chirpstack.DeviceActivation, error) {
+	var q string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		q = fmt.Sprintf("/host/ros/api/modules/module-core-lorawan/cs/devices/activate/%s", devEui)
+	} else {
+		q = fmt.Sprintf("/host/ros/api/plugins/api/lorawan/cs/devices/activate/%s", devEui)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetResult(chirpstack.DeviceActivation{}).
 		SetHeader("X-Host", hostUUID).

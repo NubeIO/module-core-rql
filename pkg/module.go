@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"github.com/NubeIO/lib-module-go/shared"
+	"github.com/NubeIO/lib-module-go/nmodule"
 	"github.com/NubeIO/module-core-rql/apirules"
 	"github.com/NubeIO/module-core-rql/rules"
 	"github.com/NubeIO/module-core-rql/storage"
@@ -10,9 +10,9 @@ import (
 )
 
 type Module struct {
-	dbHelper        shared.DBHelper
+	dbHelper        nmodule.DBHelper
 	moduleName      string
-	grpcMarshaller  shared.Marshaller
+	grpcMarshaller  nmodule.Marshaller
 	config          *Config
 	store           *cache.Cache
 	Rules           *rules.RuleEngine
@@ -24,9 +24,9 @@ type Module struct {
 	pluginIsEnabled bool
 }
 
-func (m *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
+func (m *Module) Init(dbHelper nmodule.DBHelper, moduleName string) error {
 	InitRouter()
-	grpcMarshaller := shared.GRPCMarshaller{DbHelper: dbHelper}
+	grpcMarshaller := nmodule.GRPCMarshaller{DbHelper: dbHelper}
 	m.dbHelper = dbHelper
 	m.moduleName = moduleName
 	m.grpcMarshaller = &grpcMarshaller
@@ -39,8 +39,8 @@ func (m *Module) Init(dbHelper shared.DBHelper, moduleName string) error {
 	return nil
 }
 
-func (m *Module) GetInfo() (*shared.Info, error) {
-	return &shared.Info{
+func (m *Module) GetInfo() (*nmodule.Info, error) {
+	return &nmodule.Info{
 		Name:       name,
 		Author:     "Nube iO",
 		Website:    "https://nube-io.com",

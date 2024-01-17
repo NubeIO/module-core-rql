@@ -1,6 +1,7 @@
 package apirules
 
 import (
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/datatype"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/mitchellh/mapstructure"
 )
@@ -56,20 +57,17 @@ func (inst *RQL) GetAlertsByHost() any {
 	var alertsActive []model.Alert
 	var alertsAcknowledge []model.Alert
 	var alertsClosed []model.Alert
-	var active = "active"
-	var acknowledge = "acknowledged"
-	var closed = "closed"
 
 	for _, host := range resp {
 		alerts, err := cli.GetAlertsByHost(host.UUID, []string{"active", "acknowledged", "closed"})
 		for _, alert := range alerts {
-			if alert.Status == active {
+			if alert.Status == datatype.AlertStatusActive {
 				alertsActive = append(alertsActive, alert)
 			}
-			if alert.Status == acknowledge {
+			if alert.Status == datatype.AlertStatusAcknowledged {
 				alertsAcknowledge = append(alertsAcknowledge, alert)
 			}
-			if alert.Status == closed {
+			if alert.Status == datatype.AlertStatusClosed {
 				alertsClosed = append(alertsClosed, alert)
 			}
 		}
