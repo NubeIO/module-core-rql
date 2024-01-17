@@ -2,21 +2,21 @@ package rubixoscli
 
 import (
 	"fmt"
-	"github.com/NubeIO/rubix-os/interfaces"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/NubeIO/rubix-ui/backend/rumodel"
 )
 
-func (inst *Client) EdgeBiosPing(hostUUID string) (*interfaces.Message, error) {
+func (inst *Client) EdgeBiosPing(hostUUID string) (*dto.Message, error) {
 	url := fmt.Sprintf("/host/bios/api/system/ping")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.Message{}).
+		SetResult(&dto.Message{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.Message), nil
+	return resp.Result().(*dto.Message), nil
 }
 
 func (inst *Client) EdgeBiosArch(hostUUID string) (*rumodel.Arch, error) {

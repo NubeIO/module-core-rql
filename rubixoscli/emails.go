@@ -2,14 +2,13 @@ package rubixoscli
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
+	"os"
+	"path/filepath"
 )
 
 func (inst *Client) GetEmail(emailUUID string) (*model.Email, error) {
@@ -112,7 +111,7 @@ func (inst *Client) AttachmentDownload(fileName, destination string) (*Message, 
 	}, nil
 }
 
-func (inst *Client) UploadAttachments(attachments []string) (*[]interfaces.EmailAttachment, error) {
+func (inst *Client) UploadAttachments(attachments []string) (*[]dto.EmailAttachment, error) {
 	url := fmt.Sprintf("/api/emails/attachments/upload")
 
 	attachmentsData := make([]*resty.MultipartField, 0)
@@ -134,7 +133,7 @@ func (inst *Client) UploadAttachments(attachments []string) (*[]interfaces.Email
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("Content-Type", "multipart/form-data").
 		SetMultipartFields(attachmentsData...).
-		SetResult(&[]interfaces.EmailAttachment{}).
+		SetResult(&[]dto.EmailAttachment{}).
 		Post(url))
 	if err != nil {
 		return nil, err
@@ -145,6 +144,6 @@ func (inst *Client) UploadAttachments(attachments []string) (*[]interfaces.Email
 	}
 
 	log.Debugf("Response body: %s", resp.Body())
-	respAttachments := resp.Result().(*[]interfaces.EmailAttachment)
+	respAttachments := resp.Result().(*[]dto.EmailAttachment)
 	return respAttachments, nil
 }

@@ -3,20 +3,20 @@ package rubixoscli
 import (
 	"fmt"
 	"github.com/NubeIO/lib-systemctl-go/systemctl"
-	"github.com/NubeIO/rubix-os/interfaces"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) EdgeSystemCtlAction(hostUUID, serviceName string, action interfaces.Action) (*interfaces.Message, error) {
+func (inst *Client) EdgeSystemCtlAction(hostUUID, serviceName string, action dto.Action) (*dto.Message, error) {
 	url := fmt.Sprintf("/host/bios/api/systemctl/%s?unit=%s", action, serviceName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.Message{}).
+		SetResult(&dto.Message{}).
 		Post(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.Message), nil
+	return resp.Result().(*dto.Message), nil
 }
 
 func (inst *Client) EdgeSystemCtlState(hostUUID, serviceName string) (*systemctl.SystemState, error) {

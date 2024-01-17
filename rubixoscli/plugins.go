@@ -2,8 +2,8 @@ package rubixoscli
 
 import (
 	"fmt"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/installer"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
 	"io"
 )
@@ -19,14 +19,14 @@ func (inst *Client) StoreListPlugins() ([]installer.BuildDetails, error, error) 
 	return *resp.Result().(*[]installer.BuildDetails), nil, nil
 }
 
-func (inst *Client) StoreUploadPlugin(fileName string, reader io.Reader) (*interfaces.UploadResponse, error) {
+func (inst *Client) StoreUploadPlugin(fileName string, reader io.Reader) (*dto.UploadResponse, error) {
 	url := fmt.Sprintf("/api/store/plugins")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetResult(&interfaces.UploadResponse{}).
+		SetResult(&dto.UploadResponse{}).
 		SetFileReader("file", fileName, reader).
 		Post(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*interfaces.UploadResponse), nil
+	return resp.Result().(*dto.UploadResponse), nil
 }

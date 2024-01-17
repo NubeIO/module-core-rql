@@ -1,10 +1,10 @@
 package pkg
 
 import (
-	"github.com/NubeIO/lib-module-go/http"
+	"github.com/NubeIO/lib-module-go/nhttp"
+	"github.com/NubeIO/lib-module-go/nmodule"
 	"github.com/NubeIO/lib-module-go/router"
-	"github.com/NubeIO/lib-module-go/shared"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/nargs"
+	"net/http"
 )
 
 var route *router.Router
@@ -12,76 +12,76 @@ var route *router.Router
 func InitRouter() {
 	route = router.NewRouter()
 
-	route.Handle(http.GET, "/api/rules", GetRules)
-	route.Handle(http.GET, "/api/rules/:uuid", GetRule)
-	route.Handle(http.GET, "/api/vars", GetVars)
-	route.Handle(http.GET, "/api/vars/:uuid", GetVar)
+	route.Handle(nhttp.GET, "/api/rules", GetRules)
+	route.Handle(nhttp.GET, "/api/rules/:uuid", GetRule)
+	route.Handle(nhttp.GET, "/api/vars", GetVars)
+	route.Handle(nhttp.GET, "/api/vars/:uuid", GetVar)
 
-	route.Handle(http.POST, "/api/rules", AddRule)
-	route.Handle(http.POST, "/api/rules/:uuid/run", RunRule)
-	route.Handle(http.POST, "/api/rules/dry", RunDry)
-	route.Handle(http.POST, "/api/vars", AddVar)
+	route.Handle(nhttp.POST, "/api/rules", AddRule)
+	route.Handle(nhttp.POST, "/api/rules/:uuid/run", RunRule)
+	route.Handle(nhttp.POST, "/api/rules/dry", RunDry)
+	route.Handle(nhttp.POST, "/api/vars", AddVar)
 
-	route.Handle(http.PATCH, "/api/rules/:uuid", UpdateRule)
-	route.Handle(http.PATCH, "/api/vars/:uuid", UpdateVar)
+	route.Handle(nhttp.PATCH, "/api/rules/:uuid", UpdateRule)
+	route.Handle(nhttp.PATCH, "/api/vars/:uuid", UpdateVar)
 
-	route.Handle(http.DELETE, "/api/rules/:uuid", DeleteRule)
-	route.Handle(http.DELETE, "/api/vars/:uuid", DeleteVar)
+	route.Handle(nhttp.DELETE, "/api/rules/:uuid", DeleteRule)
+	route.Handle(nhttp.DELETE, "/api/vars/:uuid", DeleteVar)
 }
 
-func (m *Module) CallModule(method http.Method, api string, args nargs.Args, body []byte) ([]byte, error) {
+func (m *Module) CallModule(method nhttp.Method, urlString string, headers http.Header, body []byte) ([]byte, error) {
 	err := m.check()
 	if err != nil {
 		return nil, err
 	}
-	module := shared.Module(m)
-	return route.CallHandler(&module, method, api, args, body)
+	module := nmodule.Module(m)
+	return route.CallHandler(&module, method, urlString, headers, body)
 }
 
-func GetRules(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
+func GetRules(m *nmodule.Module, r *router.Request) ([]byte, error) {
 	return (*m).(*Module).SelectAllRules()
 }
 
-func GetRule(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).ReuseRuleRun(body, params["uuid"])
+func GetRule(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).ReuseRuleRun(r.Body, r.PathParams["uuid"])
 }
 
-func GetVars(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
+func GetVars(m *nmodule.Module, r *router.Request) ([]byte, error) {
 	return (*m).(*Module).SelectAllVariables()
 }
 
-func GetVar(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).SelectVariable(params["uuid"])
+func GetVar(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).SelectVariable(r.PathParams["uuid"])
 }
 
-func AddRule(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).AddRule(body)
+func AddRule(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).AddRule(r.Body)
 }
 
-func RunRule(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).ReuseRuleRun(body, params["uuid"])
+func RunRule(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).ReuseRuleRun(r.Body, r.PathParams["uuid"])
 }
 
-func RunDry(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).Dry(body)
+func RunDry(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).Dry(r.Body)
 }
 
-func AddVar(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).AddVariable(body)
+func AddVar(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).AddVariable(r.Body)
 }
 
-func UpdateRule(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).UpdateRule(params["uuid"], body)
+func UpdateRule(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).UpdateRule(r.PathParams["uuid"], r.Body)
 }
 
-func UpdateVar(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).UpdateVariable(body, params["uuid"])
+func UpdateVar(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).UpdateVariable(r.Body, r.PathParams["uuid"])
 }
 
-func DeleteRule(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).DeleteRule(params["uuid"])
+func DeleteRule(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).DeleteRule(r.PathParams["uuid"])
 }
 
-func DeleteVar(m *shared.Module, params map[string]string, args nargs.Args, body []byte) ([]byte, error) {
-	return (*m).(*Module).DeleteVariable(params["uuid"])
+func DeleteVar(m *nmodule.Module, r *router.Request) ([]byte, error) {
+	return (*m).(*Module).DeleteVariable(r.PathParams["uuid"])
 }

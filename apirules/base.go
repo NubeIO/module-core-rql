@@ -2,7 +2,7 @@ package apirules
 
 import (
 	"fmt"
-	"github.com/NubeIO/lib-module-go/shared"
+	"github.com/NubeIO/lib-module-go/nmodule"
 	"github.com/NubeIO/module-core-rql/rubixoscli"
 	"github.com/NubeIO/module-core-rql/storage"
 	"github.com/NubeIO/rubix-os/installer"
@@ -16,7 +16,7 @@ type RQL struct {
 	TimeTaken string           `json:"time_taken"`
 	Storage   storage.IStorage `json:"-"`
 	Config    any              `json:"config"`
-	ROS       shared.Marshaller
+	ROS       nmodule.Marshaller
 }
 
 func getToken() string {

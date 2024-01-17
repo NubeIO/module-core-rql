@@ -7,7 +7,7 @@ require (
 	github.com/NubeDev/flow-eng v0.10.0
 	github.com/NubeIO/lib-date v0.0.6
 	github.com/NubeIO/lib-dhcpd v0.0.2
-	github.com/NubeIO/lib-module-go v0.0.1
+	github.com/NubeIO/lib-module-go v0.0.7
 	github.com/NubeIO/lib-networking v0.1.0
 	github.com/NubeIO/lib-system v0.0.3
 	github.com/NubeIO/lib-systemctl-go v0.3.1
@@ -15,14 +15,14 @@ require (
 	github.com/NubeIO/lib-utils-go v0.0.1
 	github.com/NubeIO/lib-uuid v0.0.3
 	github.com/NubeIO/nubeio-rubix-lib-auth-go v1.3.1
-	github.com/NubeIO/nubeio-rubix-lib-models-go v1.11.0
-	github.com/NubeIO/rubix-os v0.3.0-rc2
+	github.com/NubeIO/nubeio-rubix-lib-models-go v1.12.0
+	github.com/NubeIO/rubix-os v0.3.0-rc14
 	github.com/NubeIO/rubix-ui v0.0.2
 	github.com/andanhm/go-prettytime v1.1.0
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-gota/gota v0.12.0
-	github.com/go-resty/resty/v2 v2.7.0
+	github.com/go-resty/resty/v2 v2.10.0
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/hashicorp/go-plugin v1.4.10
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
@@ -80,10 +80,10 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	github.com/wailsapp/wails/v2 v2.4.1 // indirect
-	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
-	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	gonum.org/v1/gonum v0.9.1 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	google.golang.org/grpc v1.54.1 // indirect

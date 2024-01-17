@@ -2,11 +2,10 @@ package rubixoscli
 
 import (
 	"fmt"
-	"net/url"
-
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
+	"net/url"
 )
 
 func (inst *Client) EdgeGetPoints(hostUUID string) ([]model.Point, error) {
@@ -126,19 +125,19 @@ func (inst *Client) FFGetPluginSchemaPoint(hostUUID, pluginName string) ([]byte,
 	return resp.Body(), nil
 }
 
-func (inst *Client) GetPaginatedPointsByDeviceUUID(hostUUID, deviceUUID string, limit, offset int, search string) (*interfaces.PaginationResponse, error) {
+func (inst *Client) GetPaginatedPointsByDeviceUUID(hostUUID, deviceUUID string, limit, offset int, search string) (*dto.PaginationResponse, error) {
 	requestURL := fmt.Sprintf("/host/ros/api/points/paginate?with_tags=true&with_meta_tags=true&with_priority=true&device_uuid=%v&limit=%v&offset=%v", deviceUUID, limit, offset)
 	if search != "" {
 		requestURL += "&search_keyword=" + url.QueryEscape(search) // Ensure proper URL encoding for search value
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.PaginationResponse{}).
+		SetResult(&dto.PaginationResponse{}).
 		Get(requestURL))
 	if err != nil {
 		return nil, err
 	}
-	out := resp.Result().(*interfaces.PaginationResponse)
+	out := resp.Result().(*dto.PaginationResponse)
 	return out, nil
 }
 
@@ -156,17 +155,17 @@ func (inst *Client) GetSearchedPointsByDevice(hostUUID, deviceUUID, search strin
 	return out, nil
 }
 
-func (inst *Client) CountSearchedPointsByDevice(hostUUID, deviceUUID, search string) (*interfaces.Count, error) {
+func (inst *Client) CountSearchedPointsByDevice(hostUUID, deviceUUID, search string) (*dto.Count, error) {
 	url := fmt.Sprintf("/host/ros/api/points/count?device_uuid=%v&search_keyword=%v", deviceUUID, search)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.Count{}).
+		SetResult(&dto.Count{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	var out interfaces.Count
-	out = *resp.Result().(*interfaces.Count)
+	var out dto.Count
+	out = *resp.Result().(*dto.Count)
 	return &out, nil
 }
 

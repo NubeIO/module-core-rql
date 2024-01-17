@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-auth-go/externaltoken"
 	"github.com/NubeIO/nubeio-rubix-lib-auth-go/user"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/nresty"
 )
 
-func (inst *Client) EdgeBiosLogin(hostUUID string, body *user.User) (*model.TokenResponse, error) {
+func (inst *Client) EdgeBiosLogin(hostUUID string, body *user.User) (*dto.TokenResponse, error) {
 	url := "/host/bios/api/users/login"
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(body).
-		SetResult(&model.TokenResponse{}).
+		SetResult(&dto.TokenResponse{}).
 		Post(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*model.TokenResponse), nil
+	return resp.Result().(*dto.TokenResponse), nil
 }
 
 func (inst *Client) EdgeBiosTokens(hostUUID, jwtToken string) (*[]externaltoken.ExternalToken, error) {

@@ -2,10 +2,10 @@ package rubixoscli
 
 import (
 	"fmt"
-	"github.com/NubeIO/rubix-os/services/system"
-
 	systats "github.com/NubeIO/lib-system"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/rubix-os/nresty"
+	"github.com/NubeIO/rubix-os/services/system"
 )
 
 func (inst *Client) EdgeHostReboot(hostUUID string) (*system.Message, error) {
@@ -32,16 +32,16 @@ func (inst *Client) EdgeGetSystem(hostUUID string) (*systats.System, error) {
 	return resp.Result().(*systats.System), nil
 }
 
-func (inst *Client) EdgeGetMemoryUsage(hostUUID string) (*system.MemoryUsage, error) {
+func (inst *Client) EdgeGetMemoryUsage(hostUUID string) (*dto.MemoryUsage, error) {
 	url := fmt.Sprintf("/host/ros/api/system/usage")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&system.MemoryUsage{}).
+		SetResult(&dto.MemoryUsage{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*system.MemoryUsage), nil
+	return resp.Result().(*dto.MemoryUsage), nil
 }
 
 func (inst *Client) EdgeGetMemory(hostUUID string) (*systats.Memory, error) {
@@ -93,14 +93,14 @@ func (inst *Client) EdgeDiscUsage(hostUUID string) (*[]systats.Disk, error, erro
 	return data, nil, nil
 }
 
-func (inst *Client) DiscUsagePretty(hostUUID string) (*[]system.Disk, error) {
+func (inst *Client) DiscUsagePretty(hostUUID string) (*[]dto.Disk, error) {
 	url := fmt.Sprintf("/host/ros/api/system/disc/pretty")
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&[]system.Disk{}).
+		SetResult(&[]dto.Disk{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*[]system.Disk), nil
+	return resp.Result().(*[]dto.Disk), nil
 }

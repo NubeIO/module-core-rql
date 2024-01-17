@@ -3,11 +3,10 @@ package rubixoscli
 import (
 	"errors"
 	"fmt"
-	"net/url"
-
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
+	"net/url"
 )
 
 func (inst *Client) FFGetNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, overrideUrl ...string) ([]model.Network, error) {
@@ -30,7 +29,7 @@ func (inst *Client) FFGetNetworks(hostUUID string, withDevices bool, showCloneNe
 	return out, nil
 }
 
-func (inst *Client) FFGetPaginatedNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, limit, offset int, search string) (*interfaces.PaginationResponse, error) {
+func (inst *Client) FFGetPaginatedNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, limit, offset int, search string) (*dto.PaginationResponse, error) {
 	requestURL := fmt.Sprintf("/host/ros/api/networks/paginate?with_tags=true&with_meta_tags=true&show_clone_networks=%t&limit=%v&offset=%v", showCloneNetworks, limit, offset)
 	if withDevices {
 		requestURL += "&with_devices=true"
@@ -40,12 +39,12 @@ func (inst *Client) FFGetPaginatedNetworks(hostUUID string, withDevices bool, sh
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.PaginationResponse{}).
+		SetResult(&dto.PaginationResponse{}).
 		Get(requestURL))
 	if err != nil {
 		return nil, err
 	}
-	out := resp.Result().(*interfaces.PaginationResponse)
+	out := resp.Result().(*dto.PaginationResponse)
 	return out, nil
 }
 
@@ -152,16 +151,16 @@ func (inst *Client) FFEditNetwork(hostUUID, uuid string, body *model.Network) (*
 	return resp.Result().(*model.Network), nil
 }
 
-func (inst *Client) FFGetPollingQueueStatisticsByPluginName(hostUUID, pluginName, networkName string) (*model.PollQueueStatistics, error) {
+func (inst *Client) FFGetPollingQueueStatisticsByPluginName(hostUUID, pluginName, networkName string) (*dto.PollQueueStatistics, error) {
 	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/polling/stats/network/name/%s", pluginName, networkName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&model.PollQueueStatistics{}).
+		SetResult(&dto.PollQueueStatistics{}).
 		Get(url))
 	if err != nil {
 		return nil, err
 	}
-	return resp.Result().(*model.PollQueueStatistics), nil
+	return resp.Result().(*dto.PollQueueStatistics), nil
 }
 
 func (inst *Client) FFGetPluginSchemaNetwork(hostUUID, pluginName string) ([]byte, error) {

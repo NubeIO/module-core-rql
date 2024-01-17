@@ -2,11 +2,10 @@ package rubixoscli
 
 import (
 	"fmt"
-	"net/url"
-
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
-	"github.com/NubeIO/rubix-os/interfaces"
 	"github.com/NubeIO/rubix-os/nresty"
+	"net/url"
 )
 
 type PointDiscoverableCountType struct {
@@ -51,7 +50,7 @@ func (inst *Client) GetDevices(hostUUID string, withPoints ...bool) ([]model.Dev
 	return out, nil
 }
 
-func (inst *Client) GetPaginatedDevices(hostUUID string, networkUUID string, limit, offset int, search string, withPoints bool) (*interfaces.PaginationResponse, error) {
+func (inst *Client) GetPaginatedDevices(hostUUID string, networkUUID string, limit, offset int, search string, withPoints bool) (*dto.PaginationResponse, error) {
 	requestURL := fmt.Sprintf("/host/ros/api/devices/paginate?with_tags=true&with_meta_tags=true&network_uuid=%s&limit=%v&offset=%v", networkUUID, limit, offset)
 	if withPoints {
 		requestURL += "&with_devices=true"
@@ -61,12 +60,12 @@ func (inst *Client) GetPaginatedDevices(hostUUID string, networkUUID string, lim
 	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
-		SetResult(&interfaces.PaginationResponse{}).
+		SetResult(&dto.PaginationResponse{}).
 		Get(requestURL))
 	if err != nil {
 		return nil, err
 	}
-	out := resp.Result().(*interfaces.PaginationResponse)
+	out := resp.Result().(*dto.PaginationResponse)
 	return out, nil
 }
 

@@ -3,12 +3,12 @@ package rubixoscli
 import (
 	"fmt"
 	"github.com/NubeIO/lib-utils-go/pprint"
-	"github.com/NubeIO/rubix-os/interfaces"
+	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
 	"testing"
 )
 
 func TestClient_EdgeUploadPlugin(t *testing.T) {
-	data, err := client.EdgeUploadPlugin("rc", &interfaces.Plugin{
+	data, err := client.EdgeUploadPlugin("rc", &dto.Plugin{
 		Name:    "bacnetserver",
 		Arch:    "amd64",
 		Version: "v0.6.6",
