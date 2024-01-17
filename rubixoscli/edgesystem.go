@@ -2,10 +2,11 @@ package rubixoscli
 
 import (
 	"fmt"
-	systats "github.com/NubeIO/lib-system"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
-	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/NubeIO/rubix-os/services/system"
+
+	systats "github.com/NubeIO/lib-system"
+	"github.com/NubeIO/rubix-os/nresty"
 )
 
 func (inst *Client) EdgeHostReboot(hostUUID string) (*system.Message, error) {

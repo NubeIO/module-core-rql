@@ -3,6 +3,7 @@ package rubixoscli
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
@@ -39,8 +40,13 @@ type discoveredDevice struct {
 }
 
 // BacnetWhoIs do a whois on an existing network
-func (inst *Client) BacnetWhoIs(hostUUID string, body *WhoIsOpts) (*DiscoveredBACnetDevices, error) {
-	url := "/host/ros/api/plugins/api/bacnetmaster/master/whois"
+func (inst *Client) BacnetWhoIs(hostUUID, pluginName string, body *WhoIsOpts) (*DiscoveredBACnetDevices, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = "/host/ros/api/modules/module-core-bacnetmaster/api/master/whois"
+	} else {
+		url = "/host/ros/api/plugins/api/bacnetmaster/master/whois"
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(body).
@@ -66,8 +72,13 @@ type DiscoveredDevices struct {
 }
 
 // BacnetDiscoveredDevices discover devices will do a whois
-func (inst *Client) BacnetDiscoveredDevices(hostUUID string, body *WhoIsOpts) (*DiscoveredDevices, error) {
-	url := "/host/ros/api/plugins/api/bacnetmaster/read/devices"
+func (inst *Client) BacnetDiscoveredDevices(hostUUID, pluginName string, body *WhoIsOpts) (*DiscoveredDevices, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = "/host/ros/api/modules/module-core-bacnetmaster/api/read/devices"
+	} else {
+		url = "/host/ros/api/plugins/api/bacnetmaster/read/devices"
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(body).
@@ -103,8 +114,13 @@ type BACnetOpts struct {
 }
 
 // BacnetDevicePoints get points from an added device
-func (inst *Client) BacnetDevicePoints(hostUUID string, opts *BACnetOpts) (*DiscoveredPoints, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/read/points", bacnetMaster)
+func (inst *Client) BacnetDevicePoints(hostUUID, pluginName string, opts *BACnetOpts) (*DiscoveredPoints, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = "/host/ros/api/modules/module-core-bacnetmaster/api/read/points"
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/%s/read/points", bacnetMaster)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
@@ -136,8 +152,13 @@ type ObjectsList struct {
 }
 
 // BacnetDeviceObjects get device objects
-func (inst *Client) BacnetDeviceObjects(hostUUID string, opts *BACnetOpts) (*ObjectsList, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/read/objects/discover", bacnetMaster)
+func (inst *Client) BacnetDeviceObjects(hostUUID, pluginName string, opts *BACnetOpts) (*ObjectsList, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = "/host/ros/api/modules/module-core-bacnetmaster/api/read/objects/discover"
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/%s/read/objects/discover", bacnetMaster)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
@@ -188,8 +209,13 @@ type PayloadReadPV struct {
 	Error          string  `json:"error"`
 }
 
-func (inst *Client) ReadBacnetPointValue(hostUUID, pointUUID string) (string, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/read/pv", pointUUID)
+func (inst *Client) ReadBacnetPointValue(hostUUID, pointUUID, pluginName string) (string, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/%s/read/pv", pointUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/read/pv", pointUUID)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		Get(url))
@@ -200,8 +226,13 @@ func (inst *Client) ReadBacnetPointValue(hostUUID, pointUUID string) (string, er
 	return out, nil
 }
 
-func (inst *Client) WriteBacnetPointValue(hostUUID, pointUUID string, body interface{}) (*PayloadReadPV, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pv", pointUUID)
+func (inst *Client) WriteBacnetPointValue(hostUUID, pointUUID, pluginName string, body interface{}) (*PayloadReadPV, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/%s/write/pv", pointUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pv", pointUUID)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(body).
@@ -228,8 +259,13 @@ type PayloadPri struct {
 	Error          string    `json:"error"`
 }
 
-func (inst *Client) ReadBacnetPriorityArray(hostUUID, pointUUID string) (*PayloadPri, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/read/pri", pointUUID)
+func (inst *Client) ReadBacnetPriorityArray(hostUUID, pointUUID, pluginName string) (*PayloadPri, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/%s/read/pri", pointUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/read/pri", pointUUID)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetResult(&PayloadPri{}).
@@ -244,8 +280,13 @@ func (inst *Client) ReadBacnetPriorityArray(hostUUID, pointUUID string) (*Payloa
 	return nil, nil
 }
 
-func (inst *Client) WriteBacnetPriorityArray(hostUUID, pointUUID string, body interface{}) (*PriArray, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pri", pointUUID)
+func (inst *Client) WriteBacnetPriorityArray(hostUUID, pointUUID, pluginName string, body interface{}) (*PriArray, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/%s/write/pri", pointUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pri", pointUUID)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(body).
@@ -266,8 +307,13 @@ type WriteBacnetPriorityArrayNull struct {
 	PriorityNumber int `json:"priority_number"`
 }
 
-func (inst *Client) WriteBacnetPriorityArrayNull(hostUUID, pointUUID string, body *WriteBacnetPriorityArrayNull) (*PriArray, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pri/null", pointUUID)
+func (inst *Client) WriteBacnetPriorityArrayNull(hostUUID, pointUUID, pluginName string, body *WriteBacnetPriorityArrayNull) (*PriArray, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/%s/write/pri/null", pointUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/%s/write/pri/null", pointUUID)
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(body).
@@ -293,8 +339,13 @@ type DeviceObjectsBody struct {
 }
 
 // BacnetDeviceObjectsSize get device objects size/count
-func (inst *Client) BacnetDeviceObjectsSize(hostUUID string, opts *DeviceObjectsBody) (*ObjectsList, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/device/objects/size")
+func (inst *Client) BacnetDeviceObjectsSize(hostUUID, pluginName string, opts *DeviceObjectsBody) (*ObjectsList, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/read/device/objects/size")
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/device/objects/size")
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
@@ -325,8 +376,13 @@ type DeviceObjectsList struct {
 }
 
 // BacnetDeviceObjectsList get device objects list
-func (inst *Client) BacnetDeviceObjectsList(hostUUID string, opts *DeviceObjectsBody) (*DeviceObjectsList, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discover/device")
+func (inst *Client) BacnetDeviceObjectsList(hostUUID, pluginName string, opts *DeviceObjectsBody) (*DeviceObjectsList, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/read/objects/discover/device")
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discover/device")
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
@@ -343,8 +399,13 @@ func (inst *Client) BacnetDeviceObjectsList(hostUUID string, opts *DeviceObjects
 }
 
 // BacnetDeviceObjectsListCount get device objects list count
-func (inst *Client) BacnetDeviceObjectsListCount(hostUUID, deviceUUID string) (any, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discovered/count/object-count-%s", deviceUUID)
+func (inst *Client) BacnetDeviceObjectsListCount(hostUUID, deviceUUID, pluginName string) (any, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/read/objects/discovered/count/object-count-%s", deviceUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discovered/count/object-count-%s", deviceUUID)
+	}
 	var temp *int
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
@@ -370,14 +431,19 @@ type DeviceDiscoveredPoints struct {
 }
 
 // BacnetDevicePointsList get device points by its objects list
-func (inst *Client) BacnetDevicePointsList(hostUUID string, opts *DeviceObjectsBody) (*DeviceDiscoveredPoints, error) {
+func (inst *Client) BacnetDevicePointsList(hostUUID, pluginName string, opts *DeviceObjectsBody) (*DeviceDiscoveredPoints, error) {
 	if opts == nil {
 		return nil, errors.New("options body can not be empty")
 	}
 	if opts.KnownObjectsList == nil {
 		return nil, errors.New("please pass in the objects to discover")
 	}
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/nonpics/points/device")
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/read/nonpics/points/device")
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/nonpics/points/device")
+	}
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetBody(opts).
@@ -394,8 +460,13 @@ func (inst *Client) BacnetDevicePointsList(hostUUID string, opts *DeviceObjectsB
 }
 
 // BacnetDevicePointsListCount get device points list count
-func (inst *Client) BacnetDevicePointsListCount(hostUUID, deviceUUID string) (any, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discovered/count/points-count-%s", deviceUUID)
+func (inst *Client) BacnetDevicePointsListCount(hostUUID, deviceUUID, pluginName string) (any, error) {
+	var url string
+	if strings.HasPrefix(pluginName, ModulePrefix) {
+		url = fmt.Sprintf("/host/ros/api/modules/module-core-bacnetmaster/api/read/objects/discovered/count/points-count-%s", deviceUUID)
+	} else {
+		url = fmt.Sprintf("/host/ros/api/plugins/api/bacnetmaster/read/objects/discovered/count/points-count-%s", deviceUUID)
+	}
 	var temp *int
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).

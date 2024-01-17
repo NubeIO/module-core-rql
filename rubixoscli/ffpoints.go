@@ -3,9 +3,10 @@ package rubixoscli
 import (
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
+	"net/url"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
-	"net/url"
 )
 
 func (inst *Client) EdgeGetPoints(hostUUID string) ([]model.Point, error) {
@@ -112,17 +113,6 @@ func (inst *Client) EditPoint(hostUUID, uuid string, body *model.Point) (*model.
 		return nil, err
 	}
 	return resp.Result().(*model.Point), nil
-}
-
-func (inst *Client) FFGetPluginSchemaPoint(hostUUID, pluginName string) ([]byte, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/points/schema", pluginName)
-	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("X-Host", hostUUID).
-		Get(url))
-	if err != nil {
-		return nil, err
-	}
-	return resp.Body(), nil
 }
 
 func (inst *Client) GetPaginatedPointsByDeviceUUID(hostUUID, deviceUUID string, limit, offset int, search string) (*dto.PaginationResponse, error) {

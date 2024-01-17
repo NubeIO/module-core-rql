@@ -3,12 +3,13 @@ package rubixoscli
 import (
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
+	"os"
+	"path/filepath"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
-	"os"
-	"path/filepath"
 )
 
 func (inst *Client) GetEmail(emailUUID string) (*model.Email, error) {

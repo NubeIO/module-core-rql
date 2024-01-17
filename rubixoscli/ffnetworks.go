@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
+	"net/url"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
-	"net/url"
 )
 
 func (inst *Client) FFGetNetworks(hostUUID string, withDevices bool, showCloneNetworks bool, overrideUrl ...string) ([]model.Network, error) {
@@ -152,7 +153,7 @@ func (inst *Client) FFEditNetwork(hostUUID, uuid string, body *model.Network) (*
 }
 
 func (inst *Client) FFGetPollingQueueStatisticsByPluginName(hostUUID, pluginName, networkName string) (*dto.PollQueueStatistics, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/polling/stats/network/name/%s", pluginName, networkName)
+	url := fmt.Sprintf("/host/ros/api/modules/%s/api/polling/stats/network/name/%s", pluginName, networkName)
 	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
 		SetHeader("X-Host", hostUUID).
 		SetResult(&dto.PollQueueStatistics{}).
@@ -161,17 +162,6 @@ func (inst *Client) FFGetPollingQueueStatisticsByPluginName(hostUUID, pluginName
 		return nil, err
 	}
 	return resp.Result().(*dto.PollQueueStatistics), nil
-}
-
-func (inst *Client) FFGetPluginSchemaNetwork(hostUUID, pluginName string) ([]byte, error) {
-	url := fmt.Sprintf("/host/ros/api/plugins/api/%s/networks/schema", pluginName)
-	resp, err := nresty.FormatRestyResponse(inst.Rest.R().
-		SetHeader("X-Host", hostUUID).
-		Get(url))
-	if err != nil {
-		return nil, err
-	}
-	return resp.Body(), nil
 }
 
 func (inst *Client) FFUpdateNetworkTag(hostUUID, networkUUID string, body []model.Tag) ([]model.Tag, error) {

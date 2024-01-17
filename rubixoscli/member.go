@@ -3,6 +3,7 @@ package rubixoscli
 import (
 	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
+
 	"github.com/NubeIO/nubeio-rubix-lib-models-go/model"
 	"github.com/NubeIO/rubix-os/nresty"
 )
