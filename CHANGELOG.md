@@ -1,9 +1,17 @@
 # CHANGELOG
 
-## [v0.0.8](https://github.com/NubeIO/module-core-rql/tree/v0.0.8) (2023-12-11)
-- Refactor all APIs to work with ROS 0.2x
+## [v0.1.0](https://github.com/NubeIO/module-core-rql/tree/v0.1.0) (2024-01-17)
 
-## v0.0.6
+- Upgrade lib-module-go to v0.0.7 and rubix-os to v0.3.0-rc14
+- Upgrade rubixoscli from rubix-ce (f67a3746)
+- Prerequisite:
+    - rubix-os >= v0.3.0
+
+## [v0.0.8](https://github.com/NubeIO/module-core-rql/tree/v0.0.8) (2023-12-11)
+
+- Refactor all APIs to work with ROS v0.2.x
+
+## [v0.0.6](https://github.com/NubeIO/module-core-rql/tree/v0.0.6) (2023-11-23)
 
 - Add methods to get all points from all hosts
 - update to slack method
