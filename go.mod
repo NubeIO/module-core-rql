@@ -7,7 +7,7 @@ require (
 	github.com/NubeDev/flow-eng v0.10.0
 	github.com/NubeIO/lib-date v0.0.6
 	github.com/NubeIO/lib-dhcpd v0.0.2
-	github.com/NubeIO/lib-module-go v0.0.7
+	github.com/NubeIO/lib-module-go v0.0.9
 	github.com/NubeIO/lib-networking v0.1.0
 	github.com/NubeIO/lib-system v0.0.3
 	github.com/NubeIO/lib-systemctl-go v0.3.1
@@ -15,7 +15,7 @@ require (
 	github.com/NubeIO/lib-utils-go v0.0.1
 	github.com/NubeIO/lib-uuid v0.0.3
 	github.com/NubeIO/nubeio-rubix-lib-auth-go v1.3.1
-	github.com/NubeIO/nubeio-rubix-lib-models-go v1.12.0
+	github.com/NubeIO/nubeio-rubix-lib-models-go v1.14.0
 	github.com/NubeIO/rubix-os v0.3.0-rc14
 	github.com/NubeIO/rubix-ui v0.0.2
 	github.com/andanhm/go-prettytime v1.1.0
