@@ -28,10 +28,12 @@ func (c RQLRule) ID() (jsonField string, value interface{}) {
 }
 
 type RQLVariables struct {
-	UUID     string `json:"uuid"`
-	Name     string `json:"name"`
-	Variable any    `json:"variable"`
-	Password string `json:"password"`
+	UUID       string `json:"uuid"`
+	ScriptUUID string `json:"script_uuid"`
+	Name       string `json:"name"`
+	Type       string `json:"type"`
+	Value      any    `json:"value"`
+	Required   bool   `json:"required"`
 }
 
 func (c RQLVariables) ID() (jsonField string, value interface{}) {
