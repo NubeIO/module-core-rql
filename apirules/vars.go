@@ -38,7 +38,7 @@ func (inst *RQL) VarParseArray(uuidName string) any {
 	if err != nil {
 		return err
 	}
-	b, err := json.Marshal(r.Variable)
+	b, err := json.Marshal(r.Value)
 	if err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func (inst *RQL) VarParseObject(uuidName string) any {
 	if err != nil {
 		return err
 	}
-	b, err := json.Marshal(r.Variable)
+	b, err := json.Marshal(r.Value)
 	if err != nil {
 		return nil
 	}
@@ -82,7 +82,7 @@ func (inst *RQL) VarParseString(uuidName string) any {
 	if r == nil {
 		return ""
 	}
-	return fmt.Sprint(r.Variable)
+	return fmt.Sprint(r.Value)
 }
 
 func (inst *RQL) VarParseNumber(uuidName string) any {
@@ -93,7 +93,7 @@ func (inst *RQL) VarParseNumber(uuidName string) any {
 	if r == nil {
 		return 0
 	}
-	f := r.Variable
+	f := r.Value
 	if s, err := strconv.ParseFloat(fmt.Sprint(f), 64); err == nil {
 		return s
 	}

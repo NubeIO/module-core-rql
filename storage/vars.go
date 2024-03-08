@@ -3,15 +3,33 @@ package storage
 import (
 	"errors"
 	"github.com/NubeIO/lib-uuid/uuid"
+	"reflect"
 )
 
+func validateVariableValue(value any) error {
+	if value != nil {
+		kind := reflect.TypeOf(value).Kind()
+		if kind == reflect.Map {
+			return nil
+		}
+	}
+
+	return errors.New("value must be valid json object")
+}
+
 func (inst *db) AddVariable(rc *RQLVariables) (*RQLVariables, error) {
+	if err := validateVariableValue(rc.Value); err != nil {
+		return nil, err
+	}
 	rc.UUID = uuid.ShortUUID("rql")
 	err := inst.DB.Insert(rc)
 	return rc, err
 }
 
 func (inst *db) UpdateVariable(uuid string, rc *RQLVariables) (*RQLVariables, error) {
+	if err := validateVariableValue(rc.Value); err != nil {
+		return nil, err
+	}
 	if rc != nil {
 		rc.UUID = uuid
 	}
@@ -20,6 +38,9 @@ func (inst *db) UpdateVariable(uuid string, rc *RQLVariables) (*RQLVariables, er
 }
 
 func (inst *db) UpdateVariableValue(uuidName string, value any) (*RQLVariables, error) {
+	if err := validateVariableValue(value); err != nil {
+		return nil, err
+	}
 	variable, err := inst.selectVariable(uuidName)
 	if err != nil {
 		return nil, err
@@ -27,7 +48,7 @@ func (inst *db) UpdateVariableValue(uuidName string, value any) (*RQLVariables, 
 	if variable == nil {
 		return nil, errors.New("var not found")
 	}
-	variable.Variable = value
+	variable.Value = value
 	return inst.UpdateVariable(variable.UUID, variable)
 }
 

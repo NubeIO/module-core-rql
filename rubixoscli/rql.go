@@ -128,10 +128,12 @@ func (inst *Client) DeleteRule(hostUUID, uuid string) (*Message, error) {
 }
 
 type RQLVariables struct {
-	UUID     string `json:"uuid"`
-	Name     string `json:"name"`
-	Variable any    `json:"variable"`
-	Password string `json:"password"`
+	UUID       string `json:"uuid"`
+	ScriptUUID string `json:"script_uuid"`
+	Name       string `json:"name"`
+	Type       string `json:"type"`
+	Value      any    `json:"value"`
+	Required   bool   `json:"required"`
 }
 
 func (inst *Client) SelectAllVars(hostUUID string) ([]RQLVariables, error) {
