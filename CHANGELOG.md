@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [v0.1.1](https://github.com/NubeIO/module-core-rql/tree/v0.1.1) (2024-06-26)
+- Upgrade vars as per PR Improvements on variables #21
+
+
 ## [v0.1.0](https://github.com/NubeIO/module-core-rql/tree/v0.1.0) (2024-01-17)
 
 - Upgrade lib-module-go to v0.0.7 and rubix-os to v0.3.0-rc14
